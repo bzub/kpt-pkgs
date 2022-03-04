@@ -41,9 +41,18 @@ ARG CLUSTERCTL
 ARG PROVIDER_TYPE
 ARG PROVIDER_NAME
 ARG PROVIDER_VERSION
+ARG PROVIDER_COMPONENTS_URL="none"
 RUN <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
+
+if [ "${PROVIDER_COMPONENTS_URL}" != "none" ]; then
+  curl -L "${PROVIDER_COMPONENTS_URL}" \
+  | clusterctl-v1_1 generate yaml \
+  | sed '/^rules: \[\]$/d' \
+  | kpt fn sink "/pkg"
+  exit 0
+fi
 
 provider_arg="--${PROVIDER_TYPE}=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 

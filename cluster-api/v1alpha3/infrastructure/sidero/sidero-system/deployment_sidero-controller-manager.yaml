@@ -1,13 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/provider: sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
-    clusterctl.cluster.x-k8s.io: ""
-    control-plane: metal-controller-manager
+    control-plane: sidero-controller-manager
   name: sidero-controller-manager
   namespace: sidero-system # kpt-set: ${capi-provider-namespace}
 spec:
@@ -17,33 +15,22 @@ spec:
       app: sidero
       cluster.x-k8s.io/provider: sidero
       cluster.x-k8s.io/v1alpha3: v1alpha3
-      control-plane: metal-controller-manager
-  strategy: {}
+      control-plane: sidero-controller-manager
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: sidero
         cluster.x-k8s.io/provider: sidero
         cluster.x-k8s.io/v1alpha3: v1alpha3
-        control-plane: metal-controller-manager
+        control-plane: sidero-controller-manager
     spec:
       containers:
       - args:
-        - --secure-listen-address=0.0.0.0:8443 # kpt-set: --secure-listen-address=${secure-listen-address}
-        - --upstream=http://127.0.0.1:8080/ # kpt-set: --upstream=${upstream}
-        - --logtostderr=true # kpt-set: --logtostderr=${logtostderr}
-        - --v=10 # kpt-set: --v=${v}
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.4.1
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: https
-        resources: {}
-      - args:
         - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
         - --api-endpoint=- # kpt-set: --api-endpoint=${api-endpoint}
+        - --api-port=8081 # kpt-set: --api-port=${api-port}
         - --extra-agent-kernel-args=- # kpt-set: --extra-agent-kernel-args=${extra-agent-kernel-args}
+        - --boot-from-disk-method=ipxe-exit # kpt-set: --boot-from-disk-method=${boot-from-disk-method}
         - --auto-accept-servers=false # kpt-set: --auto-accept-servers=${auto-accept-servers}
         - --insecure-wipe=true # kpt-set: --insecure-wipe=${insecure-wipe}
         - --auto-bmc-setup=true # kpt-set: --auto-bmc-setup=${auto-bmc-setup}
@@ -57,8 +44,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: ghcr.io/talos-systems/metal-controller-manager:v0.3.0-alpha.0
+        image: ghcr.io/talos-systems/sidero-controller-manager:v0.3.3
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 15
         name: manager
         ports:
         - containerPort: 69
@@ -67,15 +59,17 @@ spec:
         - containerPort: 8081
           name: http
           protocol: TCP
-        - containerPort: 50100
-          name: grpc
-          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 15
         resources:
           limits:
-            cpu: "1"
+            cpu: 1000m
             memory: 512Mi
           requests:
             cpu: 100m
             memory: 128Mi
+      hostNetwork: false
       terminationGracePeriodSeconds: 10
-status: {}

@@ -3,18 +3,17 @@ kind: Service
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/provider: sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
-    clusterctl.cluster.x-k8s.io: ""
-  name: sidero-api
+  name: sidero-http
   namespace: sidero-system # kpt-set: ${capi-provider-namespace}
 spec:
   ports:
-  - port: 50100
+  - port: 8081
     protocol: TCP
-    targetPort: grpc
+    targetPort: http
   selector:
     app: sidero
     cluster.x-k8s.io/provider: sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
-    control-plane: metal-controller-manager
+    control-plane: sidero-controller-manager

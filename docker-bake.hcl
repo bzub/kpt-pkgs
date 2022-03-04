@@ -21,7 +21,7 @@ variable "CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION" {default = "v0.3.2"}
 variable "CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION" {default = "${CAPI_V1ALPHA3_CORE_VERSION}"}
 variable "CAPI_V1ALPHA3_CONTROLPLANE_TALOS_VERSION" {default = "v0.2.0"}
 variable "CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_V1ALPHA3_CORE_VERSION}"}
-variable "CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.3.0-alpha.0"}
+variable "CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.3.3"}
 
 variable "GOLANG_IMAGE" {default = "docker.io/library/golang:${GOLANG_VERSION}-alpine3.15"}
 variable "KPT_IMAGE" {default = "ghcr.io/bzub/images/kpt:${KPT_VERSION}"}
@@ -192,6 +192,7 @@ target "cluster-api-provider-v1alpha3-infrastructure-sidero" {
     PROVIDER_NAME = "sidero"
     PROVIDER_VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
     CLUSTERCTL = "clusterctl-v1_1"
+    PROVIDER_COMPONENTS_URL = "https://github.com/talos-systems/sidero/releases/download/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}/infrastructure-components.yaml"
   }
   output = ["${CLUSTER_API_DIR}/v1alpha3/infrastructure/sidero"]
 }
