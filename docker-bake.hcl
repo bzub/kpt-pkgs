@@ -50,6 +50,24 @@ target "_common" {
   }
 }
 
+target "git-tag-packages" {
+  inherits = ["_common"]
+  target = "git-tag-packages"
+  args = {
+    GIT_TAGS = join(" ", [
+      "cert-manager/${CERT_MANAGER_VERSION}",
+      "cluster-api/v1alpha3/core/cluster-api/${CAPI_V1ALPHA3_CORE_VERSION}",
+      "cluster-api/v1alpha3/bootstrap/talos/${CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION}",
+      "cluster-api/v1alpha3/bootstrap/kubeadm/${CAPI_V1ALPHA3_BOOTSTRAP_KUBEADM_VERSION}",
+      "cluster-api/v1alpha3/control-plane/talos/${CAPI_V1ALPHA3_CONTROLPLANE_TALOS_VERSION}",
+      "cluster-api/v1alpha3/control-plane/kubeadm/${CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION}",
+      "cluster-api/v1alpha3/infrastructure/docker/${CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION}",
+      "cluster-api/v1alpha3/infrastructure/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+    ])
+  }
+  output = ["${ROOT_DIR}/.git"]
+}
+
 target "cert-manager" {
   inherits = ["_common"]
   target = "pkg"

@@ -85,3 +85,20 @@ RUN find /pkg -type f -name 'Kptfile' -delete
 
 FROM scratch as cluster-api-provider-pkg
 COPY --link --from=cluster-api-provider-pkg-render /pkg /
+
+FROM tools as git-tag-packages-build
+ARG GIT_TAGS
+ENV GIT_TAGS=${GIT_TAGS}
+COPY --link .git /repo/.git
+WORKDIR /repo
+RUN <<EOT
+#!/usr/bin/env sh
+set -euxo pipefail
+
+for tag in $(echo "${GIT_TAGS}"); do
+  git tag "${tag}"
+done
+EOT
+
+FROM scratch as git-tag-packages
+COPY --link --from=git-tag-packages-build /repo/.git /
