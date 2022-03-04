@@ -24,11 +24,12 @@ spec:
     spec:
       containers:
       - args:
+        - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
         - --enable-leader-election=true # kpt-set: --enable-leader-election=${enable-leader-election}
         - --feature-gates=MachinePool=false,ClusterResourceSet=false # kpt-set: --feature-gates=${feature-gates}
         command:
         - /manager
-        image: ghcr.io/talos-systems/cluster-api-talos-controller:v0.2.0-alpha.12
+        image: ghcr.io/talos-systems/cluster-api-talos-controller:v0.3.2
         imagePullPolicy: Always
         name: manager
         resources:
