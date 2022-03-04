@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-talos
+    clusterctl.cluster.x-k8s.io: ""
+    clusterctl.cluster.x-k8s.io/lifecycle: shared
+  name: cabpt-serving-cert
+  namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+spec:
+  dnsNames:
+  - cabpt-webhook-service.capi-webhook-system.svc # kpt-set: cabpt-webhook-service.${capi-webhook-system-namespace}.svc
+  - cabpt-webhook-service.capi-webhook-system.svc.cluster.local # kpt-set: cabpt-webhook-service.${capi-webhook-system-namespace}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: cabpt-selfsigned-issuer
+  secretName: cabpt-webhook-service-cert

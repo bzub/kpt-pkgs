@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
+    control-plane: caps-controller-manager
+  name: caps-controller-manager
+  namespace: sidero-system # kpt-set: ${capi-provider-namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidero
+      cluster.x-k8s.io/provider: sidero
+      cluster.x-k8s.io/v1alpha3: v1alpha3
+      control-plane: caps-controller-manager
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sidero
+        cluster.x-k8s.io/provider: sidero
+        cluster.x-k8s.io/v1alpha3: v1alpha3
+        control-plane: caps-controller-manager
+    spec:
+      containers:
+      - args:
+        - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
+        - --webhook-port=9443 # kpt-set: --webhook-port=${webhook-port}
+        command:
+        - /manager
+        image: ghcr.io/talos-systems/cluster-api-provider-sidero:v0.3.0-alpha.0
+        imagePullPolicy: Always
+        name: manager
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: caps-webhook-service-cert
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
+    control-plane: caps-controller-manager
+  name: caps-controller-manager
+  namespace: sidero-system # kpt-set: ${capi-provider-namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidero
+      cluster.x-k8s.io/provider: sidero
+      cluster.x-k8s.io/v1alpha3: v1alpha3
+      control-plane: caps-controller-manager
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sidero
+        cluster.x-k8s.io/provider: sidero
+        cluster.x-k8s.io/v1alpha3: v1alpha3
+        control-plane: caps-controller-manager
+    spec:
+      containers:
+      - command:
+        - /manager
+        image: ghcr.io/talos-systems/cluster-api-provider-sidero:v0.3.0-alpha.0
+        imagePullPolicy: Always
+        name: manager
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+      terminationGracePeriodSeconds: 10
+status: {}

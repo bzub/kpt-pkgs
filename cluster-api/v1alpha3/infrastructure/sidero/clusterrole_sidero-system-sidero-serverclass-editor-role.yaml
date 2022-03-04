@@ -1,0 +1,34 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
+  name: sidero-system-sidero-serverclass-editor-role # kpt-set: ${capi-provider-namespace}-sidero-serverclass-editor-role
+rules:
+- apiGroups:
+  - metal.sidero.dev
+  resources:
+  - serverclasses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metal.sidero.dev
+  resources:
+  - serverclasses/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

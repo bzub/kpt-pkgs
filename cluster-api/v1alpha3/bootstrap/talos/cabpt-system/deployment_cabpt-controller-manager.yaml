@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-talos
+    clusterctl.cluster.x-k8s.io: ""
+    control-plane: controller-manager
+  name: cabpt-controller-manager
+  namespace: cabpt-system # kpt-set: ${capi-provider-namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/provider: bootstrap-talos
+      control-plane: controller-manager
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        cluster.x-k8s.io/provider: bootstrap-talos
+        control-plane: controller-manager
+    spec:
+      containers:
+      - args:
+        - --enable-leader-election=true # kpt-set: --enable-leader-election=${enable-leader-election}
+        - --feature-gates=MachinePool=false,ClusterResourceSet=false # kpt-set: --feature-gates=${feature-gates}
+        command:
+        - /manager
+        image: ghcr.io/talos-systems/cluster-api-talos-controller:v0.2.0-alpha.12
+        imagePullPolicy: Always
+        name: manager
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+      terminationGracePeriodSeconds: 10
+status: {}

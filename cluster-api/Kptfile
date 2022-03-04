@@ -1,0 +1,31 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: cluster-api
+pipeline:
+  mutators:
+  - name: normalize-feature-gates-flag
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-value-regex: '--feature-gates=.*'
+      put-value: '--feature-gates=MachinePool=false,ClusterResourceSet=false'
+  - name: normalize-enable-leader-election-flag
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-value: '--enable-leader-election'
+      put-value: '--enable-leader-election=true'
+  - name: create-setters-for-capi-provider-namespaces
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-value-regex: '(.*)(cabpt-system|cacppt-system|capd-system|capi-kubeadm-bootstrap-system|capi-kubeadm-control-plane-system|capi-system|sidero-system)(.*)'
+      put-comment: 'kpt-set: ${1}${capi-provider-namespace}${3}'
+  - name: create-setters-for-capi-webhook-system-namespace
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-value-regex: '(.*)(capi-webhook-system)(.*)'
+      put-comment: 'kpt-set: ${1}${capi-webhook-system-namespace}${3}'
+  - name: create-setters-for-all-flags
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-value-regex: '--([\w-]*)=(.*)'
+      put-comment: 'kpt-set: --${1}=${${1}}'

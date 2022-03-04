@@ -1,0 +1,14 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: cluster-api-bootstrap-kubeadm
+pipeline:
+  mutators:
+  # - name: set-namespace
+  #   image: gcr.io/kpt-fn/set-namespace:unstable
+  #   configMap:
+  #     namespace: capi-kubeadm-bootstrap-system
+  # - name: create-default-setters
+  #   image: gcr.io/kpt-fn/create-setters:unstable
+  #   configMap:
+  #     namespace: capi-kubeadm-bootstrap-system

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: control-plane-kubeadm
+    clusterctl.cluster.x-k8s.io: ""
+    clusterctl.cluster.x-k8s.io/lifecycle: shared
+    control-plane: controller-manager
+  name: capi-kubeadm-control-plane-controller-manager
+  namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/provider: control-plane-kubeadm
+      control-plane: controller-manager
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        cluster.x-k8s.io/provider: control-plane-kubeadm
+        control-plane: controller-manager
+    spec:
+      containers:
+      - args:
+        - --secure-listen-address=0.0.0.0:8443 # kpt-set: --secure-listen-address=${secure-listen-address}
+        - --upstream=http://127.0.0.1:8080/ # kpt-set: --upstream=${upstream}
+        - --logtostderr=true # kpt-set: --logtostderr=${logtostderr}
+        - --v=10 # kpt-set: --v=${v}
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+        resources: {}
+      - args:
+        - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
+        - --webhook-port=9443 # kpt-set: --webhook-port=${webhook-port}
+        command:
+        - /manager
+        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.25
+        imagePullPolicy: IfNotPresent
+        name: manager
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      terminationGracePeriodSeconds: 10
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: capi-kubeadm-control-plane-webhook-service-cert
+status: {}
