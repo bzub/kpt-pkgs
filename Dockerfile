@@ -29,7 +29,7 @@ ARG PACKAGE_PATH
 ARG RESOURCES_URL
 RUN curl -L "${RESOURCES_URL}" | kpt fn sink "/pkg"
 COPY --link ${PACKAGE_PATH}/Kptfile /pkg/Kptfile
-RUN kpt fn render /pkg && rm /pkg/Kptfile
+RUN kpt fn render --truncate-output=false /pkg && rm /pkg/Kptfile
 
 FROM scratch as pkg
 COPY --link --from=kpt-sink-render-from-url /pkg /
@@ -50,10 +50,12 @@ provider_arg="--${PROVIDER_TYPE}=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 case "${CLUSTERCTL}" in
   clusterctl-v0_3)
     "${CLUSTERCTL}" config provider "${provider_arg}" -o yaml \
+    | sed '/^rules: \[\]$/d' \
     | kpt fn sink "/pkg"
     ;;
   *)
     "${CLUSTERCTL}" generate provider "${provider_arg}" \
+    | sed '/^rules: \[\]$/d' \
     | kpt fn sink "/pkg"
 esac
 eot
@@ -77,7 +79,7 @@ COPY --link cluster-api/Kptfile /kpt-files/cluster-api/Kptfile
 COPY --link ${KPTFILE_SRC} /kpt-files/${KPTFILE_SRC}
 COPY --link --from=cluster-api-provider-upstream / /kpt-files/${PKG_PATH}
 RUN kpt pkg init /kpt-files
-RUN kpt fn render /kpt-files
+RUN kpt fn render --truncate-output=false /kpt-files
 RUN cp -r "/kpt-files/${PKG_PATH}" /pkg
 RUN find /pkg -type f -name 'Kptfile' -delete
 

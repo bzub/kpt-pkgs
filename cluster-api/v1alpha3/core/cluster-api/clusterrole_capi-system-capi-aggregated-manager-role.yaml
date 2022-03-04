@@ -9,4 +9,3 @@ metadata:
     cluster.x-k8s.io/provider: cluster-api
     clusterctl.cluster.x-k8s.io: ""
   name: capi-system-capi-aggregated-manager-role # kpt-set: ${capi-provider-namespace}-capi-aggregated-manager-role
-rules: []
