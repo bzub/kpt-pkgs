@@ -73,10 +73,10 @@ ARG PROVIDER_VERSION
 ARG CAPI_API_GROUP
 ARG PKG_PATH="cluster-api/${CAPI_API_GROUP}/${PROVIDER_TYPE}/${PROVIDER_NAME}"
 ARG KPTFILE_SRC="${PKG_PATH}/Kptfile"
-COPY --link Kptfile /kpt-files/Kptfile
 COPY --link cluster-api/Kptfile /kpt-files/cluster-api/Kptfile
 COPY --link ${KPTFILE_SRC} /kpt-files/${KPTFILE_SRC}
 COPY --link --from=cluster-api-provider-upstream / /kpt-files/${PKG_PATH}
+RUN kpt pkg init /kpt-files
 RUN kpt fn render /kpt-files
 RUN cp -r "/kpt-files/${PKG_PATH}" /pkg
 RUN find /pkg -type f -name 'Kptfile' -delete

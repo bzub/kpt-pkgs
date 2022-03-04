@@ -1,4 +1,3 @@
-variable "BUILD_ID" {default = "dev"}
 variable "BUILDKIT_GITHUB_TOKEN" {default = ""}
 variable "BUILDKIT_DOCKER_HOST" {default = "unix:///var/run/docker.sock"}
 variable "ROOT_DIR" {default = "."}
@@ -35,13 +34,11 @@ group "default" {
   targets = [
     "cert-manager",
     "cluster-api",
-    "kpt-render",
   ]
 }
 
 target "_common" {
   args = {
-    BUILD_ID = BUILD_ID
     GITHUB_TOKEN = BUILDKIT_GITHUB_TOKEN
     DOCKER_HOST = BUILDKIT_DOCKER_HOST
     GOLANG_IMAGE = GOLANG_IMAGE
