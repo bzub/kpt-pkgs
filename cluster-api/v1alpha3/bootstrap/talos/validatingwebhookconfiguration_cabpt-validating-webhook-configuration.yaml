@@ -9,7 +9,6 @@ metadata:
   name: cabpt-validating-webhook-configuration
 webhooks:
 - clientConfig:
-    caBundle: Cg==
     service:
       name: cabpt-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}

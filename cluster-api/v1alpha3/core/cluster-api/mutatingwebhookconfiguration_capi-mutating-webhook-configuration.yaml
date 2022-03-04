@@ -11,7 +11,6 @@ metadata:
   name: capi-mutating-webhook-configuration
 webhooks:
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
@@ -31,7 +30,6 @@ webhooks:
     - clusters
   sideEffects: None
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
@@ -51,7 +49,6 @@ webhooks:
     - machines
   sideEffects: None
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
@@ -71,7 +68,6 @@ webhooks:
     - machinedeployments
   sideEffects: None
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
@@ -91,7 +87,6 @@ webhooks:
     - machinehealthchecks
   sideEffects: None
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
@@ -111,7 +106,6 @@ webhooks:
     - machinesets
   sideEffects: None
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
@@ -131,7 +125,6 @@ webhooks:
     - machinepools
   sideEffects: None
 - clientConfig:
-    caBundle: Cg==
     service:
       name: capi-webhook-service
       namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}

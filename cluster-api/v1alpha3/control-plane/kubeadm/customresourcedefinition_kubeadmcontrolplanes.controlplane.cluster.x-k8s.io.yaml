@@ -16,7 +16,6 @@ spec:
     strategy: Webhook
     webhook:
       clientConfig:
-        caBundle: Cg==
         service:
           name: capi-kubeadm-control-plane-webhook-service
           namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
