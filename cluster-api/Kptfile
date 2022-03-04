@@ -29,6 +29,15 @@ pipeline:
     configMap:
       by-value-regex: '--([\w-]*)=(.*)'
       put-comment: 'kpt-set: --${1}=${${1}}'
+  - name: set-cert-manager-dependencies
+    image: gcr.io/kpt-fn/set-annotations:unstable
+    configMap:
+      config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+    selectors:
+    - kind: Certificate
+    - kind: Issuer
+    - namespace: capi-webhook-system
+      kind: Deployment
   - name: remove-caBundle-placeholders
     image: gcr.io/kpt-fn/starlark:unstable
     configMap:
