@@ -95,6 +95,66 @@ RUN find /pkg -type f -name 'Kptfile' -delete
 FROM scratch as cluster-api-provider-pkg
 COPY --link --from=cluster-api-provider-pkg-render /pkg /
 
+# generate workload clusters
+
+FROM tools as clusterctl-cluster-kpt-sink
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+ARG CLUSTERCTL
+ARG PROVIDER_NAME
+ARG PROVIDER_VERSION
+ARG PROVIDER_COMPONENTS_URL="none"
+ARG TARGET_NAMESPACE=default
+ARG CONTROL_PLANE_ENDPOINT="127.0.0.1"
+ENV CONTROL_PLANE_ENDPOINT="${CONTROL_PLANE_ENDPOINT}"
+ARG CONTROL_PLANE_PORT="6443"
+ENV CONTROL_PLANE_PORT="${CONTROL_PLANE_PORT}"
+ARG CONTROL_PLANE_SERVERCLASS="${PROVIDER_NAME}-cluster-control-plane"
+ENV CONTROL_PLANE_SERVERCLASS="${CONTROL_PLANE_SERVERCLASS}"
+ARG WORKER_SERVERCLASS="${PROVIDER_NAME}-cluster-workers"
+ENV WORKER_SERVERCLASS="${WORKER_SERVERCLASS}"
+ARG TALOS_VERSION="v0.14"
+ENV TALOS_VERSION="${TALOS_VERSION}"
+ARG KUBERNETES_VERSION="v1.20.15"
+ENV KUBERNETES_VERSION="${KUBERNETES_VERSION}"
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
+
+provider_arg="--infrastructure=${PROVIDER_NAME}:${PROVIDER_VERSION}"
+
+"${CLUSTERCTL}" config cluster "${PROVIDER_NAME}-cluster" "${provider_arg}" --target-namespace="${TARGET_NAMESPACE}" \
+| grep -Fv '  namespace: default' \
+| kpt fn sink "/pkg"
+eot
+
+FROM scratch as cluster-api-cluster-upstream
+COPY --link --from=clusterctl-cluster-kpt-sink /pkg /
+
+FROM tools as cluster-api-cluster-pkg-render
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+ARG DOCKER_HOST
+ENV DOCKER_HOST=${DOCKER_HOST}
+ARG CLUSTERCTL
+ARG PROVIDER_TYPE
+ARG PROVIDER_NAME
+ARG PROVIDER_VERSION
+ARG CAPI_API_GROUP
+ARG PKG_PATH="cluster-api/${CAPI_API_GROUP}/cluster/${PROVIDER_NAME}"
+ARG KPTFILE_SRC="${PKG_PATH}/Kptfile"
+COPY --link cluster-api/Kptfile /kpt-files/cluster-api/Kptfile
+COPY --link ${KPTFILE_SRC} /kpt-files/${KPTFILE_SRC}
+COPY --link --from=cluster-api-cluster-upstream / /kpt-files/${PKG_PATH}
+RUN sed -i 's/apply-setters/create-setters/' "/kpt-files/${KPTFILE_SRC}"
+RUN kpt pkg init /kpt-files
+RUN kpt fn render --truncate-output=false /kpt-files
+RUN cp -r "/kpt-files/${PKG_PATH}" /pkg
+RUN find /pkg -type f -name 'Kptfile' -delete
+
+FROM scratch as cluster-api-cluster-pkg
+COPY --link --from=cluster-api-cluster-pkg-render /pkg /
+
 FROM tools as git-tag-packages-build
 ARG GIT_TAGS
 ENV GIT_TAGS=${GIT_TAGS}

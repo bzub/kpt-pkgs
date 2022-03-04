@@ -82,6 +82,13 @@ target "cert-manager" {
 group "cluster-api" {
   targets = [
     "cluster-api-providers",
+    "cluster-api-clusters",
+  ]
+}
+
+group "cluster-api-clusters" {
+  targets = [
+    "cluster-api-cluster-v1alpha3-sidero",
   ]
 }
 
@@ -195,4 +202,26 @@ target "cluster-api-provider-v1alpha3-infrastructure-sidero" {
     PROVIDER_COMPONENTS_URL = "https://github.com/talos-systems/sidero/releases/download/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}/infrastructure-components.yaml"
   }
   output = ["${CLUSTER_API_DIR}/v1alpha3/infrastructure/sidero"]
+}
+
+target "cluster-api-cluster" {
+  inherits = ["_common"]
+  target = "cluster-api-cluster-pkg"
+}
+
+target "cluster-api-cluster-v1alpha3" {
+  inherits = ["cluster-api-cluster"]
+  args = {
+    CAPI_API_GROUP = "v1alpha3"
+    CLUSTERCTL = "clusterctl-v0_3"
+  }
+}
+
+target "cluster-api-cluster-v1alpha3-sidero" {
+  inherits = ["cluster-api-cluster-v1alpha3"]
+  args = {
+    PROVIDER_NAME = "sidero"
+    PROVIDER_VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero"]
 }

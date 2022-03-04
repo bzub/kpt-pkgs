@@ -1,0 +1,19 @@
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+kind: TalosControlPlane
+metadata:
+  name: sidero-cluster-cp # kpt-set: ${cluster-name}-cp
+  namespace: default
+spec:
+  controlPlaneConfig:
+    controlplane:
+      generateType: controlplane
+      talosVersion: v0.14 # kpt-set: ${talos-version}
+    init:
+      generateType: init
+      talosVersion: v0.14 # kpt-set: ${talos-version}
+  infrastructureTemplate:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+    kind: MetalMachineTemplate
+    name: sidero-cluster-cp # kpt-set: ${cluster-name}-cp
+  replicas: 1
+  version: v1.20.15 # kpt-set: ${kubernetes-version}
