@@ -11,6 +11,7 @@ spec:
   ports:
   - port: 443
     targetPort: 9443
+    protocol: TCP
   selector:
     app: sidero
     cluster.x-k8s.io/provider: sidero
