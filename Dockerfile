@@ -3,6 +3,7 @@
 ARG GOLANG_IMAGE
 ARG KPT_IMAGE
 ARG KIND_IMAGE
+ARG KUBECTL_IMAGE
 ARG CLUSTERCTL_V0_3_IMAGE
 ARG CLUSTERCTL_V0_4_IMAGE
 ARG CLUSTERCTL_V1_1_IMAGE
@@ -10,6 +11,7 @@ ARG CLUSTERCTL_V1_1_IMAGE
 FROM $GOLANG_IMAGE as golang
 FROM $KPT_IMAGE as kpt
 FROM $KIND_IMAGE as kind
+FROM $KUBECTL_IMAGE as kubectl
 FROM $CLUSTERCTL_V0_3_IMAGE as clusterctl-v0_3
 FROM $CLUSTERCTL_V0_4_IMAGE as clusterctl-v0_4
 FROM $CLUSTERCTL_V1_1_IMAGE as clusterctl-v1_1
@@ -18,6 +20,7 @@ FROM golang as tools
 RUN apk add -U git build-base curl bash docker
 COPY --link --from=kpt /kpt /usr/local/bin/kpt
 COPY --link --from=kind /kind /usr/local/bin/kind
+COPY --link --from=kubectl /opt/bitnami/kubectl/bin/kubectl /usr/local/bin/kubectl
 COPY --link --from=clusterctl-v0_3 /clusterctl /usr/local/bin/clusterctl-v0_3
 COPY --link --from=clusterctl-v0_4 /clusterctl /usr/local/bin/clusterctl-v0_4
 COPY --link --from=clusterctl-v1_1 /clusterctl /usr/local/bin/clusterctl-v1_1
