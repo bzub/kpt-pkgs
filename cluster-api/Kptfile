@@ -29,6 +29,22 @@ pipeline:
     configMap:
       by-value-regex: '--([\w-]*)=(.*)'
       put-comment: 'kpt-set: --${1}=${${1}}'
+  - name: add-paused-fields
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-path: 'spec.paused'
+      put-value: false
+    selectors:
+    - kind: Cluster
+    - kind: MachineDeployment
+  - name: add-paused-setters
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-path: 'spec.paused'
+      put-comment: 'kpt-set: ${paused}'
+    selectors:
+    - kind: Cluster
+    - kind: MachineDeployment
   - name: set-cert-manager-dependencies
     image: gcr.io/kpt-fn/set-annotations:unstable
     configMap:
