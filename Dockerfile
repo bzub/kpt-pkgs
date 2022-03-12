@@ -1,4 +1,4 @@
-# syntax = docker.io/docker/dockerfile-upstream:1.4.0-rc2
+# syntax = docker.io/docker/dockerfile-upstream:1.4.0
 
 ARG GOLANG_IMAGE
 ARG KPT_IMAGE
