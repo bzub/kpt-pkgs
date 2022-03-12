@@ -1,4 +1,3 @@
-variable "BUILDKIT_GITHUB_TOKEN" {default = ""}
 variable "BUILDKIT_DOCKER_HOST" {default = "unix:///var/run/docker.sock"}
 variable "ROOT_DIR" {default = "."}
 variable "OUT_DIR" {default = "${ROOT_DIR}/_out"}
@@ -41,7 +40,6 @@ group "default" {
 
 target "_common" {
   args = {
-    GITHUB_TOKEN = BUILDKIT_GITHUB_TOKEN
     DOCKER_HOST = BUILDKIT_DOCKER_HOST
     GOLANG_IMAGE = GOLANG_IMAGE
     KPT_IMAGE = KPT_IMAGE

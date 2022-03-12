@@ -38,8 +38,6 @@ FROM scratch as pkg
 COPY --link --from=kpt-sink-render-from-url /pkg /
 
 FROM tools as clusterctl-provider-kpt-sink
-ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 ARG CLUSTERCTL
 ARG PROVIDER_TYPE
 ARG PROVIDER_NAME
@@ -76,8 +74,6 @@ FROM scratch as cluster-api-provider-upstream
 COPY --link --from=clusterctl-provider-kpt-sink /pkg /
 
 FROM tools as cluster-api-provider-pkg-render
-ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 ARG DOCKER_HOST
 ENV DOCKER_HOST=${DOCKER_HOST}
 ARG CLUSTERCTL
@@ -101,8 +97,6 @@ COPY --link --from=cluster-api-provider-pkg-render /pkg /
 # generate workload clusters
 
 FROM tools as clusterctl-cluster-kpt-sink
-ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 ARG CLUSTERCTL
 ARG PROVIDER_NAME
 ARG PROVIDER_VERSION
@@ -135,8 +129,6 @@ FROM scratch as cluster-api-cluster-upstream
 COPY --link --from=clusterctl-cluster-kpt-sink /pkg /
 
 FROM tools as cluster-api-cluster-pkg-render
-ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 ARG DOCKER_HOST
 ENV DOCKER_HOST=${DOCKER_HOST}
 ARG CLUSTERCTL
