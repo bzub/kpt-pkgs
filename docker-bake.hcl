@@ -1,4 +1,3 @@
-variable "BUILDKIT_DOCKER_HOST" {default = "unix:///var/run/docker.sock"}
 variable "ROOT_DIR" {default = "."}
 variable "OUT_DIR" {default = "${ROOT_DIR}/_out"}
 variable "BIN_DIR" {default = "${OUT_DIR}/bin"}
@@ -30,6 +29,12 @@ variable "KUBECTL_IMAGE" {default = "docker.io/bitnami/kubectl:${KUBECTL_VERSION
 variable "CLUSTERCTL_V0_3_IMAGE" {default = "ghcr.io/bzub/images/clusterctl:${CAPI_V1ALPHA3_CORE_VERSION}"}
 variable "CLUSTERCTL_V0_4_IMAGE" {default = "ghcr.io/bzub/images/clusterctl:${CAPI_V1ALPHA4_CORE_VERSION}"}
 variable "CLUSTERCTL_V1_1_IMAGE" {default = "ghcr.io/bzub/images/clusterctl:${CAPI_V1BETA1_CORE_VERSION}"}
+variable "KPT_FN_SEARCH_REPLACE_IMAGE" {default = "gcr.io/kpt-fn/search-replace@sha256:c8da9c025eea6bef4426c1eb1c12158da7bd795f8912fc83a170d490b3240a8b"}
+variable "KPT_FN_SET_ANNOTATIONS_IMAGE" {default = "gcr.io/kpt-fn/set-annotation:v0.1.2@sha256:2c4e2ab6aa0554d9947adf412809497056d2bcfedc7f6f723f3b4578e383fcc3"}
+variable "KPT_FN_SET_NAMESPACE_IMAGE" {default = "gcr.io/kpt-fn/set-namespace:v0.2.0@sha256:7adc23986f97572d75af9aec6a7f74d60f7b9976227f43a75486633e7c539e6f"}
+variable "KPT_FN_CREATE_SETTERS_IMAGE" {default = "gcr.io/kpt-fn/create-setters@sha256:76ec527190c3826196db133c32db5d29c228876f0c4b5e692781f68e2dcc7536"}
+variable "KPT_FN_APPLY_SETTERS_IMAGE" {default = "gcr.io/kpt-fn/apply-setters@sha256:d322a18de00daf566b48bc7cbebf4814bc87cecf783d494ccaf9294bf23c6392"}
+variable "KPT_FN_STARLARK_IMAGE" {default = "gcr.io/kpt-fn/starlark@sha256:416188026608fbea937ebf2e287ae8aa277651884520621357b7f5115261a04e"}
 
 group "default" {
   targets = [
@@ -40,7 +45,6 @@ group "default" {
 
 target "_common" {
   args = {
-    DOCKER_HOST = BUILDKIT_DOCKER_HOST
     GOLANG_IMAGE = GOLANG_IMAGE
     KPT_IMAGE = KPT_IMAGE
     KIND_IMAGE = KIND_IMAGE
@@ -48,6 +52,12 @@ target "_common" {
     CLUSTERCTL_V0_3_IMAGE = CLUSTERCTL_V0_3_IMAGE
     CLUSTERCTL_V0_4_IMAGE = CLUSTERCTL_V0_4_IMAGE
     CLUSTERCTL_V1_1_IMAGE = CLUSTERCTL_V1_1_IMAGE
+    KPT_FN_SEARCH_REPLACE_IMAGE = KPT_FN_SEARCH_REPLACE_IMAGE
+    KPT_FN_SET_ANNOTATIONS_IMAGE = KPT_FN_SET_ANNOTATIONS_IMAGE
+    KPT_FN_SET_NAMESPACE_IMAGE = KPT_FN_SET_NAMESPACE_IMAGE
+    KPT_FN_CREATE_SETTERS_IMAGE = KPT_FN_CREATE_SETTERS_IMAGE
+    KPT_FN_APPLY_SETTERS_IMAGE = KPT_FN_APPLY_SETTERS_IMAGE
+    KPT_FN_STARLARK_IMAGE = KPT_FN_STARLARK_IMAGE
   }
 }
 

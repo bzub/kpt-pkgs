@@ -3,7 +3,6 @@ kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: capi-webhook-system/capi-kubeadm-bootstrap-serving-cert # kpt-set: ${capi-webhook-system-namespace}/capi-kubeadm-bootstrap-serving-cert
-  creationTimestamp: null
   labels:
     cluster.x-k8s.io/provider: bootstrap-kubeadm
     clusterctl.cluster.x-k8s.io: ""

@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     cluster.x-k8s.io/provider: bootstrap-kubeadm
     clusterctl.cluster.x-k8s.io: ""
