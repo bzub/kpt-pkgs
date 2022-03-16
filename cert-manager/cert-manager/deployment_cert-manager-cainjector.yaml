@@ -25,8 +25,8 @@ spec:
     spec:
       containers:
       - args:
-        - --v=2
-        - --leader-election-namespace=kube-system
+        - --v=2 # kpt-set: --v=${v}
+        - --leader-election-namespace=kube-system # kpt-set: --leader-election-namespace=${leader-election-namespace}
         env:
         - name: POD_NAMESPACE
           valueFrom:

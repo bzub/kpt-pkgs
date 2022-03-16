@@ -2,6 +2,10 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: cluster-api
+info:
+  description: |
+    This package is for maintenance on the packages under `cluster-api`.
+    It is not intended to be consumed as a package of resources for deployment.
 pipeline:
   mutators:
   - name: normalize-feature-gates-flag
@@ -24,11 +28,6 @@ pipeline:
     configMap:
       by-value-regex: '(.*)(capi-webhook-system)(.*)'
       put-comment: 'kpt-set: ${1}${capi-webhook-system-namespace}${3}'
-  - name: create-setters-for-all-flags
-    image: gcr.io/kpt-fn/search-replace:unstable
-    configMap:
-      by-value-regex: '--([\w-]*)=(.*)'
-      put-comment: 'kpt-set: --${1}=${${1}}'
   - name: add-paused-fields
     image: gcr.io/kpt-fn/search-replace:unstable
     configMap:
@@ -54,62 +53,3 @@ pipeline:
     - kind: Issuer
     - namespace: capi-webhook-system
       kind: Deployment
-  - name: remove-caBundle-placeholders
-    image: gcr.io/kpt-fn/starlark:unstable
-    configMap:
-      source: |
-        def removecabundles(resources):
-          for resource in resources:
-            webhooks = resource.get("webhooks")
-            if not webhooks:
-              continue
-
-            print("removecabundles is processing resource", resource["kind"], resource["metadata"]["name"])
-            for webhook in webhooks:
-              if not webhook.get("clientConfig"):
-                continue
-              if not webhook["clientConfig"].get("caBundle"):
-                continue
-
-              print("removecabundles is processing webhook", webhook["name"])
-
-              webhook["clientConfig"].pop("caBundle")
-
-          for resource in resources:
-            spec = resource.get("spec")
-            if not spec:
-              continue
-
-            conversion = spec.get("conversion")
-            if not conversion:
-              continue
-
-            webhook = conversion.get("webhook")
-            if not webhook:
-              continue
-
-            clientConfig = webhook.get("clientConfig")
-            if not clientConfig:
-              continue
-
-            clientConfig.pop("caBundle", "noexist")
-
-        removecabundles(ctx.resource_list["items"])
-  - name: add-port-protocol
-    image: gcr.io/kpt-fn/starlark:unstable
-    configMap:
-      source: |
-        def addportprotocol(resources):
-          for resource in resources:
-            spec = resource.get("spec")
-            if not spec:
-              continue
-
-            ports = spec.get("ports")
-            if not ports:
-              continue
-
-            for port in ports:
-              port.setdefault("protocol", "TCP")
-
-        addportprotocol(ctx.resource_list["items"])

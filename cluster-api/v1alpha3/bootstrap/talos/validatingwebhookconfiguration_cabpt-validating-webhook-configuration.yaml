@@ -1,7 +1,6 @@
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
-  creationTimestamp: null
   labels:
     cluster.x-k8s.io/provider: bootstrap-talos
     clusterctl.cluster.x-k8s.io: ""
