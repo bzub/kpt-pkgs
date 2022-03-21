@@ -26,17 +26,17 @@ spec:
     spec:
       containers:
       - args:
-        - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
-        - --api-endpoint=- # kpt-set: --api-endpoint=${api-endpoint}
-        - --api-port=8081 # kpt-set: --api-port=${api-port}
-        - --extra-agent-kernel-args=- # kpt-set: --extra-agent-kernel-args=${extra-agent-kernel-args}
-        - --boot-from-disk-method=ipxe-exit # kpt-set: --boot-from-disk-method=${boot-from-disk-method}
-        - --auto-accept-servers=false # kpt-set: --auto-accept-servers=${auto-accept-servers}
-        - --insecure-wipe=true # kpt-set: --insecure-wipe=${insecure-wipe}
-        - --auto-bmc-setup=true # kpt-set: --auto-bmc-setup=${auto-bmc-setup}
-        - --server-reboot-timeout=20m # kpt-set: --server-reboot-timeout=${server-reboot-timeout}
-        - --test-power-simulated-explicit-failure-prob=0 # kpt-set: --test-power-simulated-explicit-failure-prob=${test-power-simulated-explicit-failure-prob}
-        - --test-power-simulated-silent-failure-prob=0 # kpt-set: --test-power-simulated-silent-failure-prob=${test-power-simulated-silent-failure-prob}
+        - --metrics-addr=127.0.0.1:8080
+        - --api-endpoint=-
+        - --api-port=8081
+        - --extra-agent-kernel-args=-
+        - --boot-from-disk-method=ipxe-exit
+        - --auto-accept-servers=false
+        - --insecure-wipe=true
+        - --auto-bmc-setup=true
+        - --server-reboot-timeout=20m
+        - --test-power-simulated-explicit-failure-prob=0
+        - --test-power-simulated-silent-failure-prob=0
         command:
         - /manager
         env:
