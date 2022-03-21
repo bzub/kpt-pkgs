@@ -6,7 +6,7 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
     control-plane: controller-manager
   name: cabpt-controller-manager
-  namespace: cabpt-system # kpt-set: ${capi-provider-namespace}
+  namespace: cabpt-system
 spec:
   replicas: 1
   selector:

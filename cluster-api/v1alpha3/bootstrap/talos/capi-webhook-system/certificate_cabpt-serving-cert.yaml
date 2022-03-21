@@ -6,13 +6,13 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
     clusterctl.cluster.x-k8s.io/lifecycle: shared
   name: cabpt-serving-cert
-  namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+  namespace: capi-webhook-system
   annotations:
     config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
   dnsNames:
-  - cabpt-webhook-service.capi-webhook-system.svc # kpt-set: cabpt-webhook-service.${capi-webhook-system-namespace}.svc
-  - cabpt-webhook-service.capi-webhook-system.svc.cluster.local # kpt-set: cabpt-webhook-service.${capi-webhook-system-namespace}.svc.cluster.local
+  - cabpt-webhook-service.capi-webhook-system.svc
+  - cabpt-webhook-service.capi-webhook-system.svc.cluster.local
   issuerRef:
     kind: Issuer
     name: cabpt-selfsigned-issuer

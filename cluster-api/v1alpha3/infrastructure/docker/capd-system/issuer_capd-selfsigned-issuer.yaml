@@ -5,7 +5,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-docker
     clusterctl.cluster.x-k8s.io: ""
   name: capd-selfsigned-issuer
-  namespace: capd-system # kpt-set: ${capi-provider-namespace}
+  namespace: capd-system
   annotations:
     config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:

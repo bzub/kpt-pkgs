@@ -13,4 +13,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: sidero-system # kpt-set: ${capi-provider-namespace}
+  namespace: sidero-system

@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: capi-webhook-system/caps-serving-cert # kpt-set: ${capi-webhook-system-namespace}/caps-serving-cert
+    cert-manager.io/inject-ca-from: capi-webhook-system/caps-serving-cert
     controller-gen.kubebuilder.io/version: v0.5.0
   labels:
     app: sidero
@@ -16,7 +16,7 @@ spec:
       clientConfig:
         service:
           name: caps-webhook-service
-          namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+          namespace: capi-webhook-system
           path: /convert
       conversionReviewVersions:
       - v1

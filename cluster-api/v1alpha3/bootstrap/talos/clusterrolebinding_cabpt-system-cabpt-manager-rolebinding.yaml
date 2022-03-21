@@ -4,12 +4,12 @@ metadata:
   labels:
     cluster.x-k8s.io/provider: bootstrap-talos
     clusterctl.cluster.x-k8s.io: ""
-  name: cabpt-system-cabpt-manager-rolebinding # kpt-set: ${capi-provider-namespace}-cabpt-manager-rolebinding
+  name: cabpt-system-cabpt-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cabpt-system-cabpt-manager-role # kpt-set: ${capi-provider-namespace}-cabpt-manager-role
+  name: cabpt-system-cabpt-manager-role
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: cabpt-system # kpt-set: ${capi-provider-namespace}
+  namespace: cabpt-system

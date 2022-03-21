@@ -5,7 +5,7 @@ metadata:
     cluster.x-k8s.io/provider: bootstrap-kubeadm
     clusterctl.cluster.x-k8s.io: ""
   name: capi-kubeadm-bootstrap-leader-election-role
-  namespace: capi-kubeadm-bootstrap-system # kpt-set: ${capi-provider-namespace}
+  namespace: capi-kubeadm-bootstrap-system
 rules:
 - apiGroups:
   - ""

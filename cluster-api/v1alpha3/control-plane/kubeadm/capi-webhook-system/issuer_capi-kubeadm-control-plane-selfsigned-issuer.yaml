@@ -6,7 +6,7 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
     clusterctl.cluster.x-k8s.io/lifecycle: shared
   name: capi-kubeadm-control-plane-selfsigned-issuer
-  namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+  namespace: capi-webhook-system
   annotations:
     config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:

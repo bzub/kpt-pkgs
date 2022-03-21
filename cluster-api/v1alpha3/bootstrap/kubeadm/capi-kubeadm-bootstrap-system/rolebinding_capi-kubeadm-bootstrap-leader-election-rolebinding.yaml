@@ -5,7 +5,7 @@ metadata:
     cluster.x-k8s.io/provider: bootstrap-kubeadm
     clusterctl.cluster.x-k8s.io: ""
   name: capi-kubeadm-bootstrap-leader-election-rolebinding
-  namespace: capi-kubeadm-bootstrap-system # kpt-set: ${capi-provider-namespace}
+  namespace: capi-kubeadm-bootstrap-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -13,4 +13,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: capi-kubeadm-bootstrap-system # kpt-set: ${capi-provider-namespace}
+  namespace: capi-kubeadm-bootstrap-system

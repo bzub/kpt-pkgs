@@ -6,7 +6,7 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
     control-plane: controller-manager
   name: capi-kubeadm-control-plane-controller-manager-metrics-service
-  namespace: capi-kubeadm-control-plane-system # kpt-set: ${capi-provider-namespace}
+  namespace: capi-kubeadm-control-plane-system
 spec:
   ports:
   - name: https
