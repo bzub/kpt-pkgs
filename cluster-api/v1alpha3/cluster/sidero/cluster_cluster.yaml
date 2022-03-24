@@ -1,7 +1,7 @@
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: Cluster
 metadata:
-  name: sidero-cluster # kpt-set: ${cluster-name}
+  name: cluster
   namespace: default
 spec:
   clusterNetwork:
@@ -14,9 +14,9 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
     kind: TalosControlPlane
-    name: sidero-cluster-cp # kpt-set: ${cluster-name}-cp
+    name: cluster-cp
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
     kind: MetalCluster
-    name: sidero-cluster # kpt-set: ${cluster-name}
+    name: cluster
   paused: false

@@ -181,7 +181,7 @@ touch /root/.cluster-api/clusterctl.yaml
 
 provider_arg="--infrastructure=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 
-"${CLUSTERCTL}" config cluster "${PROVIDER_NAME}-cluster" "${provider_arg}" --target-namespace="${TARGET_NAMESPACE}" \
+"${CLUSTERCTL}" config cluster "cluster" "${provider_arg}" --target-namespace="${TARGET_NAMESPACE}" \
 | grep -Fv '  namespace: default' \
 | kpt fn sink "/pkg"
 eot
