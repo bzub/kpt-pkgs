@@ -65,9 +65,16 @@ ARG PROVIDER_TYPE
 ARG PROVIDER_NAME
 ARG PROVIDER_VERSION
 ARG PROVIDER_COMPONENTS_URL="none"
-RUN <<eot
+ARG SECRETS_ENV_FILE="/run/secrets/secrets-env"
+ENV SECRETS_ENV_FILE=${SECRETS_ENV_FILE}
+
+RUN --mount=type=secret,id=secrets-env <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
+
+if [ -f "${SECRETS_ENV_FILE}" ]; then
+  set -a; . "${SECRETS_ENV_FILE}"; set +a
+fi
 
 if [ "${PROVIDER_COMPONENTS_URL}" != "none" ]; then
   curl -L "${PROVIDER_COMPONENTS_URL}" \
@@ -137,9 +144,16 @@ ARG TALOS_VERSION="v0.14"
 ENV TALOS_VERSION="${TALOS_VERSION}"
 ARG KUBERNETES_VERSION="v1.20.15"
 ENV KUBERNETES_VERSION="${KUBERNETES_VERSION}"
-RUN <<eot
+ARG SECRETS_ENV_FILE="/run/secrets/secrets-env"
+ENV SECRETS_ENV_FILE=${SECRETS_ENV_FILE}
+
+RUN --mount=type=secret,id=secrets-env <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
+
+if [ -f "${SECRETS_ENV_FILE}" ]; then
+  set -a; . "${SECRETS_ENV_FILE}"; set +a
+fi
 
 provider_arg="--infrastructure=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 
