@@ -155,9 +155,9 @@ ARG CONTROL_PLANE_ENDPOINT="127.0.0.1"
 ENV CONTROL_PLANE_ENDPOINT="${CONTROL_PLANE_ENDPOINT}"
 ARG CONTROL_PLANE_PORT="6443"
 ENV CONTROL_PLANE_PORT="${CONTROL_PLANE_PORT}"
-ARG CONTROL_PLANE_SERVERCLASS="${PROVIDER_NAME}-cluster-control-plane"
+ARG CONTROL_PLANE_SERVERCLASS="any"
 ENV CONTROL_PLANE_SERVERCLASS="${CONTROL_PLANE_SERVERCLASS}"
-ARG WORKER_SERVERCLASS="${PROVIDER_NAME}-cluster-workers"
+ARG WORKER_SERVERCLASS="any"
 ENV WORKER_SERVERCLASS="${WORKER_SERVERCLASS}"
 ARG TALOS_VERSION="v0.14"
 ENV TALOS_VERSION="${TALOS_VERSION}"
@@ -181,7 +181,7 @@ touch /root/.cluster-api/clusterctl.yaml
 
 provider_arg="--infrastructure=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 
-"${CLUSTERCTL}" config cluster "${PROVIDER_NAME}-cluster" "${provider_arg}" --target-namespace="${TARGET_NAMESPACE}" \
+"${CLUSTERCTL}" config cluster "cluster" "${provider_arg}" --target-namespace="${TARGET_NAMESPACE}" \
 | grep -Fv '  namespace: default' \
 | kpt fn sink "/pkg"
 eot

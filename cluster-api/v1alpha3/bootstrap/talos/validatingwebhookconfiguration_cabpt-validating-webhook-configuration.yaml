@@ -10,7 +10,7 @@ webhooks:
 - clientConfig:
     service:
       name: cabpt-webhook-service
-      namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+      namespace: capi-webhook-system
       path: /validate-infrastructure-cluster-x-k8s-io-v1alpha3-talosconfig
   failurePolicy: Fail
   matchPolicy: Equivalent

@@ -5,4 +5,4 @@ metadata:
     cluster.x-k8s.io/provider: bootstrap-kubeadm
     clusterctl.cluster.x-k8s.io: ""
     control-plane: controller-manager
-  name: capi-kubeadm-bootstrap-system # kpt-set: ${capi-provider-namespace}
+  name: capi-kubeadm-bootstrap-system

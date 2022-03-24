@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: capi-webhook-system/capi-kubeadm-control-plane-serving-cert # kpt-set: ${capi-webhook-system-namespace}/capi-kubeadm-control-plane-serving-cert
+    cert-manager.io/inject-ca-from: capi-webhook-system/capi-kubeadm-control-plane-serving-cert
     controller-gen.kubebuilder.io/version: v0.2.9
   labels:
     cluster.x-k8s.io/provider: control-plane-kubeadm
@@ -17,7 +17,7 @@ spec:
       clientConfig:
         service:
           name: capi-kubeadm-control-plane-webhook-service
-          namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+          namespace: capi-webhook-system
           path: /convert
       conversionReviewVersions:
       - v1

@@ -5,7 +5,7 @@ metadata:
     cluster.x-k8s.io/provider: bootstrap-talos
     clusterctl.cluster.x-k8s.io: ""
   name: cabpt-leader-election-role
-  namespace: cabpt-system # kpt-set: ${capi-provider-namespace}
+  namespace: cabpt-system
 rules:
 - apiGroups:
   - ""

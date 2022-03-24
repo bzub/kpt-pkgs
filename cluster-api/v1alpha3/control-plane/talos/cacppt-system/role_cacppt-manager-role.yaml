@@ -5,7 +5,7 @@ metadata:
     cluster.x-k8s.io/provider: control-plane-talos
     clusterctl.cluster.x-k8s.io: ""
   name: cacppt-manager-role
-  namespace: cacppt-system # kpt-set: ${capi-provider-namespace}
+  namespace: cacppt-system
 rules:
 - apiGroups:
   - ""

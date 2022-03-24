@@ -7,7 +7,7 @@ metadata:
     clusterctl.cluster.x-k8s.io/lifecycle: shared
     control-plane: controller-manager
   name: cabpt-controller-manager
-  namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+  namespace: capi-webhook-system
   annotations:
     config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
@@ -28,8 +28,8 @@ spec:
     spec:
       containers:
       - args:
-        - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
-        - --webhook-port=9443 # kpt-set: --webhook-port=${webhook-port}
+        - --metrics-addr=127.0.0.1:8080
+        - --webhook-port=9443
         command:
         - /manager
         image: ghcr.io/talos-systems/cluster-api-talos-controller:v0.3.2

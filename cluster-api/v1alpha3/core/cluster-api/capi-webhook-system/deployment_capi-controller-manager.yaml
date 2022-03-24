@@ -7,7 +7,7 @@ metadata:
     clusterctl.cluster.x-k8s.io/lifecycle: shared
     control-plane: controller-manager
   name: capi-controller-manager
-  namespace: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+  namespace: capi-webhook-system
   annotations:
     config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
@@ -28,10 +28,10 @@ spec:
     spec:
       containers:
       - args:
-        - --secure-listen-address=0.0.0.0:8443 # kpt-set: --secure-listen-address=${secure-listen-address}
-        - --upstream=http://127.0.0.1:8080/ # kpt-set: --upstream=${upstream}
-        - --logtostderr=true # kpt-set: --logtostderr=${logtostderr}
-        - --v=10 # kpt-set: --v=${v}
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http://127.0.0.1:8080/
+        - --logtostderr=true
+        - --v=10
         image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
         name: kube-rbac-proxy
         ports:
@@ -39,9 +39,9 @@ spec:
           name: https
         resources: {}
       - args:
-        - --metrics-addr=127.0.0.1:8080 # kpt-set: --metrics-addr=${metrics-addr}
-        - --webhook-port=9443 # kpt-set: --webhook-port=${webhook-port}
-        - --feature-gates=MachinePool=false,ClusterResourceSet=false # kpt-set: --feature-gates=${feature-gates}
+        - --metrics-addr=127.0.0.1:8080
+        - --webhook-port=9443
+        - --feature-gates=MachinePool=false,ClusterResourceSet=false
         command:
         - /manager
         image: us.gcr.io/k8s-artifacts-prod/cluster-api/cluster-api-controller:v0.3.25

@@ -5,4 +5,4 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
     clusterctl.cluster.x-k8s.io/lifecycle: shared
     control-plane: controller-manager
-  name: capi-webhook-system # kpt-set: ${capi-webhook-system-namespace}
+  name: capi-webhook-system

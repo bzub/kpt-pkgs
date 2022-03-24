@@ -1,7 +1,7 @@
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: MetalCluster
 metadata:
-  name: sidero-cluster # kpt-set: ${cluster-name}
+  name: cluster
   namespace: default
 spec:
   controlPlaneEndpoint:
