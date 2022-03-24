@@ -9,4 +9,4 @@ spec:
       serverClassRef:
         apiVersion: metal.sidero.dev/v1alpha1
         kind: ServerClass
-        name: sidero-cluster-control-plane # kpt-set: ${control-plane-serverclass}
+        name: any
