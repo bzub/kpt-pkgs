@@ -42,6 +42,20 @@ COPY --link --from=kpt-fn-set-namespace /usr/local/bin/function /usr/local/bin/k
 COPY --link --from=kpt-fn-create-setters /usr/local/bin/function /usr/local/bin/kpt-fn-create-setters
 COPY --link --from=kpt-fn-apply-setters /usr/local/bin/function /usr/local/bin/kpt-fn-apply-setters
 COPY --link --from=kpt-fn-starlark /usr/local/bin/function /usr/local/bin/kpt-fn-starlark
+# Workaround talos to siderolabs github org rename.
+ARG CLUSTERCTL_CONFIG="/root/.cluster-api/clusterctl.yaml"
+COPY --link <<eot ${CLUSTERCTL_CONFIG}
+providers:
+  - name: "talos"
+    url: "https://github.com/siderolabs/cluster-api-bootstrap-provider-talos/releases/latest/bootstrap-components.yaml"
+    type: "BootstrapProvider"
+  - name: "talos"
+    url: "https://github.com/siderolabs/cluster-api-control-plane-provider-talos/releases/latest/control-plane-components.yaml"
+    type: "ControlPlaneProvider"
+  - name: "sidero"
+    url: "https://github.com/siderolabs/sidero/releases/latest/infrastructure-components.yaml"
+    type: "InfrastructureProvider"
+eot
 
 FROM tools as kpt-sink-render-from-url
 ARG PACKAGE_PATH
@@ -67,6 +81,8 @@ ARG PROVIDER_VERSION
 ARG PROVIDER_COMPONENTS_URL="none"
 ARG SECRETS_ENV_FILE="/run/secrets/secrets-env"
 ENV SECRETS_ENV_FILE=${SECRETS_ENV_FILE}
+# Workaround talos to siderolabs github org rename.
+ARG CLUSTERCTL_CONFIG="/root/.cluster-api/clusterctl.yaml"
 
 RUN --mount=type=secret,id=secrets-env <<eot
 #!/usr/bin/env sh
@@ -75,6 +91,9 @@ set -euxo pipefail
 if [ -f "${SECRETS_ENV_FILE}" ]; then
   set -a; . "${SECRETS_ENV_FILE}"; set +a
 fi
+
+# Workaround talos to siderolabs github org rename.
+touch /root/.cluster-api/clusterctl.yaml
 
 if [ "${PROVIDER_COMPONENTS_URL}" != "none" ]; then
   curl -L "${PROVIDER_COMPONENTS_URL}" \
@@ -146,6 +165,8 @@ ARG KUBERNETES_VERSION="v1.20.15"
 ENV KUBERNETES_VERSION="${KUBERNETES_VERSION}"
 ARG SECRETS_ENV_FILE="/run/secrets/secrets-env"
 ENV SECRETS_ENV_FILE=${SECRETS_ENV_FILE}
+# Workaround talos to siderolabs github org rename.
+ARG CLUSTERCTL_CONFIG="/root/.cluster-api/clusterctl.yaml"
 
 RUN --mount=type=secret,id=secrets-env <<eot
 #!/usr/bin/env sh
@@ -154,6 +175,9 @@ set -euxo pipefail
 if [ -f "${SECRETS_ENV_FILE}" ]; then
   set -a; . "${SECRETS_ENV_FILE}"; set +a
 fi
+
+# Workaround talos to siderolabs github org rename.
+touch /root/.cluster-api/clusterctl.yaml
 
 provider_arg="--infrastructure=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 
