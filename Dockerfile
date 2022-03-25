@@ -93,7 +93,7 @@ if [ -f "${SECRETS_ENV_FILE}" ]; then
 fi
 
 # Workaround talos to siderolabs github org rename.
-touch /root/.cluster-api/clusterctl.yaml
+touch "${CLUSTERCTL_CONFIG}"
 
 if [ "${PROVIDER_COMPONENTS_URL}" != "none" ]; then
   curl -L "${PROVIDER_COMPONENTS_URL}" \
@@ -177,7 +177,7 @@ if [ -f "${SECRETS_ENV_FILE}" ]; then
 fi
 
 # Workaround talos to siderolabs github org rename.
-touch /root/.cluster-api/clusterctl.yaml
+touch "${CLUSTERCTL_CONFIG}"
 
 provider_arg="--infrastructure=${PROVIDER_NAME}:${PROVIDER_VERSION}"
 
