@@ -93,6 +93,22 @@ cat /component.yaml \
 | kpt fn sink "/pkg"
 eot
 
+FROM tools as cluster-api-component-rename-files
+COPY --link --from=cluster-api-component-kpt-sink /pkg /pkg
+RUN <<eot
+for filepath in $(find /pkg -type f -iname '*.yaml'); do
+  kind="$(echo "${filepath}" | sed 's|\(.*/\)\(\w*\)_.*.yaml|\2|')"
+  if [ "${kind}" = "customresourcedefinition" ]; then
+    continue
+  fi
+  dir="$(dirname "${filepath}")"
+  outfile="${dir}/${kind}.yaml"
+  echo '---' >> "${outfile}"
+  cat "${filepath}" >> "${outfile}"
+  rm "${filepath}"
+done
+eot
+
 FROM tools as cluster-api-component-kpt-fn-render
 ARG PROVIDER_TYPE
 ARG PROVIDER_NAME
@@ -103,7 +119,7 @@ ARG KPTFILE_SRC="${PKG_PATH}/Kptfile"
 COPY --link ./Kptfile /kpt-files/Kptfile
 COPY --link cluster-api/Kptfile /kpt-files/cluster-api/Kptfile
 COPY --link ${KPTFILE_SRC} /kpt-files/${KPTFILE_SRC}
-COPY --link --from=cluster-api-component-kpt-sink /pkg /kpt-files/${PKG_PATH}
+COPY --link --from=cluster-api-component-rename-files /pkg /kpt-files/${PKG_PATH}
 RUN sed -i 's/apply-setters/create-setters/' "/kpt-files/${KPTFILE_SRC}"
 RUN sed -i 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' /kpt-files/Kptfile
 RUN sed -i 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' /kpt-files/cluster-api/Kptfile
