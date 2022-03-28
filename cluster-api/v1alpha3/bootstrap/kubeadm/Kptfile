@@ -17,3 +17,36 @@ pipeline:
       - kind: CustomResourceDefinition
       - kind: ValidatingWebhookConfiguration
       - kind: MutatingWebhookConfiguration
+  - name: set-feature-gates
+    image: gcr.io/kpt-fn/search-replace:unstable
+    configMap:
+      by-value-regex: '--feature-gates=.*'
+      put-value: '--feature-gates=MachinePool=false,ClusterResourceSet=false'
+    selectors:
+      - kind: Deployment
+  - name: set-cert-manager-dependencies
+    image: gcr.io/kpt-fn/set-annotations:unstable
+    configMap:
+      config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+    selectors:
+    - kind: Certificate
+    - kind: Issuer
+    - kind: Deployment
+  - name: add-port-protocol
+    image: gcr.io/kpt-fn/starlark:unstable
+    configMap:
+      source: |
+        def addportprotocol(resources):
+          for resource in resources:
+            spec = resource.get("spec")
+            if not spec:
+              continue
+
+            ports = spec.get("ports")
+            if not ports:
+              continue
+
+            for port in ports:
+              port.setdefault("protocol", "TCP")
+
+        addportprotocol(ctx.resource_list["items"])

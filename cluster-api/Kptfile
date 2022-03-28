@@ -6,31 +6,13 @@ info:
   description: |
     This package is for maintenance on the packages under `cluster-api`.
     It is not intended to be consumed as a package of resources for deployment.
-pipeline:
-  mutators:
-  - name: normalize-feature-gates-flag
-    image: gcr.io/kpt-fn/search-replace:unstable
-    configMap:
-      by-value-regex: '--feature-gates=.*'
-      put-value: '--feature-gates=MachinePool=false,ClusterResourceSet=false'
-  - name: normalize-enable-leader-election-flag
-    image: gcr.io/kpt-fn/search-replace:unstable
-    configMap:
-      by-value: '--enable-leader-election'
-      put-value: '--enable-leader-election=true'
-  - name: add-paused-fields
-    image: gcr.io/kpt-fn/search-replace:unstable
-    configMap:
-      by-path: 'spec.paused'
-      put-value: false
-    selectors:
-    - kind: Cluster
-    - kind: MachineDeployment
-  - name: set-cert-manager-dependencies
-    image: gcr.io/kpt-fn/set-annotations:unstable
-    configMap:
-      config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
-    selectors:
-    - kind: Certificate
-    - kind: Issuer
-    - kind: Deployment
+# pipeline:
+#   mutators:
+#   - name: add-paused-fields
+#     image: gcr.io/kpt-fn/search-replace:unstable
+#     configMap:
+#       by-path: 'spec.paused'
+#       put-value: false
+#     selectors:
+#     - kind: Cluster
+#     - kind: MachineDeployment

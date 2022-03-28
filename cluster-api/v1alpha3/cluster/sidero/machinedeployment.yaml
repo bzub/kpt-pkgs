@@ -21,4 +21,3 @@ spec:
         kind: MetalMachineTemplate
         name: cluster-workers
       version: v1.20.15 # kpt-set: ${kubernetes-version}
-  paused: false

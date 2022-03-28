@@ -38,7 +38,7 @@ spec:
           name: https
       - args:
         - --metrics-addr=127.0.0.1:8080
-        - --enable-leader-election=true
+        - --enable-leader-election
         - --feature-gates=MachinePool=false,ClusterResourceSet=false
         command:
         - /manager
