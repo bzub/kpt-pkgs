@@ -14,3 +14,4 @@ spec:
   selector:
     cluster.x-k8s.io/provider: infrastructure-docker
     control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""

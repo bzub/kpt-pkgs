@@ -4,11 +4,11 @@ metadata:
   labels:
     cluster.x-k8s.io/provider: bootstrap-talos
     clusterctl.cluster.x-k8s.io: ""
-  name: cabpt-system-cabpt-proxy-rolebinding
+  name: cabpt-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cabpt-system-cabpt-proxy-role
+  name: cabpt-manager-role
 subjects:
 - kind: ServiceAccount
   name: default

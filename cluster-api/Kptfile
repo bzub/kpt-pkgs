@@ -33,5 +33,4 @@ pipeline:
     selectors:
     - kind: Certificate
     - kind: Issuer
-    - namespace: capi-webhook-system
-      kind: Deployment
+    - kind: Deployment
