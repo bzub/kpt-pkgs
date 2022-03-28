@@ -4,11 +4,16 @@ metadata:
   name: cluster-api-bootstrap-kubeadm
 pipeline:
   mutators:
-  # - name: set-namespace
-  #   image: gcr.io/kpt-fn/set-namespace:unstable
-  #   configMap:
-  #     namespace: capi-kubeadm-bootstrap-system
-  # - name: create-default-setters
-  #   image: gcr.io/kpt-fn/create-setters:unstable
-  #   configMap:
-  #     namespace: capi-kubeadm-bootstrap-system
+  - name: common-labels
+    image: gcr.io/kpt-fn/set-labels:unstable
+    configMap:
+      clusterctl.cluster.x-k8s.io: ""
+  - name: set-labels-clusterctl-lifecycle-shared
+    image: gcr.io/kpt-fn/set-labels:unstable
+    configMap:
+      clusterctl.cluster.x-k8s.io/lifecycle: shared
+    selectors:
+      - namespace: capi-webhook-system
+      - kind: CustomResourceDefinition
+      - kind: ValidatingWebhookConfiguration
+      - kind: MutatingWebhookConfiguration
