@@ -44,6 +44,35 @@ fi
 cat "${IN_FILE}" | clusterctl generate yaml > "${OUT_FILE}"
 eot
 
+FROM tools as add-clusterctl-provider-resource
+ARG PROVIDER_TYPE
+ARG PROVIDER_NAME
+ARG NAMESPACE
+ARG PROVIDER_TYPE_GO
+ARG VERSION
+ARG OUT_FILE="/_out/file"
+COPY --link --from=clusterctl-generate-yaml ${OUT_FILE} ${OUT_FILE}
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
+provider_name_short="${PROVIDER_NAME}"
+provider_name_full="${PROVIDER_TYPE}-${PROVIDER_NAME}"
+if [ "${PROVIDER_TYPE}" == "core" ]; then
+  provider_name_full="${PROVIDER_NAME}"
+fi
+cat <<EOT >> "${OUT_FILE}"
+---
+apiVersion: clusterctl.cluster.x-k8s.io/v1alpha3
+kind: Provider
+metadata:
+  name: ${provider_name_full}
+  namespace: ${NAMESPACE}
+providerName: ${provider_name_short}
+type: ${PROVIDER_TYPE_GO}
+version: ${VERSION}
+EOT
+eot
+
 FROM ${FETCH_RESOURCES_IMAGE} as fetch-resources-image
 
 FROM tools as kpt-fn-sink

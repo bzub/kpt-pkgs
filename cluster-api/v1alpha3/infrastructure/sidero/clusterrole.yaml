@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: caps-manager-role
@@ -147,7 +147,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-server-editor-role
@@ -178,7 +178,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-serverclass-editor-role
@@ -213,7 +213,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-environment-editor-role
@@ -244,7 +244,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-proxy-role

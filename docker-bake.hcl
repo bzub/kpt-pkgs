@@ -81,10 +81,13 @@ target "cert-manager" {
 }
 
 group "cluster-api" {
-  targets = ["cluster-api-components"]
+  targets = [
+    "cluster-api-providers",
+    "cluster-api-clusters",
+  ]
 }
 
-group "cluster-api-components" {
+group "cluster-api-providers" {
   targets = [
     "cluster-api-component-v1alpha3-core",
     "cluster-api-component-v1alpha3-bootstrap-kubeadm",
@@ -97,27 +100,44 @@ group "cluster-api-components" {
   ]
 }
 
-target "cluster-api-component" {
+group "cluster-api-clusters" {
+  targets = [
+    "cluster-api-component-v1alpha3-cluster-sidero",
+  ]
+}
+
+target "_cluster-api" {
   inherits = ["_common"]
   target = "pkg"
+}
+
+target "_cluster-api-provider" {
+  args = {
+    FETCH_RESOURCES_IMAGE = "add-clusterctl-provider-resource"
+  }
+}
+
+target "_cluster-api-cluster" {
   args = {
     FETCH_RESOURCES_IMAGE = "clusterctl-generate-yaml"
   }
 }
 
 target "cluster-api-component-v1alpha3" {
-  inherits = ["cluster-api-component"]
+  inherits = ["_cluster-api"]
   args = {
     CAPI_API_GROUP = "v1alpha3"
   }
 }
 
 target "cluster-api-component-v1alpha3-core" {
-  inherits = ["cluster-api-component-v1alpha3"]
+  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/core/cluster-api/Kptfile"
     PROVIDER_TYPE = "core"
+    PROVIDER_TYPE_GO = "CoreProvider"
     PROVIDER_NAME = "cluster-api"
+    NAMESPACE = "capi-system"
     VERSION = CAPI_V1ALPHA3_CORE_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
@@ -127,31 +147,31 @@ target "cluster-api-component-v1alpha3-core" {
 }
 
 target "cluster-api-component-v1alpha3-bootstrap" {
-  inherits = ["cluster-api-component-v1alpha3"]
+  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
   args = {
     PROVIDER_TYPE = "bootstrap"
+    PROVIDER_TYPE_GO = "BootstrapProvider"
   }
 }
 
 target "cluster-api-component-v1alpha3-control-plane" {
-  inherits = ["cluster-api-component-v1alpha3"]
+  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
   args = {
     PROVIDER_TYPE = "control-plane"
+    PROVIDER_TYPE_GO = "ControlPlaneProvider"
   }
 }
 
 target "cluster-api-component-v1alpha3-infrastructure" {
-  inherits = ["cluster-api-component-v1alpha3"]
+  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
   args = {
     PROVIDER_TYPE = "infrastructure"
+    PROVIDER_TYPE_GO = "InfrastructureProvider"
   }
 }
 
 target "cluster-api-component-v1alpha3-cluster" {
-  inherits = ["cluster-api-component-v1alpha3"]
-  args = {
-    PROVIDER_TYPE = "cluster"
-  }
+  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-cluster"]
 }
 
 target "cluster-api-component-v1alpha3-bootstrap-kubeadm" {
@@ -159,6 +179,7 @@ target "cluster-api-component-v1alpha3-bootstrap-kubeadm" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/bootstrap/kubeadm/Kptfile"
     PROVIDER_NAME = "kubeadm"
+    NAMESPACE = "capi-kubeadm-bootstrap-system"
     VERSION = CAPI_V1ALPHA3_BOOTSTRAP_KUBEADM_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
@@ -172,6 +193,7 @@ target "cluster-api-component-v1alpha3-bootstrap-talos" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/bootstrap/talos/Kptfile"
     PROVIDER_NAME = "talos"
+    NAMESPACE = "cabpt-system"
     VERSION = CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "cluster-api-bootstrap-provider-talos"
@@ -185,6 +207,7 @@ target "cluster-api-component-v1alpha3-control-plane-kubeadm" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/control-plane/kubeadm/Kptfile"
     PROVIDER_NAME = "kubeadm"
+    NAMESPACE = "capi-kubeadm-control-plane-system"
     VERSION = CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
@@ -198,6 +221,7 @@ target "cluster-api-component-v1alpha3-control-plane-talos" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/control-plane/talos/Kptfile"
     PROVIDER_NAME = "talos"
+    NAMESPACE = "cacppt-system"
     VERSION = CAPI_V1ALPHA3_CONTROLPLANE_TALOS_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "cluster-api-control-plane-provider-talos"
@@ -211,6 +235,7 @@ target "cluster-api-component-v1alpha3-infrastructure-docker" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/infrastructure/docker/Kptfile"
     PROVIDER_NAME = "docker"
+    NAMESPACE = "capd-system"
     VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
@@ -224,6 +249,7 @@ target "cluster-api-component-v1alpha3-infrastructure-sidero" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/infrastructure/sidero/Kptfile"
     PROVIDER_NAME = "sidero"
+    NAMESPACE = "sidero-system"
     VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "sidero"
@@ -237,6 +263,7 @@ target "cluster-api-component-v1alpha3-cluster-sidero" {
   args = {
     KPTFILE_SOURCE = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/Kptfile"
     PROVIDER_NAME = "sidero"
+    NAMESPACE = "sidero-system"
     VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "sidero"

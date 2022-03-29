@@ -3,7 +3,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: caps-metalmachine-editor-rolebinding
@@ -21,7 +21,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-manager-serverclass-editor-rolebinding
@@ -39,7 +39,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: caps-metalcluster-editor-role-rolebinding
@@ -57,7 +57,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-proxy-rolebinding
@@ -75,7 +75,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-manager-environment-editor-rolebinding
@@ -93,7 +93,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: caps-manager-rolebinding
@@ -111,7 +111,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: sidero
-    cluster.x-k8s.io/provider: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-manager-server-editor-rolebinding
