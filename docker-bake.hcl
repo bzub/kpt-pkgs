@@ -3,6 +3,7 @@ variable "CLUSTER_API_DIR" {default = "${ROOT_DIR}/cluster-api"}
 
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
 variable "CERT_MANAGER_VERSION" {default = "v1.1.1"}
+variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 variable "CAPI_V1ALPHA3_CORE_VERSION" {default = "v0.3.25"}
 variable "CAPI_V1ALPHA4_CORE_VERSION" {default = "v0.4.7"}
 variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.1.2"}
@@ -14,7 +15,7 @@ variable "CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_V1ALPH
 variable "CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.3.3"}
 
 variable "KPT_IMAGE" {default = "docker-image://ghcr.io/bzub/images/kpt:${KPT_VERSION}"}
-variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CAPI_V1BETA1_CORE_VERSION}"}
+variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CLUSTERCTL_VERSION}"}
 variable "KPT_FN_SEARCH_REPLACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/search-replace@sha256:c8da9c025eea6bef4426c1eb1c12158da7bd795f8912fc83a170d490b3240a8b"}
 variable "KPT_FN_SET_ANNOTATIONS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-annotations@sha256:6285fca0192e26c0ae090f26103a3661282260c69c80a794fbf6481082101ea6"}
 variable "KPT_FN_SET_NAMESPACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-namespace:v0.2.0@sha256:7adc23986f97572d75af9aec6a7f74d60f7b9976227f43a75486633e7c539e6f"}
@@ -281,4 +282,13 @@ target "cluster-api-component-v1alpha3-cluster-sidero" {
     ])
   }
   output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero"]
+}
+
+target "cluster-api-clusterctl-crds" {
+  inherits = ["_cluster-api"]
+  args = {
+    KPTFILE_SOURCE = "${CLUSTER_API_DIR}/clusterctl-crds/Kptfile"
+    URL = "https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/${CLUSTERCTL_VERSION}/cmd/clusterctl/config/manifest/clusterctl-api.yaml"
+  }
+  output = ["${CLUSTER_API_DIR}/clusterctl-crds"]
 }
