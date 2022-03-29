@@ -13,6 +13,7 @@ COPY --link --from=kpt-fn-create-setters /usr/local/bin/function /usr/local/bin/
 COPY --link --from=kpt-fn-apply-setters /usr/local/bin/function /usr/local/bin/kpt-fn-apply-setters
 COPY --link --from=kpt-fn-starlark /usr/local/bin/function /usr/local/bin/kpt-fn-starlark
 COPY --link --from=kpt-fn-set-labels /usr/local/bin/function /usr/local/bin/kpt-fn-set-labels
+COPY --link --from=kpt-fn-ensure-name-substring /usr/local/bin/function /usr/local/bin/kpt-fn-ensure-name-substring
 
 FROM tools as fetch-github-release-file
 ARG GITHUB_ORG
