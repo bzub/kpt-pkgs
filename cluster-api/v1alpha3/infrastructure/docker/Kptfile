@@ -4,56 +4,58 @@ metadata:
   name: cluster-api-infrastructure-docker
 pipeline:
   mutators:
-  - name: common-labels
-    image: gcr.io/kpt-fn/set-labels:unstable
-    configMap:
-      clusterctl.cluster.x-k8s.io: ""
-      cluster.x-k8s.io/provider: infrastructure-docker
-  - name: set-labels-clusterctl-lifecycle-shared
-    image: gcr.io/kpt-fn/set-labels:unstable
-    configMap:
-      clusterctl.cluster.x-k8s.io/lifecycle: shared
-    selectors:
-      - namespace: capi-webhook-system
-      - kind: CustomResourceDefinition
-      - kind: ValidatingWebhookConfiguration
-      - kind: MutatingWebhookConfiguration
-  - name: set-labels-clusterctl-core-inventory
-    image: gcr.io/kpt-fn/set-labels:unstable
-    configMap:
-      clusterctl.cluster.x-k8s.io/core: inventory
-    selectors:
-      - kind: Provider
-  - name: set-feature-gates
-    image: gcr.io/kpt-fn/search-replace:unstable
-    configMap:
-      by-value-regex: '--feature-gates=.*'
-      put-value: '--feature-gates=MachinePool=false,ClusterResourceSet=false'
-    selectors:
-      - kind: Deployment
-  - name: set-cert-manager-dependencies
-    image: gcr.io/kpt-fn/set-annotations:unstable
-    configMap:
-      config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
-    selectors:
-    - kind: Certificate
-    - kind: Issuer
-    - kind: Deployment
-  - name: add-port-protocol
-    image: gcr.io/kpt-fn/starlark:unstable
-    configMap:
-      source: |
-        def addportprotocol(resources):
-          for resource in resources:
-            spec = resource.get("spec")
-            if not spec:
-              continue
+    - name: common-labels
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io: ""
+        cluster.x-k8s.io/provider: infrastructure-docker
+    - name: set-labels-clusterctl-lifecycle-shared
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io/lifecycle: shared
+      selectors:
+        - namespace: capi-webhook-system
+        - kind: CustomResourceDefinition
+        - kind: ValidatingWebhookConfiguration
+        - kind: MutatingWebhookConfiguration
+    - name: set-labels-clusterctl-core-inventory
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io/core: inventory
+      selectors:
+        - kind: Provider
+    - name: set-feature-gates
+      image: gcr.io/kpt-fn/search-replace:unstable
+      configMap:
+        by-value-regex: '--feature-gates=.*'
+        put-value: '--feature-gates=MachinePool=false,ClusterResourceSet=false'
+      selectors:
+        - kind: Deployment
+    - name: set-cert-manager-dependencies
+      image: gcr.io/kpt-fn/set-annotations:unstable
+      configMap:
+        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+      selectors:
+        - kind: Certificate
+        - kind: Issuer
+        - kind: Deployment
+    - name: add-port-protocol
+      image: gcr.io/kpt-fn/starlark:unstable
+      configMap:
+        source: |
+          def addportprotocol(resources):
+            for resource in resources:
+              spec = resource.get("spec")
+              if not spec:
+                continue
 
-            ports = spec.get("ports")
-            if not ports:
-              continue
+              ports = spec.get("ports")
+              if not ports:
+                continue
 
-            for port in ports:
-              port.setdefault("protocol", "TCP")
+              for port in ports:
+                port.setdefault("protocol", "TCP")
 
-        addportprotocol(ctx.resource_list["items"])
+          addportprotocol(ctx.resource_list["items"])
+      selectors:
+        - kind: Service
