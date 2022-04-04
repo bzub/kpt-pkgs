@@ -13,7 +13,5 @@ spec:
     targetPort: 9443
     protocol: TCP
   selector:
-    cluster.x-k8s.io/provider: control-plane-talos
+    cluster.x-k8s.io/provider: controlplane-talos
     control-plane: controller-manager
-    clusterctl.cluster.x-k8s.io: ""
-    clusterctl.cluster.x-k8s.io/lifecycle: shared

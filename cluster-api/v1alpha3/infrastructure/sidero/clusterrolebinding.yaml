@@ -6,11 +6,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: caps-metalmachine-editor-rolebinding
+  name: sidero-system-caps-metalmachine-editor-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: caps-manager-role
+  name: sidero-system-caps-manager-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -24,11 +24,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: sidero-manager-serverclass-editor-rolebinding
+  name: sidero-system-sidero-manager-serverclass-editor-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: sidero-serverclass-editor-role
+  name: sidero-system-sidero-serverclass-editor-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -42,11 +42,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: caps-metalcluster-editor-role-rolebinding
+  name: sidero-system-caps-metalcluster-editor-role-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: caps-manager-role
+  name: sidero-system-caps-manager-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -60,11 +60,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: sidero-proxy-rolebinding
+  name: sidero-system-sidero-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: sidero-proxy-role
+  name: sidero-system-sidero-proxy-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -78,11 +78,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: sidero-manager-environment-editor-rolebinding
+  name: sidero-system-sidero-manager-environment-editor-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: sidero-environment-editor-role
+  name: sidero-system-sidero-environment-editor-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -96,11 +96,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: caps-manager-rolebinding
+  name: sidero-system-caps-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: caps-manager-role
+  name: sidero-system-caps-manager-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -114,11 +114,11 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: sidero-manager-server-editor-rolebinding
+  name: sidero-system-sidero-manager-server-editor-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: sidero-server-editor-role
+  name: sidero-system-sidero-server-editor-role
 subjects:
 - kind: ServiceAccount
   name: default

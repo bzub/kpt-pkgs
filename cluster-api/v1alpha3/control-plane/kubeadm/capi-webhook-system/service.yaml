@@ -14,5 +14,3 @@ spec:
     protocol: TCP
   selector:
     cluster.x-k8s.io/provider: control-plane-kubeadm
-    clusterctl.cluster.x-k8s.io: ""
-    clusterctl.cluster.x-k8s.io/lifecycle: shared

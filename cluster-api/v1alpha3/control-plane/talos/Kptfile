@@ -4,15 +4,47 @@ metadata:
   name: cluster-api-control-plane-talos
 pipeline:
   mutators:
-    - name: common-labels
+    - name: set-provider-labels
       image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
-        clusterctl.cluster.x-k8s.io: ""
-        cluster.x-k8s.io/provider: control-plane-talos
+        # This should be `control-plane-talos` but it appears this version of sidero
+        # does not follow the cluster-api naming convention. Keeping it as-is for
+        # compatability.
+        # TODO: Change this to `control-plane-talos`.
+        cluster.x-k8s.io/provider: controlplane-talos
+    - name: set-clusterctl-labels
+      image: gcr.io/kpt-fn/starlark:unstable
+      configMap:
+        source: |
+          def setcommonlabels(resources):
+            for resource in resources:
+              resource["metadata"].setdefault("labels", {})
+              resource["metadata"]["labels"].update({ "clusterctl.cluster.x-k8s.io": "" })
+              # This mimics clusterctl's behavior of updating metadata.labels
+              # and nothing else like labels.
+              # TODO: Remove this when we can just use `set-labels` above.
+              resource["metadata"]["labels"].update({ "cluster.x-k8s.io/provider": "control-plane-talos" })
+
+          setcommonlabels(ctx.resource_list["items"])
+    - name: ensure-cluster-rbac-name-prefixes
+      image: gcr.io/kpt-fn/ensure-name-substring:unstable
+      configMap:
+        prepend: cacppt-system-
+      selectors:
+        - kind: ClusterRole
+        - kind: ClusterRoleBinding
     - name: set-labels-clusterctl-lifecycle-shared
-      image: gcr.io/kpt-fn/set-labels:unstable
+      image: gcr.io/kpt-fn/starlark:unstable
       configMap:
-        clusterctl.cluster.x-k8s.io/lifecycle: shared
+        source: |
+          def setlabelsclusterctllifecycleshared(resources):
+            for resource in resources:
+              resource["metadata"].setdefault("labels", {})
+              resource["metadata"]["labels"].update({
+                "clusterctl.cluster.x-k8s.io/lifecycle": "shared"
+              })
+
+          setlabelsclusterctllifecycleshared(ctx.resource_list["items"])
       selectors:
         - namespace: capi-webhook-system
         - kind: CustomResourceDefinition
@@ -24,17 +56,18 @@ pipeline:
         clusterctl.cluster.x-k8s.io/core: inventory
       selectors:
         - kind: Provider
-    - name: set-feature-gates
-      image: gcr.io/kpt-fn/search-replace:unstable
-      configMap:
-        by-value-regex: '--feature-gates=.*'
-        put-value: '--feature-gates=MachinePool=false,ClusterResourceSet=false'
-      selectors:
-        - kind: Deployment
     - name: set-cert-manager-dependencies
-      image: gcr.io/kpt-fn/set-annotations:unstable
+      image: gcr.io/kpt-fn/starlark:unstable
       configMap:
-        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+        source: |
+          def setcertmanagerdependencies(resources):
+            for resource in resources:
+              resource["metadata"].setdefault("annotations", {})
+              resource["metadata"]["annotations"].update({
+                "config.kubernetes.io/depends-on": "apps/namespaces/cert-manager/Deployment/cert-manager-webhook"
+              })
+
+          setcertmanagerdependencies(ctx.resource_list["items"])
       selectors:
         - kind: Certificate
         - kind: Issuer
