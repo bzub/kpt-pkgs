@@ -95,21 +95,21 @@ group "cluster-api" {
 
 group "cluster-api-providers" {
   targets = [
-    "cluster-api-component-v1alpha3-core",
-    "cluster-api-component-v1alpha3-bootstrap-kubeadm",
-    "cluster-api-component-v1alpha3-bootstrap-talos",
-    "cluster-api-component-v1alpha3-control-plane-kubeadm",
-    "cluster-api-component-v1alpha3-control-plane-talos",
-    "cluster-api-component-v1alpha3-infrastructure-docker",
-    "cluster-api-component-v1alpha3-infrastructure-sidero",
-    "cluster-api-component-v1alpha3-cluster-sidero",
+    "cluster-api-v1alpha3-core",
+    "cluster-api-v1alpha3-bootstrap-kubeadm",
+    "cluster-api-v1alpha3-bootstrap-talos",
+    "cluster-api-v1alpha3-control-plane-kubeadm",
+    "cluster-api-v1alpha3-control-plane-talos",
+    "cluster-api-v1alpha3-infrastructure-docker",
+    "cluster-api-v1alpha3-infrastructure-sidero",
+    "cluster-api-v1alpha3-cluster-sidero",
   ]
 }
 
 group "cluster-api-clusters" {
   targets = [
-    "cluster-api-component-v1alpha3-cluster-sidero",
-    "cluster-api-component-v1alpha3-cluster-sidero-serverclass",
+    "cluster-api-v1alpha3-cluster-sidero",
+    "cluster-api-v1alpha3-cluster-sidero-serverclass",
   ]
 }
 
@@ -130,15 +130,15 @@ target "_cluster-api-cluster" {
   }
 }
 
-target "cluster-api-component-v1alpha3" {
+target "_cluster-api-v1alpha3" {
   inherits = ["_cluster-api"]
   args = {
     CAPI_API_GROUP = "v1alpha3"
   }
 }
 
-target "cluster-api-component-v1alpha3-core" {
-  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
+target "cluster-api-v1alpha3-core" {
+  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/core/cluster-api"
   }
@@ -155,36 +155,36 @@ target "cluster-api-component-v1alpha3-core" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/core/cluster-api"]
 }
 
-target "cluster-api-component-v1alpha3-bootstrap" {
-  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
+target "_cluster-api-v1alpha3-bootstrap" {
+  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider"]
   args = {
     PROVIDER_TYPE = "bootstrap"
     PROVIDER_TYPE_GO = "BootstrapProvider"
   }
 }
 
-target "cluster-api-component-v1alpha3-control-plane" {
-  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
+target "_cluster-api-v1alpha3-control-plane" {
+  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider"]
   args = {
     PROVIDER_TYPE = "control-plane"
     PROVIDER_TYPE_GO = "ControlPlaneProvider"
   }
 }
 
-target "cluster-api-component-v1alpha3-infrastructure" {
-  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-provider"]
+target "_cluster-api-v1alpha3-infrastructure" {
+  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider"]
   args = {
     PROVIDER_TYPE = "infrastructure"
     PROVIDER_TYPE_GO = "InfrastructureProvider"
   }
 }
 
-target "cluster-api-component-v1alpha3-cluster" {
-  inherits = ["cluster-api-component-v1alpha3", "_cluster-api-cluster"]
+target "_cluster-api-v1alpha3-cluster" {
+  inherits = ["_cluster-api-v1alpha3", "_cluster-api-cluster"]
 }
 
-target "cluster-api-component-v1alpha3-bootstrap-kubeadm" {
-  inherits = ["cluster-api-component-v1alpha3-bootstrap"]
+target "cluster-api-v1alpha3-bootstrap-kubeadm" {
+  inherits = ["_cluster-api-v1alpha3-bootstrap"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/bootstrap/kubeadm"
   }
@@ -199,8 +199,8 @@ target "cluster-api-component-v1alpha3-bootstrap-kubeadm" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/bootstrap/kubeadm"]
 }
 
-target "cluster-api-component-v1alpha3-bootstrap-talos" {
-  inherits = ["cluster-api-component-v1alpha3-bootstrap"]
+target "cluster-api-v1alpha3-bootstrap-talos" {
+  inherits = ["_cluster-api-v1alpha3-bootstrap"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/bootstrap/talos"
   }
@@ -215,8 +215,8 @@ target "cluster-api-component-v1alpha3-bootstrap-talos" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/bootstrap/talos"]
 }
 
-target "cluster-api-component-v1alpha3-control-plane-kubeadm" {
-  inherits = ["cluster-api-component-v1alpha3-control-plane"]
+target "cluster-api-v1alpha3-control-plane-kubeadm" {
+  inherits = ["_cluster-api-v1alpha3-control-plane"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/control-plane/kubeadm"
   }
@@ -231,8 +231,8 @@ target "cluster-api-component-v1alpha3-control-plane-kubeadm" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/control-plane/kubeadm"]
 }
 
-target "cluster-api-component-v1alpha3-control-plane-talos" {
-  inherits = ["cluster-api-component-v1alpha3-control-plane"]
+target "cluster-api-v1alpha3-control-plane-talos" {
+  inherits = ["_cluster-api-v1alpha3-control-plane"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/control-plane/talos"
   }
@@ -247,8 +247,8 @@ target "cluster-api-component-v1alpha3-control-plane-talos" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/control-plane/talos"]
 }
 
-target "cluster-api-component-v1alpha3-infrastructure-docker" {
-  inherits = ["cluster-api-component-v1alpha3-infrastructure"]
+target "cluster-api-v1alpha3-infrastructure-docker" {
+  inherits = ["_cluster-api-v1alpha3-infrastructure"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/infrastructure/docker"
   }
@@ -263,8 +263,8 @@ target "cluster-api-component-v1alpha3-infrastructure-docker" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/infrastructure/docker"]
 }
 
-target "cluster-api-component-v1alpha3-infrastructure-sidero" {
-  inherits = ["cluster-api-component-v1alpha3-infrastructure"]
+target "cluster-api-v1alpha3-infrastructure-sidero" {
+  inherits = ["_cluster-api-v1alpha3-infrastructure"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/infrastructure/sidero"
   }
@@ -279,8 +279,8 @@ target "cluster-api-component-v1alpha3-infrastructure-sidero" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/infrastructure/sidero"]
 }
 
-target "cluster-api-component-v1alpha3-cluster-sidero" {
-  inherits = ["cluster-api-component-v1alpha3-cluster"]
+target "cluster-api-v1alpha3-cluster-sidero" {
+  inherits = ["_cluster-api-v1alpha3-cluster"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero"
   }
@@ -306,7 +306,7 @@ target "cluster-api-component-v1alpha3-cluster-sidero" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero"]
 }
 
-target "cluster-api-component-v1alpha3-cluster-sidero-serverclass" {
+target "cluster-api-v1alpha3-cluster-sidero-serverclass" {
   inherits = ["_cluster-api"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero-serverclass"
