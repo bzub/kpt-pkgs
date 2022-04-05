@@ -20,3 +20,6 @@ pipeline:
         control-plane-endpoint-port: "6443"
         pod-cidr: 10.244.0.0/16
         service-cidr: 10.96.0.0/12
+    - name: server-labels
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configPath: ".fn-configs/server-labels.yaml"
