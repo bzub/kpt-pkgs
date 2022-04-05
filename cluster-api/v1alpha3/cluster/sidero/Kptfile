@@ -11,6 +11,9 @@ pipeline:
     - name: apply-setters
       image: gcr.io/kpt-fn/apply-setters:unstable
       configMap:
+        cluster-name: clustername
+        control-plane-name: clustername-cp
+        workers-name: clustername-workers
         talos-version: v0.14
         kubernetes-version: v1.20.15
         control-plane-endpoint-host: "127.0.0.1"

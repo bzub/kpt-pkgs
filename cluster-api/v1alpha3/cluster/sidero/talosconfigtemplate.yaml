@@ -1,7 +1,7 @@
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: TalosConfigTemplate
 metadata:
-  name: cluster-workers
+  name: clustername-workers # kpt-set: ${workers-name}
   namespace: default
 spec:
   template:

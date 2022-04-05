@@ -272,7 +272,7 @@ target "cluster-api-component-v1alpha3-cluster-sidero" {
     GITHUB_REPO = "sidero"
     FILENAME = "cluster-template.yaml"
     ENVIRONMENT_VARIABLES = join("\n", [
-      "CLUSTER_NAME=cluster",
+      "CLUSTER_NAME=clustername",
       "CONTROL_PLANE_MACHINE_COUNT=1",
       "WORKER_MACHINE_COUNT=0",
       "CONTROL_PLANE_ENDPOINT=127.0.0.1",
