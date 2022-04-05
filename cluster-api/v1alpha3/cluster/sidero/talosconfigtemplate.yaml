@@ -3,6 +3,8 @@ kind: TalosConfigTemplate
 metadata:
   name: clustername-workers # kpt-set: ${workers-name}
   namespace: default
+  labels:
+    cluster: clustername
 spec:
   template:
     spec:

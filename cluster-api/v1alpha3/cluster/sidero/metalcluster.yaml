@@ -3,6 +3,8 @@ kind: MetalCluster
 metadata:
   name: clustername # kpt-set: ${cluster-name}
   namespace: default
+  labels:
+    cluster: clustername
 spec:
   controlPlaneEndpoint:
     host: 127.0.0.1 # kpt-set: ${control-plane-endpoint-host}

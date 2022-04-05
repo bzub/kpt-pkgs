@@ -1,6 +1,7 @@
 # syntax = docker.io/docker/dockerfile-upstream:1.4.0
 
 ARG FETCH_RESOURCES_IMAGE
+ARG PKG_SOURCE
 
 FROM alpine as tools
 RUN apk add -U git curl bash
@@ -112,15 +113,41 @@ done
 cp -r "${IN_PKG}" "${OUT_PKG}"
 eot
 
+FROM scratch as sidero-serverclass
+ARG OUT_PKG="/_out/pkg"
+COPY --link <<eot ${OUT_PKG}/serverclass.yaml
+apiVersion: metal.sidero.dev/v1alpha1
+kind: ServerClass
+metadata:
+  name: serverclassname
+eot
+
+FROM ${PKG_SOURCE} as pkg-source
+
 FROM tools as kpt-fn-render
 ARG OUT_PKG="/_out/pkg"
-COPY --link --from=pkg_rename_files ${OUT_PKG} ${OUT_PKG}
-ARG KPTFILE_SOURCE
-COPY --link ${KPTFILE_SOURCE} ${OUT_PKG}/Kptfile
-RUN sed -i 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' "${OUT_PKG}/Kptfile"
-RUN sed -i 's/apply-setters/create-setters/' "${OUT_PKG}/Kptfile"
+COPY --link --from=pkg-local / ${OUT_PKG}
+COPY --link --from=pkg-source ${OUT_PKG} ${OUT_PKG}
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
+for kptfile in $(find "${OUT_PKG}" -type f -name Kptfile); do
+  sed -i.bak \
+    -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' \
+    -e 's/apply-setters/create-setters/' \
+    "${kptfile}"
+done
+eot
 RUN kpt fn render --allow-exec --truncate-output=false "${OUT_PKG}"
-RUN rm "${OUT_PKG}/Kptfile"
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
+for kptfile in $(find "${OUT_PKG}" -type f -name Kptfile); do
+  backup_file="${kptfile}.bak"
+  rm "${kptfile}"
+  mv "${backup_file}" "${kptfile}"
+done
+eot
 
 FROM scratch as pkg
 ARG OUT_PKG="/_out/pkg"

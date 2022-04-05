@@ -3,6 +3,8 @@ kind: MetalMachineTemplate
 metadata:
   name: clustername-workers # kpt-set: ${workers-name}
   namespace: default
+  labels:
+    cluster: clustername
 spec:
   template:
     spec:
@@ -16,6 +18,8 @@ kind: MetalMachineTemplate
 metadata:
   name: clustername-cp # kpt-set: ${control-plane-name}
   namespace: default
+  labels:
+    cluster: clustername
 spec:
   template:
     spec:
