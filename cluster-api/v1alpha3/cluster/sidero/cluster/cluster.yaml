@@ -1,23 +1,23 @@
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: Cluster
 metadata:
-  name: clustername # kpt-set: ${cluster-name}
-  namespace: default
-  labels:
-    cluster: clustername
+  name: cluster
 spec:
   clusterNetwork:
     pods:
       cidrBlocks:
-      - 10.244.0.0/16 # kpt-set: ${pod-cidr}
+      - 10.244.0.0/16
     services:
       cidrBlocks:
-      - 10.96.0.0/12 # kpt-set: ${service-cidr}
+      - 10.96.0.0/12
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
     kind: TalosControlPlane
-    name: clustername-cp # kpt-set: ${control-plane-name}
+    name: taloscontrolplane
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
     kind: MetalCluster
-    name: clustername # kpt-set: ${cluster-name}
+    name: metalcluster
+  controlPlaneEndpoint:
+    host: 127.0.0.1
+    port: 6443

@@ -18,12 +18,13 @@ variable "KPT_IMAGE" {default = "docker-image://ghcr.io/bzub/images/kpt:${KPT_VE
 variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CLUSTERCTL_VERSION}"}
 variable "KPT_FN_SEARCH_REPLACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/search-replace@sha256:c8da9c025eea6bef4426c1eb1c12158da7bd795f8912fc83a170d490b3240a8b"}
 variable "KPT_FN_SET_ANNOTATIONS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-annotations@sha256:6285fca0192e26c0ae090f26103a3661282260c69c80a794fbf6481082101ea6"}
-variable "KPT_FN_SET_NAMESPACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-namespace:v0.2.0@sha256:7adc23986f97572d75af9aec6a7f74d60f7b9976227f43a75486633e7c539e6f"}
+variable "KPT_FN_SET_NAMESPACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-namespace@sha256:a457b9266764ae42c94b2ecd6690e4fc858295b2c58a7043d9e486697ef8b201"}
 variable "KPT_FN_CREATE_SETTERS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/create-setters@sha256:76ec527190c3826196db133c32db5d29c228876f0c4b5e692781f68e2dcc7536"}
 variable "KPT_FN_APPLY_SETTERS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/apply-setters@sha256:d322a18de00daf566b48bc7cbebf4814bc87cecf783d494ccaf9294bf23c6392"}
 variable "KPT_FN_STARLARK_IMAGE" {default = "docker-image://gcr.io/kpt-fn/starlark@sha256:416188026608fbea937ebf2e287ae8aa277651884520621357b7f5115261a04e"}
 variable "KPT_FN_SET_LABELS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-labels@sha256:d088e20cd2c9067e433398161cd7adda3d23226e1afeda37ea2b8029eaf3852f"}
 variable "KPT_FN_ENSURE_NAME_SUBSTRING_IMAGE" {default = "docker-image://gcr.io/kpt-fn/ensure-name-substring@sha256:027d1fcdfa839d991cb6ddf924d339569d20a7dff70cd821642cb0d053739010"}
+variable "KPT_FN_APPLY_REPLACEMENTS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/apply-replacements@sha256:7c494199513277e95fe28e13a0198ea69d8e6cc4100c4a417d0c93995ce41215"}
 
 group "default" {
   targets = [
@@ -44,10 +45,12 @@ target "_common" {
     kpt-fn-starlark = KPT_FN_STARLARK_IMAGE
     kpt-fn-set-labels = KPT_FN_SET_LABELS_IMAGE
     kpt-fn-ensure-name-substring = KPT_FN_ENSURE_NAME_SUBSTRING_IMAGE
+    kpt-fn-apply-replacements = KPT_FN_APPLY_REPLACEMENTS_IMAGE
   }
   args = {
     FETCH_RESOURCES_IMAGE = "fetch-github-release-file"
     PKG_SOURCE = "pkg_rename_files"
+    PKG_SINK_SOURCE = "kpt-fn-sink"
   }
 }
 
@@ -109,7 +112,6 @@ group "cluster-api-providers" {
 group "cluster-api-clusters" {
   targets = [
     "cluster-api-v1alpha3-cluster-sidero",
-    "cluster-api-v1alpha3-cluster-sidero-serverclass",
   ]
 }
 
@@ -279,7 +281,18 @@ target "cluster-api-v1alpha3-infrastructure-sidero" {
   output = ["${CLUSTER_API_DIR}/v1alpha3/infrastructure/sidero"]
 }
 
-target "cluster-api-v1alpha3-cluster-sidero" {
+group "cluster-api-v1alpha3-cluster-sidero" {
+  targets = [
+    "cluster-api-v1alpha3-cluster-sidero-cluster",
+    "cluster-api-v1alpha3-cluster-sidero-machinedeployment",
+    "cluster-api-v1alpha3-cluster-sidero-metalmachinetemplate",
+    "cluster-api-v1alpha3-cluster-sidero-serverclass",
+    "cluster-api-v1alpha3-cluster-sidero-talosconfigtemplate",
+    "cluster-api-v1alpha3-cluster-sidero-taloscontrolplane",
+  ]
+}
+
+target "_cluster-api-v1alpha3-cluster-sidero" {
   inherits = ["_cluster-api-v1alpha3-cluster"]
   contexts = {
     pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero"
@@ -297,24 +310,78 @@ target "cluster-api-v1alpha3-cluster-sidero" {
       "WORKER_MACHINE_COUNT=0",
       "CONTROL_PLANE_ENDPOINT=127.0.0.1",
       "CONTROL_PLANE_PORT=6443",
-      "CONTROL_PLANE_SERVERCLASS=any",
-      "WORKER_SERVERCLASS=any",
+      "CONTROL_PLANE_SERVERCLASS=clustername",
+      "WORKER_SERVERCLASS=clustername",
       "TALOS_VERSION=v0.14",
       "KUBERNETES_VERSION=v1.20.15",
     ])
   }
-  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero"]
+}
+
+target "cluster-api-v1alpha3-cluster-sidero-cluster" {
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+  contexts = {
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/cluster"
+  }
+  args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-cluster"
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/cluster"]
+}
+
+target "cluster-api-v1alpha3-cluster-sidero-machinedeployment" {
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+  contexts = {
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/machinedeployment"
+  }
+  args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-machinedeployment"
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/machinedeployment"]
+}
+
+target "cluster-api-v1alpha3-cluster-sidero-metalmachinetemplate" {
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+  contexts = {
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/metalmachinetemplate"
+  }
+  args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-metalmachinetemplate"
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/metalmachinetemplate"]
 }
 
 target "cluster-api-v1alpha3-cluster-sidero-serverclass" {
-  inherits = ["_cluster-api"]
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
   contexts = {
-    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero-serverclass"
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/serverclass"
   }
   args = {
-    PKG_SOURCE = "sidero-serverclass"
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-serverclass"
   }
-  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero-serverclass"]
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/serverclass"]
+}
+
+target "cluster-api-v1alpha3-cluster-sidero-talosconfigtemplate" {
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+  contexts = {
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/talosconfigtemplate"
+  }
+  args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-talosconfigtemplate"
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/talosconfigtemplate"]
+}
+
+target "cluster-api-v1alpha3-cluster-sidero-taloscontrolplane" {
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+  contexts = {
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/taloscontrolplane"
+  }
+  args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-taloscontrolplane"
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/taloscontrolplane"]
 }
 
 target "cluster-api-clusterctl-crds" {
