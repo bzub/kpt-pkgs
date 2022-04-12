@@ -5,7 +5,7 @@ ARG PKG_SOURCE
 ARG PKG_SINK_SOURCE
 
 FROM alpine as tools
-RUN apk add -U git curl bash
+RUN apk add -U git curl bash jq
 COPY --link --from=kpt /kpt /usr/local/bin/kpt
 COPY --link --from=clusterctl /clusterctl /usr/local/bin/clusterctl
 COPY --link --from=kpt-fn-search-replace /usr/local/bin/function /usr/local/bin/kpt-fn-search-replace
@@ -232,6 +232,25 @@ eot
 # kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROLPLANE_ENDPOINT_FN_CONFIG}"
 # kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG}"
 # eot
+
+FROM tools as kpt-pkg-get
+ARG OUT_PKG="/_out/pkg"
+ARG GIT_REPO_DIR="/_in/repo"
+ARG GIT_REPO="file://${GIT_REPO_DIR}/.git"
+ARG GIT_REF="test_e2e"
+ARG UPDATE_STRATEGY="resource-merge"
+ARG PKG_SPECS
+COPY --link --from=repo-source / ${GIT_REPO_DIR}/.git
+RUN mkdir -p "${OUT_PKG}"
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
+for pkg_spec in $(echo "${PKG_SPECS}" | jq -c '.[]'); do
+  remote_dir="$(echo "${pkg_spec}" | jq -r '.["remote_dir"]')"
+  local_dir="${OUT_PKG}/$(echo "${pkg_spec}" | jq -r '.["local_dir"]')"
+  kpt pkg get "${GIT_REPO}/${remote_dir}@${GIT_REF}" "${local_dir}" --strategy="${UPDATE_STRATEGY}"
+done
+eot
 
 FROM ${PKG_SOURCE} as pkg-source
 

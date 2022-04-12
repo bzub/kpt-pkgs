@@ -30,10 +30,12 @@ group "default" {
   targets = [
     "cert-manager",
     "cluster-api",
+    "blueprints",
   ]
 }
 
 target "_common" {
+  target = "pkg"
   contexts = {
     kpt = KPT_IMAGE
     clusterctl = CLUSTERCTL_IMAGE
@@ -78,7 +80,6 @@ target "cert-manager" {
   contexts = {
     pkg-local = "./cert-manager"
   }
-  target = "pkg"
   args = {
     GITHUB_ORG = "cert-manager"
     GITHUB_REPO = "cert-manager"
@@ -117,7 +118,6 @@ group "cluster-api-clusters" {
 
 target "_cluster-api" {
   inherits = ["_common"]
-  target = "pkg"
 }
 
 target "_cluster-api-provider" {
@@ -393,4 +393,30 @@ target "cluster-api-clusterctl-crds" {
     URL = "https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/${CLUSTERCTL_VERSION}/cmd/clusterctl/config/manifest/clusterctl-api.yaml"
   }
   output = ["${CLUSTER_API_DIR}/clusterctl-crds"]
+}
+
+group "blueprints" {
+  targets = [
+    "blueprints-cluster-api-v1alpha3-talos-sidero-management",
+  ]
+}
+
+target "blueprints-cluster-api-v1alpha3-talos-sidero-management" {
+  inherits = ["_common"]
+  contexts = {
+    pkg-local = "blueprints/cluster-api-v1alpha3-talos-sidero-management"
+    repo-source = ".git"
+  }
+  args = {
+    PKG_SOURCE = "kpt-pkg-get"
+    PKG_SPECS = jsonencode([
+    {local_dir = "cert-manager", remote_dir = "cert-manager"},
+    {local_dir = "clusterctl-crds", remote_dir = "cluster-api/clusterctl-crds"},
+    {local_dir = "bootstrap-talos", remote_dir = "cluster-api/v1alpha3/bootstrap/talos"},
+    {local_dir = "control-plane-talos", remote_dir = "cluster-api/v1alpha3/control-plane/talos"},
+    {local_dir = "core", remote_dir = "cluster-api/v1alpha3/core/cluster-api"},
+    {local_dir = "infrastructure-sidero", remote_dir = "cluster-api/v1alpha3/infrastructure/sidero"},
+    ])
+  }
+  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-talos-sidero-management"]
 }

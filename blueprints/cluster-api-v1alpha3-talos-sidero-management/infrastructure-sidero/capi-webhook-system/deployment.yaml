@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: # kpt-merge: capi-webhook-system/caps-controller-manager
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    control-plane: caps-controller-manager
+    clusterctl.cluster.x-k8s.io: ""
+    clusterctl.cluster.x-k8s.io/lifecycle: shared
+  name: caps-controller-manager
+  namespace: capi-webhook-system
+  annotations:
+    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidero
+      cluster.x-k8s.io/provider: sidero
+      cluster.x-k8s.io/v1alpha3: v1alpha3
+      control-plane: caps-controller-manager
+  template:
+    metadata:
+      labels:
+        app: sidero
+        cluster.x-k8s.io/provider: sidero
+        cluster.x-k8s.io/v1alpha3: v1alpha3
+        control-plane: caps-controller-manager
+    spec:
+      containers:
+      - args:
+        - --metrics-addr=127.0.0.1:8080
+        - --webhook-port=9443
+        command:
+        - /manager
+        image: ghcr.io/talos-systems/caps-controller-manager:v0.3.3
+        imagePullPolicy: Always
+        name: manager
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: caps-webhook-service-cert

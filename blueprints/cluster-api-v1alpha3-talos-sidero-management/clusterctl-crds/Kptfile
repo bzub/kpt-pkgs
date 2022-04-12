@@ -1,0 +1,32 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: clusterctl-crds
+upstream:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cluster-api/clusterctl-crds
+    ref: test_e2e
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cluster-api/clusterctl-crds
+    ref: test_e2e
+    commit: badd9634e419c454719cd5feb318924579a4fc4d
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io: ""
+      name: common-labels
+    - image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io/core: inventory
+      name: set-labels-clusterctl-core-inventory
+      selectors:
+        - kind: Provider
+        - kind: CustomResourceDefinition
+          name: providers.clusterctl.cluster.x-k8s.io
