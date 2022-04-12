@@ -1,0 +1,9 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: serverclass
+pipeline:
+  mutators:
+    - name: set-serverclass-label-from-name
+      image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: ".fn-configs/set-serverclass-label-from-name.yaml"

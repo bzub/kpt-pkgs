@@ -2,6 +2,7 @@
 
 ARG FETCH_RESOURCES_IMAGE
 ARG PKG_SOURCE
+ARG PKG_SINK_SOURCE
 
 FROM alpine as tools
 RUN apk add -U git curl bash
@@ -15,6 +16,7 @@ COPY --link --from=kpt-fn-apply-setters /usr/local/bin/function /usr/local/bin/k
 COPY --link --from=kpt-fn-starlark /usr/local/bin/function /usr/local/bin/kpt-fn-starlark
 COPY --link --from=kpt-fn-set-labels /usr/local/bin/function /usr/local/bin/kpt-fn-set-labels
 COPY --link --from=kpt-fn-ensure-name-substring /usr/local/bin/function /usr/local/bin/kpt-fn-ensure-name-substring
+COPY --link --from=kpt-fn-apply-replacements /usr/local/bin/function /usr/local/bin/kpt-fn-apply-replacements
 
 FROM tools as fetch-github-release-file
 ARG GITHUB_ORG
@@ -93,15 +95,82 @@ cat "${IN_FILE}" \
 | kpt fn sink "${OUT_PKG}"
 eot
 
+FROM tools as pkg-sink-source-sidero-cluster
+ARG OUT_PKG="/_out/pkg"
+ARG CONTROLPLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
+COPY --link --from=kpt-fn-sink ${OUT_PKG}/cluster_clustername.yaml ${OUT_PKG}/cluster.yaml
+COPY --link --from=kpt-fn-sink ${OUT_PKG}/metalcluster_clustername.yaml ${OUT_PKG}/metalcluster.yaml
+COPY --link <<eot ${CONTROLPLANE_ENDPOINT_FN_CONFIG}
+apiVersion: fn.kpt.dev/v1alpha1
+kind: ApplyReplacements
+metadata:
+  name: set-controlPlaneEndpoint-from-metalcluster
+replacements:
+  - source:
+      kind: MetalCluster
+      fieldPath: spec.controlPlaneEndpoint
+    targets:
+      - select:
+          kind: Cluster
+        fieldPaths:
+          - spec.controlPlaneEndpoint
+        options:
+          create: true
+eot
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROLPLANE_ENDPOINT_FN_CONFIG}"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-file-path=cluster.yaml" "by-path=metadata.name" "put-value=cluster"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-file-path=metalcluster.yaml" "by-path=metadata.name" "put-value=metalcluster"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-file-path=cluster.yaml" "by-path=spec.controlPlaneRef.name" "put-value=taloscontrolplane"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-file-path=cluster.yaml" "by-path=spec.infrastructureRef.name" "put-value=metalcluster"
+
+FROM tools as pkg-sink-source-sidero-machinedeployment
+ARG OUT_PKG="/_out/pkg"
+COPY --link --from=kpt-fn-sink ${OUT_PKG}/machinedeployment_clustername-workers.yaml ${OUT_PKG}/machinedeployment.yaml
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=machinedeployment"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.bootstrap.configRef.name" "put-value=talosconfigtemplate"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.infrastructureRef.name" "put-value=metalmachinetemplate"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.clusterName" "put-value=cluster"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.clusterName" "put-value=cluster"
+
+FROM tools as pkg-sink-source-sidero-metalmachinetemplate
+ARG OUT_PKG="/_out/pkg"
+COPY --link --from=kpt-fn-sink ${OUT_PKG}/metalmachinetemplate_clustername-workers.yaml ${OUT_PKG}/metalmachinetemplate.yaml
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=metalmachinetemplate"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
+
+FROM tools as pkg-sink-source-sidero-serverclass
+ARG OUT_PKG="/_out/pkg"
+COPY --link <<eot ${OUT_PKG}/serverclass.yaml
+apiVersion: metal.sidero.dev/v1alpha1
+kind: ServerClass
+metadata:
+  name: serverclass
+eot
+
+FROM tools as pkg-sink-source-sidero-talosconfigtemplate
+ARG OUT_PKG="/_out/pkg"
+COPY --link --from=kpt-fn-sink ${OUT_PKG}/talosconfigtemplate_clustername-workers.yaml ${OUT_PKG}/talosconfigtemplate.yaml
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=talosconfigtemplate"
+
+FROM tools as pkg-sink-source-sidero-taloscontrolplane
+ARG OUT_PKG="/_out/pkg"
+COPY --link --from=kpt-fn-sink ${OUT_PKG}/taloscontrolplane_clustername-cp.yaml ${OUT_PKG}/taloscontrolplane.yaml
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=taloscontrolplane"
+RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.infrastructureTemplate.name" "put-value=metalmachinetemplate"
+
+FROM ${PKG_SINK_SOURCE} as pkg-sink-source
+
 FROM tools as pkg_rename_files
 ARG IN_PKG="/_in/pkg"
 ARG OUT_PKG="/_out/pkg"
-COPY --link --from=kpt-fn-sink ${OUT_PKG} ${IN_PKG}
+COPY --link --from=pkg-sink-source ${OUT_PKG} ${IN_PKG}
 RUN mkdir -p "$(dirname "${OUT_PKG}")"
 RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
 for filepath in $(find "${IN_PKG}" -type f -iname '*.yaml'); do
   kind="$(echo "${filepath}" | sed 's|\(.*/\)\(\w*\)_.*.yaml|\2|')"
-  if [ "${kind}" = "customresourcedefinition" ]; then
+  if [ "${kind}" = "customresourcedefinition" ] || [ -z "${kind}" ]; then
     continue
   fi
   dir="$(dirname "${filepath}")"
@@ -113,14 +182,56 @@ done
 cp -r "${IN_PKG}" "${OUT_PKG}"
 eot
 
-FROM scratch as sidero-serverclass
-ARG OUT_PKG="/_out/pkg"
-COPY --link <<eot ${OUT_PKG}/serverclass.yaml
-apiVersion: metal.sidero.dev/v1alpha1
-kind: ServerClass
-metadata:
-  name: serverclassname
-eot
+# FROM tools as sidero-cluster-modifications
+# ARG OUT_PKG="/_out/pkg"
+# ARG CONTROLPLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
+# ARG SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG="/fn-configs/set-names-from-cluster-name.yaml"
+# COPY --link --from=pkg_rename_files ${OUT_PKG} ${OUT_PKG}
+# COPY --link <<eot ${CONTROLPLANE_ENDPOINT_FN_CONFIG}
+# apiVersion: fn.kpt.dev/v1alpha1
+# kind: ApplyReplacements
+# metadata:
+#   name: set-controlPlaneEndpoint-from-metalcluster
+# replacements:
+#   - source:
+#       kind: MetalCluster
+#       fieldPath: spec.controlPlaneEndpoint
+#     targets:
+#       - select:
+#           kind: Cluster
+#         fieldPaths:
+#           - spec.controlPlaneEndpoint
+#         options:
+#           create: true
+# eot
+# COPY --link <<eot ${SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG}
+# apiVersion: fn.kpt.dev/v1alpha1
+# kind: ApplyReplacements
+# metadata:
+#   name: set-names-from-cluster-name
+# replacements:
+#   - source:
+#       kind: Cluster
+#     targets:
+#       - select:
+#           kind: TalosConfigTemplate
+#         fieldPaths:
+#           - metadata.name
+#       - select:
+#           kind: ServerClass
+#         fieldPaths:
+#           - metadata.name
+#       - select:
+#           kind: MetalMachineTemplate
+#         fieldPaths:
+#           - metadata.name
+# eot
+# RUN <<eot
+# #!/usr/bin/env sh
+# set -euxo pipefail
+# kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROLPLANE_ENDPOINT_FN_CONFIG}"
+# kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG}"
+# eot
 
 FROM ${PKG_SOURCE} as pkg-source
 
@@ -134,7 +245,6 @@ set -euxo pipefail
 for kptfile in $(find "${OUT_PKG}" -type f -name Kptfile); do
   sed -i.bak \
     -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' \
-    -e 's/apply-setters/create-setters/' \
     "${kptfile}"
 done
 eot

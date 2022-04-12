@@ -1,0 +1,14 @@
+apiVersion: fn.kpt.dev/v1alpha1
+kind: ApplyReplacements
+metadata:
+  name: set-talosconfigtemplate-from-name
+  annotations:
+    config.kubernetes.io/local-config: "true"
+replacements:
+  - source:
+      kind: TalosConfigTemplate
+    targets:
+      - select:
+          kind: MachineDeployment
+        fieldPaths:
+          - spec.template.spec.bootstrap.configRef.name

@@ -1,0 +1,9 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: talosconfigtemplate
+pipeline:
+  mutators:
+    - name: set-talosconfigtemplate-from-name
+      image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: ".fn-configs/set-talosconfigtemplate-from-name.yaml"

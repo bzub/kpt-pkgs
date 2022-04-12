@@ -1,0 +1,22 @@
+apiVersion: fn.kpt.dev/v1alpha1
+kind: ApplyReplacements
+metadata:
+  name: set-serverclass-label-from-name
+  annotations:
+    config.kubernetes.io/local-config: "true"
+replacements:
+  - source:
+      kind: ServerClass
+    targets:
+      - select:
+          kind: ServerClass
+        fieldPaths:
+          - spec.selector.matchLabels.serverclass
+        options:
+          create: true
+      - select:
+          kind: Server
+        fieldPaths:
+          - metadata.labels.serverclass
+        options:
+          create: true
