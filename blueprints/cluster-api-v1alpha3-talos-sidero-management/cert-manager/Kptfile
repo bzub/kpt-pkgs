@@ -1,0 +1,40 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: cert-manager
+upstream:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cert-manager
+    ref: test_e2e
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cert-manager
+    ref: test_e2e
+    commit: badd9634e419c454719cd5feb318924579a4fc4d
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/starlark:unstable
+      configMap:
+        source: |
+          def addportprotocol(resources):
+            for resource in resources:
+              spec = resource.get("spec")
+              if not spec:
+                continue
+
+              ports = spec.get("ports")
+              if not ports:
+                continue
+
+              for port in ports:
+                port.setdefault("protocol", "TCP")
+
+          addportprotocol(ctx.resource_list["items"])
+      name: add-port-protocol
+      selectors:
+        - kind: Service
