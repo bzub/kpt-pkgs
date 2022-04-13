@@ -182,57 +182,6 @@ done
 cp -r "${IN_PKG}" "${OUT_PKG}"
 eot
 
-# FROM tools as sidero-cluster-modifications
-# ARG OUT_PKG="/_out/pkg"
-# ARG CONTROLPLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
-# ARG SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG="/fn-configs/set-names-from-cluster-name.yaml"
-# COPY --link --from=pkg_rename_files ${OUT_PKG} ${OUT_PKG}
-# COPY --link <<eot ${CONTROLPLANE_ENDPOINT_FN_CONFIG}
-# apiVersion: fn.kpt.dev/v1alpha1
-# kind: ApplyReplacements
-# metadata:
-#   name: set-controlPlaneEndpoint-from-metalcluster
-# replacements:
-#   - source:
-#       kind: MetalCluster
-#       fieldPath: spec.controlPlaneEndpoint
-#     targets:
-#       - select:
-#           kind: Cluster
-#         fieldPaths:
-#           - spec.controlPlaneEndpoint
-#         options:
-#           create: true
-# eot
-# COPY --link <<eot ${SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG}
-# apiVersion: fn.kpt.dev/v1alpha1
-# kind: ApplyReplacements
-# metadata:
-#   name: set-names-from-cluster-name
-# replacements:
-#   - source:
-#       kind: Cluster
-#     targets:
-#       - select:
-#           kind: TalosConfigTemplate
-#         fieldPaths:
-#           - metadata.name
-#       - select:
-#           kind: ServerClass
-#         fieldPaths:
-#           - metadata.name
-#       - select:
-#           kind: MetalMachineTemplate
-#         fieldPaths:
-#           - metadata.name
-# eot
-# RUN <<eot
-# #!/usr/bin/env sh
-# set -euxo pipefail
-# kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROLPLANE_ENDPOINT_FN_CONFIG}"
-# kpt fn eval "${OUT_PKG}" --exec="kpt-fn-apply-replacements" --fn-config="${SET_NAMES_FROM_CLUSTER_NAME_FN_CONFIG}"
-# eot
-
 FROM tools as kpt-pkg-get
 ARG OUT_PKG="/_out/pkg"
 ARG GIT_REPO_DIR="/_in/repo"
