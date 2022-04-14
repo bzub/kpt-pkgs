@@ -15,17 +15,17 @@ upstreamLock:
     repo: file:///_in/repo
     directory: /cluster-api/clusterctl-crds
     ref: test_e2e
-    commit: badd9634e419c454719cd5feb318924579a4fc4d
+    commit: 1aa7cd71f40ef7e26513869e86733e8129d7e9af
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
         clusterctl.cluster.x-k8s.io: ""
-      name: common-labels
+      name: set-labels-for-clusterctl
     - image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
         clusterctl.cluster.x-k8s.io/core: inventory
-      name: set-labels-clusterctl-core-inventory
+      name: set-labels-for-clusterctl-core-inventory
       selectors:
         - kind: Provider
         - kind: CustomResourceDefinition

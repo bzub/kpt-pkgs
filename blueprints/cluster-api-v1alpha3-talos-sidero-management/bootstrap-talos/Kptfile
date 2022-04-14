@@ -15,42 +15,18 @@ upstreamLock:
     repo: file:///_in/repo
     directory: /cluster-api/v1alpha3/bootstrap/talos
     ref: test_e2e
-    commit: badd9634e419c454719cd5feb318924579a4fc4d
+    commit: 1aa7cd71f40ef7e26513869e86733e8129d7e9af
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
         cluster.x-k8s.io/provider: bootstrap-talos
+        clusterctl.cluster.x-k8s.io: ""
       name: set-provider-labels
-    - image: gcr.io/kpt-fn/starlark:unstable
+    - image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
-        source: |
-          def setcommonlabels(resources):
-            for resource in resources:
-              resource["metadata"].setdefault("labels", {})
-              resource["metadata"]["labels"].update({ "clusterctl.cluster.x-k8s.io": "" })
-
-          setcommonlabels(ctx.resource_list["items"])
-      name: set-clusterctl-labels
-    - image: gcr.io/kpt-fn/ensure-name-substring:unstable
-      configMap:
-        prepend: cabpt-system-
-      name: ensure-cluster-rbac-name-prefixes
-      selectors:
-        - kind: ClusterRole
-        - kind: ClusterRoleBinding
-    - image: gcr.io/kpt-fn/starlark:unstable
-      configMap:
-        source: |
-          def setlabelsclusterctllifecycleshared(resources):
-            for resource in resources:
-              resource["metadata"].setdefault("labels", {})
-              resource["metadata"]["labels"].update({
-                "clusterctl.cluster.x-k8s.io/lifecycle": "shared"
-              })
-
-          setlabelsclusterctllifecycleshared(ctx.resource_list["items"])
-      name: set-labels-clusterctl-lifecycle-shared
+        clusterctl.cluster.x-k8s.io/lifecycle: shared
+      name: set-labels-for-clusterctl-shared-lifecycle
       selectors:
         - namespace: capi-webhook-system
         - kind: CustomResourceDefinition
@@ -59,42 +35,21 @@ pipeline:
     - image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
         clusterctl.cluster.x-k8s.io/core: inventory
-      name: set-labels-clusterctl-core-inventory
+      name: set-labels-for-clusterctl-core-inventory
       selectors:
         - kind: Provider
-    - image: gcr.io/kpt-fn/starlark:unstable
+    - image: gcr.io/kpt-fn/ensure-name-substring:unstable
       configMap:
-        source: |
-          def setcertmanagerdependencies(resources):
-            for resource in resources:
-              resource["metadata"].setdefault("annotations", {})
-              resource["metadata"]["annotations"].update({
-                "config.kubernetes.io/depends-on": "apps/namespaces/cert-manager/Deployment/cert-manager-webhook"
-              })
-
-          setcertmanagerdependencies(ctx.resource_list["items"])
+        prepend: cabpt-system-
+      name: ensure-cluster-rbac-name-prefixes
+      selectors:
+        - kind: ClusterRole
+        - kind: ClusterRoleBinding
+    - image: gcr.io/kpt-fn/set-annotations:unstable
+      configMap:
+        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
       name: set-cert-manager-dependencies
       selectors:
         - kind: Certificate
         - kind: Issuer
         - kind: Deployment
-    - image: gcr.io/kpt-fn/starlark:unstable
-      configMap:
-        source: |
-          def addportprotocol(resources):
-            for resource in resources:
-              spec = resource.get("spec")
-              if not spec:
-                continue
-
-              ports = spec.get("ports")
-              if not ports:
-                continue
-
-              for port in ports:
-                port.setdefault("protocol", "TCP")
-
-          addportprotocol(ctx.resource_list["items"])
-      name: add-port-protocol
-      selectors:
-        - kind: Service
