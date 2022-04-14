@@ -8,16 +8,22 @@ pipeline:
       image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
         cluster.x-k8s.io/provider: bootstrap-talos
-    - name: set-clusterctl-labels
-      image: gcr.io/kpt-fn/starlark:unstable
+        clusterctl.cluster.x-k8s.io: ""
+    - name: set-labels-for-clusterctl-shared-lifecycle
+      image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
-        source: |
-          def setcommonlabels(resources):
-            for resource in resources:
-              resource["metadata"].setdefault("labels", {})
-              resource["metadata"]["labels"].update({ "clusterctl.cluster.x-k8s.io": "" })
-
-          setcommonlabels(ctx.resource_list["items"])
+        clusterctl.cluster.x-k8s.io/lifecycle: shared
+      selectors:
+        - namespace: capi-webhook-system
+        - kind: CustomResourceDefinition
+        - kind: ValidatingWebhookConfiguration
+        - kind: MutatingWebhookConfiguration
+    - name: set-labels-for-clusterctl-core-inventory
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io/core: inventory
+      selectors:
+        - kind: Provider
     - name: ensure-cluster-rbac-name-prefixes
       image: gcr.io/kpt-fn/ensure-name-substring:unstable
       configMap:
@@ -25,62 +31,11 @@ pipeline:
       selectors:
         - kind: ClusterRole
         - kind: ClusterRoleBinding
-    - name: set-labels-clusterctl-lifecycle-shared
-      image: gcr.io/kpt-fn/starlark:unstable
-      configMap:
-        source: |
-          def setlabelsclusterctllifecycleshared(resources):
-            for resource in resources:
-              resource["metadata"].setdefault("labels", {})
-              resource["metadata"]["labels"].update({
-                "clusterctl.cluster.x-k8s.io/lifecycle": "shared"
-              })
-
-          setlabelsclusterctllifecycleshared(ctx.resource_list["items"])
-      selectors:
-        - namespace: capi-webhook-system
-        - kind: CustomResourceDefinition
-        - kind: ValidatingWebhookConfiguration
-        - kind: MutatingWebhookConfiguration
-    - name: set-labels-clusterctl-core-inventory
-      image: gcr.io/kpt-fn/set-labels:unstable
-      configMap:
-        clusterctl.cluster.x-k8s.io/core: inventory
-      selectors:
-        - kind: Provider
     - name: set-cert-manager-dependencies
-      image: gcr.io/kpt-fn/starlark:unstable
+      image: gcr.io/kpt-fn/set-annotations:unstable
       configMap:
-        source: |
-          def setcertmanagerdependencies(resources):
-            for resource in resources:
-              resource["metadata"].setdefault("annotations", {})
-              resource["metadata"]["annotations"].update({
-                "config.kubernetes.io/depends-on": "apps/namespaces/cert-manager/Deployment/cert-manager-webhook"
-              })
-
-          setcertmanagerdependencies(ctx.resource_list["items"])
+        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
       selectors:
         - kind: Certificate
         - kind: Issuer
         - kind: Deployment
-    - name: add-port-protocol
-      image: gcr.io/kpt-fn/starlark:unstable
-      configMap:
-        source: |
-          def addportprotocol(resources):
-            for resource in resources:
-              spec = resource.get("spec")
-              if not spec:
-                continue
-
-              ports = spec.get("ports")
-              if not ports:
-                continue
-
-              for port in ports:
-                port.setdefault("protocol", "TCP")
-
-          addportprotocol(ctx.resource_list["items"])
-      selectors:
-        - kind: Service

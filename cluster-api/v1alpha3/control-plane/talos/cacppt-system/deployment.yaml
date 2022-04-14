@@ -13,13 +13,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      cluster.x-k8s.io/provider: controlplane-talos
+      cluster.x-k8s.io/provider: control-plane-talos
       control-plane: controller-manager
+      clusterctl.cluster.x-k8s.io: ""
   template:
     metadata:
       labels:
-        cluster.x-k8s.io/provider: controlplane-talos
+        cluster.x-k8s.io/provider: control-plane-talos
         control-plane: controller-manager
+        clusterctl.cluster.x-k8s.io: ""
+      annotations:
+        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
     spec:
       containers:
       - args:
