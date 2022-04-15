@@ -291,6 +291,7 @@ group "cluster-api-v1alpha3-cluster-sidero" {
     "cluster-api-v1alpha3-cluster-sidero-serverclass",
     "cluster-api-v1alpha3-cluster-sidero-talosconfigtemplate",
     "cluster-api-v1alpha3-cluster-sidero-taloscontrolplane",
+    "cluster-api-v1alpha3-cluster-sidero-environment",
   ]
 }
 
@@ -384,6 +385,17 @@ target "cluster-api-v1alpha3-cluster-sidero-taloscontrolplane" {
     PKG_SINK_SOURCE = "pkg-sink-source-sidero-taloscontrolplane"
   }
   output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/taloscontrolplane"]
+}
+
+target "cluster-api-v1alpha3-cluster-sidero-environment" {
+  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+  contexts = {
+    pkg-local = "${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/environment"
+  }
+  args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-environment"
+  }
+  output = ["${CLUSTER_API_DIR}/v1alpha3/cluster/sidero/environment"]
 }
 
 target "cluster-api-clusterctl-crds" {

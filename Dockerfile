@@ -172,6 +172,37 @@ COPY --link --from=kpt-fn-sink ${OUT_PKG}/taloscontrolplane_clustername-cp.yaml 
 RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=taloscontrolplane"
 RUN kpt fn eval "${OUT_PKG}" --exec="kpt-fn-search-replace" -- "by-path=spec.infrastructureTemplate.name" "put-value=metalmachinetemplate"
 
+FROM tools as pkg-sink-source-sidero-environment
+ARG OUT_PKG="/_out/pkg"
+COPY --link <<eot ${OUT_PKG}/environment.yaml
+apiVersion: metal.sidero.dev/v1alpha1
+kind: Environment
+metadata:
+  name: environment
+spec:
+  initrd:
+    url: https://github.com/talos-systems/talos/releases/download/v0.10.3/initramfs-amd64.xz
+  kernel:
+    args:
+    - talos.config=https://sidero-endpoint:8081/configdata?uuid=
+    - talos.platform=metal
+    - console=tty0
+    - console=ttyS0
+    - consoleblank=0
+    - earlyprintk=ttyS0
+    - ima_appraise=fix
+    - ima_hash=sha512
+    - ima_template=ima-ng
+    - init_on_alloc=1
+    - initrd=initramfs.xz
+    - nvme_core.io_timeout=4294967295
+    - printk.devkmsg=on
+    - pti=on
+    - random.trust_cpu=on
+    - slab_nomerge=
+    url: https://github.com/talos-systems/talos/releases/download/v0.10.3/vmlinuz-amd64
+eot
+
 FROM ${PKG_SINK_SOURCE} as pkg-sink-source
 
 FROM tools as pkg_rename_files
