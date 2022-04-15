@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata: # kpt-merge: /capi-kubeadm-bootstrap-system
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-kubeadm
+    control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""
+  name: capi-kubeadm-bootstrap-system

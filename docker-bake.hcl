@@ -399,6 +399,7 @@ target "cluster-api-clusterctl-crds" {
 
 group "blueprints" {
   targets = [
+    "blueprints-cluster-api-v1alpha3-management-docker",
     "blueprints-cluster-api-v1alpha3-management-sidero",
     "blueprints-cluster-api-v1alpha3-workload-sidero-control-plane-only",
   ]
@@ -412,6 +413,24 @@ target "_blueprints" {
   args = {
     PKG_SOURCE = "kpt-pkg-get"
   }
+}
+
+target "blueprints-cluster-api-v1alpha3-management-docker" {
+  inherits = ["_blueprints"]
+  contexts = {
+    pkg-local = "blueprints/cluster-api-v1alpha3-management-docker"
+  }
+  args = {
+    PKG_SPECS = jsonencode([
+    {local_dir = "cert-manager", remote_dir = "cert-manager"},
+    {local_dir = "clusterctl-crds", remote_dir = "cluster-api/clusterctl-crds"},
+    {local_dir = "bootstrap-kubeadm", remote_dir = "cluster-api/v1alpha3/bootstrap/kubeadm"},
+    {local_dir = "control-plane-kubeadm", remote_dir = "cluster-api/v1alpha3/control-plane/kubeadm"},
+    {local_dir = "core", remote_dir = "cluster-api/v1alpha3/core/cluster-api"},
+    {local_dir = "infrastructure-docker", remote_dir = "cluster-api/v1alpha3/infrastructure/docker"},
+    ])
+  }
+  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-management-docker"]
 }
 
 target "blueprints-cluster-api-v1alpha3-management-sidero" {

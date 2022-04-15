@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata: # kpt-merge: capi-system/capi-controller-manager-metrics-service
+  labels:
+    cluster.x-k8s.io/provider: cluster-api
+    control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""
+  name: capi-controller-manager-metrics-service
+  namespace: capi-system
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: https
+    protocol: TCP
+  selector:
+    cluster.x-k8s.io/provider: cluster-api
+    control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""

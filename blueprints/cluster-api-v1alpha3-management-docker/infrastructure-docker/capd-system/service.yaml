@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata: # kpt-merge: capd-system/capd-controller-manager-metrics-service
+  annotations:
+    prometheus.io/port: "8443"
+    prometheus.io/scheme: https
+    prometheus.io/scrape: "true"
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-docker
+    control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""
+  name: capd-controller-manager-metrics-service
+  namespace: capd-system
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: https
+    protocol: TCP
+  selector:
+    cluster.x-k8s.io/provider: infrastructure-docker
+    control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""
+---
+apiVersion: v1
+kind: Service
+metadata: # kpt-merge: capd-system/capd-webhook-service
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-docker
+    clusterctl.cluster.x-k8s.io: ""
+  name: capd-webhook-service
+  namespace: capd-system
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+    protocol: TCP
+  selector:
+    cluster.x-k8s.io/provider: infrastructure-docker
+    control-plane: controller-manager
+    clusterctl.cluster.x-k8s.io: ""
