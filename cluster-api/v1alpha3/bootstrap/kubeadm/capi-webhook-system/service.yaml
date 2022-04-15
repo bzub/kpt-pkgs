@@ -11,6 +11,7 @@ spec:
   ports:
   - port: 443
     targetPort: webhook-server
+    protocol: TCP
   selector:
     cluster.x-k8s.io/provider: bootstrap-kubeadm
     clusterctl.cluster.x-k8s.io: ""

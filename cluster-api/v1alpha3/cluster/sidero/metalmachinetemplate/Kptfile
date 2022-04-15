@@ -7,3 +7,5 @@ pipeline:
     - image: gcr.io/kpt-fn/apply-replacements:unstable
       configPath: .fn-configs/set-metalmachinetemplate-from-name.yaml
       name: set-metalmachinetemplate-from-name
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

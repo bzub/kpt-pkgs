@@ -7,3 +7,5 @@ pipeline:
     - name: set-talosconfigtemplate-from-name
       image: gcr.io/kpt-fn/apply-replacements:unstable
       configPath: ".fn-configs/set-talosconfigtemplate-from-name.yaml"
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

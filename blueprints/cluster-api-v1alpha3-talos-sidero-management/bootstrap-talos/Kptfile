@@ -15,7 +15,7 @@ upstreamLock:
     repo: file:///_in/repo
     directory: /cluster-api/v1alpha3/bootstrap/talos
     ref: test_e2e
-    commit: 1aa7cd71f40ef7e26513869e86733e8129d7e9af
+    commit: 56d5b07396183849579ed1e4039392c5afe94f57
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/set-labels:unstable
@@ -53,3 +53,5 @@ pipeline:
         - kind: Certificate
         - kind: Issuer
         - kind: Deployment
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

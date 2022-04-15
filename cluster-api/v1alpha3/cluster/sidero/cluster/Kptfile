@@ -10,3 +10,5 @@ pipeline:
     - name: set-controlPlaneEndpoint-from-cluster
       image: gcr.io/kpt-fn/apply-replacements:unstable
       configPath: ".fn-configs/set-controlPlaneEndpoint-from-cluster.yaml"
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

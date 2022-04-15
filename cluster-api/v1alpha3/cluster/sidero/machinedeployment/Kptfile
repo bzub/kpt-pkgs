@@ -4,3 +4,6 @@ metadata:
   name: machinedeployment
 info:
   description: sample description
+pipeline:
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

@@ -25,6 +25,7 @@ variable "KPT_FN_STARLARK_IMAGE" {default = "docker-image://gcr.io/kpt-fn/starla
 variable "KPT_FN_SET_LABELS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-labels@sha256:d088e20cd2c9067e433398161cd7adda3d23226e1afeda37ea2b8029eaf3852f"}
 variable "KPT_FN_ENSURE_NAME_SUBSTRING_IMAGE" {default = "docker-image://gcr.io/kpt-fn/ensure-name-substring@sha256:027d1fcdfa839d991cb6ddf924d339569d20a7dff70cd821642cb0d053739010"}
 variable "KPT_FN_APPLY_REPLACEMENTS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/apply-replacements@sha256:7c494199513277e95fe28e13a0198ea69d8e6cc4100c4a417d0c93995ce41215"}
+variable "KPT_FN_GATEKEEPER_IMAGE" {default = "docker-image://gcr.io/kpt-fn/gatekeeper@sha256:3427f13a6208bb3dd6913b4d58b34c3f482823c1edd79f3910aca8e5117812f8"}
 
 group "default" {
   targets = [
@@ -48,6 +49,7 @@ target "_common" {
     kpt-fn-set-labels = KPT_FN_SET_LABELS_IMAGE
     kpt-fn-ensure-name-substring = KPT_FN_ENSURE_NAME_SUBSTRING_IMAGE
     kpt-fn-apply-replacements = KPT_FN_APPLY_REPLACEMENTS_IMAGE
+    kpt-fn-gatekeeper = KPT_FN_GATEKEEPER_IMAGE
   }
   args = {
     FETCH_RESOURCES_IMAGE = "fetch-github-release-file"
