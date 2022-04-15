@@ -15,7 +15,7 @@ upstreamLock:
     repo: file:///_in/repo
     directory: /cluster-api/v1alpha3/bootstrap/talos
     ref: test_e2e
-    commit: 722f5317edaa41a83e346204d20e00f6f65c6398
+    commit: c61335e2ee97cc37a99259fb3735b0d36d16f0f0
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/set-labels:unstable

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata: # kpt-merge: capi-webhook-system/capi-selfsigned-issuer
+  labels:
+    cluster.x-k8s.io/provider: cluster-api
+    clusterctl.cluster.x-k8s.io: ""
+    clusterctl.cluster.x-k8s.io/lifecycle: shared
+  name: capi-selfsigned-issuer
+  namespace: capi-webhook-system
+  annotations:
+    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+spec:
+  selfSigned: {}
