@@ -399,18 +399,27 @@ target "cluster-api-clusterctl-crds" {
 
 group "blueprints" {
   targets = [
-    "blueprints-cluster-api-v1alpha3-talos-sidero-management",
+    "blueprints-cluster-api-v1alpha3-management-sidero",
+    "blueprints-cluster-api-v1alpha3-workload-sidero-control-plane-only",
   ]
 }
 
-target "blueprints-cluster-api-v1alpha3-talos-sidero-management" {
+target "_blueprints" {
   inherits = ["_common"]
   contexts = {
-    pkg-local = "blueprints/cluster-api-v1alpha3-talos-sidero-management"
     repo-source = ".git"
   }
   args = {
     PKG_SOURCE = "kpt-pkg-get"
+  }
+}
+
+target "blueprints-cluster-api-v1alpha3-management-sidero" {
+  inherits = ["_blueprints"]
+  contexts = {
+    pkg-local = "blueprints/cluster-api-v1alpha3-management-sidero"
+  }
+  args = {
     PKG_SPECS = jsonencode([
     {local_dir = "cert-manager", remote_dir = "cert-manager"},
     {local_dir = "clusterctl-crds", remote_dir = "cluster-api/clusterctl-crds"},
@@ -420,5 +429,20 @@ target "blueprints-cluster-api-v1alpha3-talos-sidero-management" {
     {local_dir = "infrastructure-sidero", remote_dir = "cluster-api/v1alpha3/infrastructure/sidero"},
     ])
   }
-  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-talos-sidero-management"]
+  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-management-sidero"]
+}
+
+target "blueprints-cluster-api-v1alpha3-workload-sidero-control-plane-only" {
+  inherits = ["_blueprints"]
+  contexts = {
+    pkg-local = "blueprints/cluster-api-v1alpha3-workload-sidero-control-plane-only"
+  }
+  args = {
+    PKG_SPECS = jsonencode([
+    {local_dir = "", remote_dir = "cluster-api/v1alpha3/cluster/sidero/cluster"},
+    {local_dir = "metalmachinetemplate", remote_dir = "cluster-api/v1alpha3/cluster/sidero/metalmachinetemplate"},
+    {local_dir = "metalmachinetemplate/taloscontrolplane", remote_dir = "cluster-api/v1alpha3/cluster/sidero/taloscontrolplane"},
+    ])
+  }
+  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-workload-sidero-control-plane-only"]
 }

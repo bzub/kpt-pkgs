@@ -1,0 +1,15 @@
+apiVersion: fn.kpt.dev/v1alpha1
+kind: ApplyReplacements
+metadata: # kpt-merge: /set-controlPlaneEndpoint-from-cluster
+  name: set-controlPlaneEndpoint-from-cluster
+  annotations:
+    config.kubernetes.io/local-config: "true"
+replacements:
+  - source:
+      kind: Cluster
+      fieldPath: spec.controlPlaneEndpoint
+    targets:
+      - select:
+          kind: MetalCluster
+        fieldPaths:
+          - spec.controlPlaneEndpoint
