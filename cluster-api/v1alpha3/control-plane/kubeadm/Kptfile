@@ -39,3 +39,5 @@ pipeline:
         - kind: Certificate
         - kind: Issuer
         - kind: Deployment
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

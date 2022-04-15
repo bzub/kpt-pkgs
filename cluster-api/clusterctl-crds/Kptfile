@@ -16,3 +16,5 @@ pipeline:
         - kind: Provider
         - kind: CustomResourceDefinition
           name: providers.clusterctl.cluster.x-k8s.io
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

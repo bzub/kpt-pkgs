@@ -12,6 +12,7 @@ spec:
   - name: https
     port: 8443
     targetPort: https
+    protocol: TCP
   selector:
     cluster.x-k8s.io/provider: bootstrap-talos
     control-plane: controller-manager

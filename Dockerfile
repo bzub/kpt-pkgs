@@ -17,6 +17,7 @@ COPY --link --from=kpt-fn-starlark /usr/local/bin/function /usr/local/bin/kpt-fn
 COPY --link --from=kpt-fn-set-labels /usr/local/bin/function /usr/local/bin/kpt-fn-set-labels
 COPY --link --from=kpt-fn-ensure-name-substring /usr/local/bin/function /usr/local/bin/kpt-fn-ensure-name-substring
 COPY --link --from=kpt-fn-apply-replacements /usr/local/bin/function /usr/local/bin/kpt-fn-apply-replacements
+COPY --link --from=kpt-fn-gatekeeper /usr/local/bin/function /usr/local/bin/kpt-fn-gatekeeper
 
 FROM tools as fetch-github-release-file
 ARG GITHUB_ORG
@@ -83,6 +84,18 @@ FROM tools as kpt-fn-sink
 ARG IN_FILE="/_in/file"
 ARG OUT_FILE="/_out/file"
 ARG OUT_PKG="/_out/pkg"
+ARG ENSURE_PORT_PROTOCOL_STARLARK="/fn-configs/ensure-port-protocol.star"
+COPY --link <<eot ${ENSURE_PORT_PROTOCOL_STARLARK}
+def addportprotocol(resources):
+  for resource in resources:
+    spec = resource.get("spec")
+    ports = spec.get("ports")
+    if not ports:
+      continue
+    for port in ports:
+      port.setdefault("protocol", "TCP")
+addportprotocol(ctx.resource_list["items"])
+eot
 COPY --link --from=fetch-resources-image ${OUT_FILE} ${IN_FILE}
 RUN mkdir -p "$(dirname "${OUT_PKG}")"
 RUN <<eot
@@ -90,8 +103,9 @@ RUN <<eot
 set -euxo pipefail
 cat "${IN_FILE}" \
 | sed '/^rules: \[\]$/d' \
-| sed '/^ *caBundle: Cg==$/d'\
-| sed '/^  creationTimestamp: null$/d'\
+| sed '/^ *caBundle: Cg==$/d' \
+| sed '/^  creationTimestamp: null$/d' \
+| kpt fn eval - --exec="kpt-fn-starlark" --match-kind="Service" -- "source=$(cat ${ENSURE_PORT_PROTOCOL_STARLARK})" \
 | kpt fn sink "${OUT_PKG}"
 eot
 

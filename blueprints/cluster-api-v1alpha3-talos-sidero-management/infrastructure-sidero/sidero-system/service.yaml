@@ -58,6 +58,7 @@ spec:
   - name: https
     port: 8443
     targetPort: https
+    protocol: TCP
   selector:
     app: sidero
     cluster.x-k8s.io/provider: infrastructure-sidero
