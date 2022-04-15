@@ -1,0 +1,25 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: metalmachinetemplate
+upstream:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cluster-api/v1alpha3/cluster/sidero/metalmachinetemplate
+    ref: test_e2e
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cluster-api/v1alpha3/cluster/sidero/metalmachinetemplate
+    ref: test_e2e
+    commit: 722f5317edaa41a83e346204d20e00f6f65c6398
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: .fn-configs/set-metalmachinetemplate-from-name.yaml
+      name: set-metalmachinetemplate-from-name
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable

@@ -1,26 +1,26 @@
 apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
-  name: infrastructure-sidero
+  name: core
 upstream:
   type: git
   git:
     repo: file:///_in/repo
-    directory: /cluster-api/v1alpha3/infrastructure/sidero
+    directory: /cluster-api/v1alpha3/core/cluster-api
     ref: test_e2e
   updateStrategy: resource-merge
 upstreamLock:
   type: git
   git:
     repo: file:///_in/repo
-    directory: /cluster-api/v1alpha3/infrastructure/sidero
+    directory: /cluster-api/v1alpha3/core/cluster-api
     ref: test_e2e
-    commit: 56d5b07396183849579ed1e4039392c5afe94f57
+    commit: 722f5317edaa41a83e346204d20e00f6f65c6398
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/set-labels:unstable
       configMap:
-        cluster.x-k8s.io/provider: infrastructure-sidero
+        cluster.x-k8s.io/provider: cluster-api
         clusterctl.cluster.x-k8s.io: ""
       name: set-labels-for-clusterctl
     - image: gcr.io/kpt-fn/set-labels:unstable
@@ -40,7 +40,7 @@ pipeline:
         - kind: Provider
     - image: gcr.io/kpt-fn/ensure-name-substring:unstable
       configMap:
-        prepend: sidero-system-
+        prepend: capi-system-
       name: ensure-cluster-rbac-name-prefixes
       selectors:
         - kind: ClusterRole

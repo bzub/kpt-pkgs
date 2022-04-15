@@ -1,0 +1,8 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: MetalCluster
+metadata: # kpt-merge: /metalcluster
+  name: metalcluster
+spec:
+  controlPlaneEndpoint:
+    host: 127.0.0.1
+    port: 6443

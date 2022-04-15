@@ -1,0 +1,17 @@
+apiVersion: fn.kpt.dev/v1alpha1
+kind: ApplyReplacements
+metadata: # kpt-merge: /set-cluster-from-name
+  name: set-cluster-from-name
+  annotations:
+    config.kubernetes.io/local-config: "true"
+replacements:
+  - source:
+      kind: Cluster
+    targets:
+      - select:
+          kind: MachineDeployment
+        fieldPaths:
+          - spec.clusterName
+          - spec.template.spec.clusterName
+        options:
+          create: true

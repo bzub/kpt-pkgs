@@ -210,8 +210,12 @@ RUN <<eot
 set -euxo pipefail
 for pkg_spec in $(echo "${PKG_SPECS}" | jq -c '.[]'); do
   remote_dir="$(echo "${pkg_spec}" | jq -r '.["remote_dir"]')"
-  local_dir="${OUT_PKG}/$(echo "${pkg_spec}" | jq -r '.["local_dir"]')"
-  kpt pkg get "${GIT_REPO}/${remote_dir}@${GIT_REF}" "${local_dir}" --strategy="${UPDATE_STRATEGY}"
+  local_dir="$(echo "${pkg_spec}" | jq -r '.["local_dir"]')"
+  local_dir_absolute="${OUT_PKG}/${local_dir}"
+  if [ "${local_dir}" = "" ]; then
+    rmdir ${local_dir_absolute}
+  fi
+  kpt pkg get "${GIT_REPO}/${remote_dir}@${GIT_REF}" "${local_dir_absolute}" --strategy="${UPDATE_STRATEGY}"
 done
 eot
 

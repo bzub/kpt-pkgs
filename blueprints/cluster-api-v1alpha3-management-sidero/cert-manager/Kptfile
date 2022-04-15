@@ -1,0 +1,21 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: cert-manager
+upstream:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cert-manager
+    ref: test_e2e
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: file:///_in/repo
+    directory: /cert-manager
+    ref: test_e2e
+    commit: 722f5317edaa41a83e346204d20e00f6f65c6398
+pipeline:
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable
