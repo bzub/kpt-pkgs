@@ -1,4 +1,5 @@
 variable "ROOT_DIR" {default = "."}
+variable "ARTIFACTS_DIR" {default = "_out"}
 variable "CLUSTER_API_DIR" {default = "${ROOT_DIR}/cluster-api"}
 
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
@@ -31,7 +32,7 @@ group "default" {
   targets = [
     "cert-manager",
     "cluster-api",
-    "blueprints",
+    "examples",
   ]
 }
 
@@ -52,8 +53,8 @@ target "_common" {
     kpt-fn-gatekeeper = KPT_FN_GATEKEEPER_IMAGE
   }
   args = {
-    FETCH_RESOURCES_IMAGE = "fetch-github-release-file"
-    PKG_SOURCE = "pkg_rename_files"
+    FETCH_RESOURCES_IMAGE = "github-release-file"
+    PKG_SOURCE = "pkg-rename-files"
     PKG_SINK_SOURCE = "kpt-fn-sink"
   }
 }
@@ -124,7 +125,7 @@ target "_cluster-api" {
 
 target "_cluster-api-provider" {
   args = {
-    FETCH_RESOURCES_IMAGE = "add-clusterctl-provider-resource"
+    FETCH_RESOURCES_IMAGE = "cluster-api-provider-resources"
   }
 }
 
@@ -409,71 +410,41 @@ target "cluster-api-clusterctl-crds" {
   output = ["${CLUSTER_API_DIR}/clusterctl-crds"]
 }
 
-group "blueprints" {
+group "examples" {
   targets = [
-    "blueprints-cluster-api-v1alpha3-management-docker",
-    "blueprints-cluster-api-v1alpha3-management-sidero",
-    "blueprints-cluster-api-v1alpha3-workload-sidero-control-plane-only",
+    "examples-cluster-api-v1alpha3-management-docker",
+    "examples-cluster-api-v1alpha3-management-sidero",
   ]
 }
 
-target "_blueprints" {
+target "_examples" {
   inherits = ["_common"]
   contexts = {
     repo-source = ".git"
   }
   args = {
-    PKG_SOURCE = "kpt-pkg-get"
+    PKG_SOURCE = "example-artifacts"
   }
 }
 
-target "blueprints-cluster-api-v1alpha3-management-docker" {
-  inherits = ["_blueprints"]
+target "examples-cluster-api-v1alpha3-management-docker" {
+  inherits = ["_examples"]
   contexts = {
-    pkg-local = "blueprints/cluster-api-v1alpha3-management-docker"
+    example-source = "./examples/cluster-api-v1alpha3-management-docker"
   }
   args = {
-    PKG_SPECS = jsonencode([
-    {local_dir = "cert-manager", remote_dir = "cert-manager"},
-    {local_dir = "clusterctl-crds", remote_dir = "cluster-api/clusterctl-crds"},
-    {local_dir = "bootstrap-kubeadm", remote_dir = "cluster-api/v1alpha3/bootstrap/kubeadm"},
-    {local_dir = "control-plane-kubeadm", remote_dir = "cluster-api/v1alpha3/control-plane/kubeadm"},
-    {local_dir = "core", remote_dir = "cluster-api/v1alpha3/core/cluster-api"},
-    {local_dir = "infrastructure-docker", remote_dir = "cluster-api/v1alpha3/infrastructure/docker"},
-    ])
+    EXAMPLE_NAME = "cluster-api-v1alpha3-management-docker"
   }
-  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-management-docker"]
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-docker"]
 }
 
-target "blueprints-cluster-api-v1alpha3-management-sidero" {
-  inherits = ["_blueprints"]
+target "examples-cluster-api-v1alpha3-management-sidero" {
+  inherits = ["_examples"]
   contexts = {
-    pkg-local = "blueprints/cluster-api-v1alpha3-management-sidero"
+    example-source = "./examples/cluster-api-v1alpha3-management-sidero"
   }
   args = {
-    PKG_SPECS = jsonencode([
-    {local_dir = "cert-manager", remote_dir = "cert-manager"},
-    {local_dir = "clusterctl-crds", remote_dir = "cluster-api/clusterctl-crds"},
-    {local_dir = "bootstrap-talos", remote_dir = "cluster-api/v1alpha3/bootstrap/talos"},
-    {local_dir = "control-plane-talos", remote_dir = "cluster-api/v1alpha3/control-plane/talos"},
-    {local_dir = "core", remote_dir = "cluster-api/v1alpha3/core/cluster-api"},
-    {local_dir = "infrastructure-sidero", remote_dir = "cluster-api/v1alpha3/infrastructure/sidero"},
-    ])
+    EXAMPLE_NAME = "cluster-api-v1alpha3-management-sidero"
   }
-  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-management-sidero"]
-}
-
-target "blueprints-cluster-api-v1alpha3-workload-sidero-control-plane-only" {
-  inherits = ["_blueprints"]
-  contexts = {
-    pkg-local = "blueprints/cluster-api-v1alpha3-workload-sidero-control-plane-only"
-  }
-  args = {
-    PKG_SPECS = jsonencode([
-    {local_dir = "", remote_dir = "cluster-api/v1alpha3/cluster/sidero/cluster"},
-    {local_dir = "metalmachinetemplate", remote_dir = "cluster-api/v1alpha3/cluster/sidero/metalmachinetemplate"},
-    {local_dir = "metalmachinetemplate/taloscontrolplane", remote_dir = "cluster-api/v1alpha3/cluster/sidero/taloscontrolplane"},
-    ])
-  }
-  output = ["${ROOT_DIR}/blueprints/cluster-api-v1alpha3-workload-sidero-control-plane-only"]
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-sidero"]
 }
