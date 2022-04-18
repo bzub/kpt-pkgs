@@ -432,9 +432,6 @@ target "examples-cluster-api-v1alpha3-management-docker" {
   contexts = {
     example-source = "./examples/cluster-api-v1alpha3-management-docker"
   }
-  args = {
-    EXAMPLE_NAME = "cluster-api-v1alpha3-management-docker"
-  }
   output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-docker"]
 }
 
@@ -442,9 +439,6 @@ target "examples-cluster-api-v1alpha3-management-sidero" {
   inherits = ["_examples"]
   contexts = {
     example-source = "./examples/cluster-api-v1alpha3-management-sidero"
-  }
-  args = {
-    EXAMPLE_NAME = "cluster-api-v1alpha3-management-sidero"
   }
   output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-sidero"]
 }

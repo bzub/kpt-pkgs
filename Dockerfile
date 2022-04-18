@@ -287,8 +287,6 @@ ARG GIT_REPO="file://${GIT_REPO_DIR}/.git"
 ENV GIT_REPO=${GIT_REPO}
 ARG GIT_REF="test_e2e"
 ENV GIT_REF=${GIT_REF}
-ARG EXAMPLE_NAME
-ENV EXAMPLE_NAME="${EXAMPLE_NAME}"
 ENV EXAMPLE_DIR="${OUT_DIR}"
 ARG EXAMPLE_SOURCE_DIR="${IN_DIR}/example"
 COPY --link --from=repo-source / "${GIT_REPO_DIR}/.git"
@@ -297,8 +295,7 @@ RUN mdrip "${EXAMPLE_SOURCE_DIR}" | source /dev/stdin
 
 FROM scratch as example-artifacts
 ARG OUT_DIR
-ARG EXAMPLE_NAME
-COPY --link --from=example-artifacts-build "${OUT_DIR}/${EXAMPLE_NAME}" /
+COPY --link --from=example-artifacts-build ${OUT_DIR} /
 
 FROM ${PKG_SOURCE} as pkg-source
 FROM ${PKG_LOCAL} as pkg-local

@@ -8,8 +8,7 @@ Set default variables and create a workspace for the blueprint packages in this 
 
 <!-- @initializeWorkspace @clusterapi @v1alpha3 @management @docker @test -->
 ```sh
-example_name="${EXAMPLE_NAME:-cluster-api-v1alpha3-management-docker}"
-example_dir="${EXAMPLE_DIR:-$(mktemp -d)}/${example_name}"
+example_dir="${EXAMPLE_DIR:-$(mktemp -d)}"
 git_repo="${GIT_REPO:-https://github.com/bzub/kpt-pkgs/.git}"
 git_ref="${GIT_REF:-main}"
 
