@@ -1,6 +1,0 @@
-apiVersion: kpt.dev/v1
-kind: Kptfile
-metadata:
-  name: cluster-api-v1alpha3-management-docker
-info:
-  description: sample description

@@ -1,6 +1,0 @@
-apiVersion: kpt.dev/v1
-kind: Kptfile
-metadata:
-  name: cluster-api-v1alpha3-talos-sidero-management
-info:
-  description: sample description
