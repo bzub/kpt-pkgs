@@ -6,7 +6,7 @@ How to install cluster-api providers for kubeadm and docker.
 
 Set default variables and create a workspace for the blueprint packages in this example.
 
-<!-- @initializeWorkspace @clusterapi @v1alpha3 @management @docker @test -->
+<!-- @initializeWorkspace @test -->
 ```sh
 example_dir="${EXAMPLE_DIR:-$(mktemp -d)}"
 git_repo="${GIT_REPO:-https://github.com/bzub/kpt-pkgs/.git}"
@@ -16,17 +16,17 @@ mkdir -p "${example_dir}"
 kpt pkg init "${example_dir}"
 ```
 
-## Blueprint [Docker Management Cluster]
+## Blueprint [`docker-infrastructure-with-cert-manager`]
 
 This builds a blueprint package containing all the packages needed for a cluster-api management cluster.
 
-### Getting Packages [Docker Management Cluster]
+### Getting Packages [`docker-infrastructure-with-cert-manager`]
 
 Populate a new blueprint package with the sub-packages needed for a cluster-api management cluster.
 
-<!-- @gettingPackages @clusterapi @v1alpha3 @management @docker @test -->
+<!-- @gettingPackages @test -->
 ```sh
-blueprint_name="blueprint00"
+blueprint_name="docker-infrastructure-with-cert-manager"
 blueprint_dir="${example_dir}/${blueprint_name}"
 mkdir "${blueprint_dir}"
 kpt pkg init "${blueprint_dir}"
@@ -51,7 +51,7 @@ Here we will cover some of those situations.
 Let's enable some experimental features in all providers.
 One way to do this is to use the `search-replace` function imperatively.
 
-<!-- @enableFeatureGates @clusterapi @v1alpha3 @management @docker @test -->
+<!-- @enableFeatureGates @test -->
 ```sh
 kpt fn eval "${example_dir}" \
   --image="gcr.io/kpt-fn/search-replace:unstable" \
@@ -63,7 +63,7 @@ kpt fn eval "${example_dir}" \
 
 Running a package's function pipeline after changes is usually a good idea.
 
-<!-- @enableFeatureGatesRender @clusterapi @v1alpha3 @management @docker @test -->
+<!-- @render @test -->
 ```sh
 kpt fn render "${example_dir}"
 ```
