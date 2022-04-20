@@ -34,15 +34,14 @@ COPY --link <<'eot' /usr/local/bin/kpt
 #!/usr/bin/env bash
 set -euxo pipefail
 run_kpt() {
-  /usr/local/bin/kpt-bin ${@}
-  exit "${?}"
+  /usr/local/bin/kpt-bin "${@}"
 }
 run_kpt_render() {
   pkg="${@: -1}"
   for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
     sed -i.bak -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' "${kptfile}"
   done
-  run_kpt ${@}
+  run_kpt "${@}"
   return_code="${?}"
   for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
     backup_file="${kptfile}.bak"
@@ -52,12 +51,13 @@ run_kpt_render() {
   exit "${return_code}"
 }
 if [ "${#}" -lt "3" ]; then
-  run_kpt ${@}
+  run_kpt "${@}"
+  exit "${?}"
 fi
 if [ "${1}" = "fn" ] && [ "${2}" = "render" ]; then
-  run_kpt_render ${@}
+  run_kpt_render "${@}"
 fi
-run_kpt ${@}
+run_kpt "${@}"
 eot
 RUN chmod +x /usr/local/bin/kpt
 
@@ -322,8 +322,14 @@ ENV EXAMPLE_DIR="${OUT_DIR}"
 ARG EXAMPLE_SOURCE_DIR="${IN_DIR}/example"
 COPY --link --from=repo-source / "${GIT_REPO_DIR}/.git"
 COPY --link --from=example-source / "${EXAMPLE_SOURCE_DIR}"
-RUN sed -i 's/kpt fn render/kpt fn render --allow-exec/g' "${EXAMPLE_SOURCE_DIR}/README.md"
-RUN mdrip "${EXAMPLE_SOURCE_DIR}" | source /dev/stdin
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
+sed -i 's/kpt fn render/kpt fn render --allow-exec/g' "${EXAMPLE_SOURCE_DIR}/README.md"
+mdrip "${EXAMPLE_SOURCE_DIR}" > /example.sh
+chmod +x /example.sh
+bash -c /example.sh
+eot
 
 FROM scratch as example-artifacts
 ARG OUT_DIR
