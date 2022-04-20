@@ -16,7 +16,7 @@ RUN go install "github.com/monopole/mdrip@${MDRIP_GIT_REF}"
 
 FROM alpine as tools
 RUN apk add -U git curl bash jq
-COPY --link --from=kpt /kpt /usr/local/bin/kpt
+COPY --link --from=kpt /kpt /usr/local/bin/kpt-bin
 COPY --link --from=clusterctl /clusterctl /usr/local/bin/clusterctl
 COPY --link --from=kpt-fn-search-replace /usr/local/bin/function /usr/local/bin/kpt-fn-search-replace
 COPY --link --from=kpt-fn-set-annotations /usr/local/bin/function /usr/local/bin/kpt-fn-set-annotations
@@ -29,6 +29,36 @@ COPY --link --from=kpt-fn-ensure-name-substring /usr/local/bin/function /usr/loc
 COPY --link --from=kpt-fn-apply-replacements /usr/local/bin/function /usr/local/bin/kpt-fn-apply-replacements
 COPY --link --from=kpt-fn-gatekeeper /usr/local/bin/function /usr/local/bin/kpt-fn-gatekeeper
 COPY --link --from=mdrip-build /go/bin/mdrip /usr/local/bin/mdrip
+COPY --link <<'eot' /usr/local/bin/kpt
+#!/usr/bin/env bash
+set -euxo pipefail
+run_kpt() {
+  /usr/local/bin/kpt-bin ${@}
+  exit "${?}"
+}
+run_kpt_render() {
+  pkg="${@: -1}"
+  for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
+    sed -i.bak -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' "${kptfile}"
+  done
+  run_kpt ${@}
+  return_code="${?}"
+  for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
+    backup_file="${kptfile}.bak"
+    rm "${kptfile}"
+    mv "${backup_file}" "${kptfile}"
+  done
+  exit "${return_code}"
+}
+if [ "${#}" -lt "3" ]; then
+  run_kpt ${@}
+fi
+if [ "${1}" = "fn" ] && [ "${2}" = "render" ]; then
+  run_kpt_render ${@}
+fi
+run_kpt ${@}
+eot
+RUN chmod +x /usr/local/bin/kpt
 
 FROM tools as fetch-github-release-file
 ARG GITHUB_ORG
@@ -291,6 +321,7 @@ ENV EXAMPLE_DIR="${OUT_DIR}"
 ARG EXAMPLE_SOURCE_DIR="${IN_DIR}/example"
 COPY --link --from=repo-source / "${GIT_REPO_DIR}/.git"
 COPY --link --from=example-source / "${EXAMPLE_SOURCE_DIR}"
+RUN sed -i 's/kpt fn render/kpt fn render --allow-exec/g' "${EXAMPLE_SOURCE_DIR}/README.md"
 RUN mdrip "${EXAMPLE_SOURCE_DIR}" | source /dev/stdin
 
 FROM scratch as example-artifacts
@@ -304,25 +335,7 @@ FROM tools as kpt-fn-render
 ARG OUT_DIR
 COPY --link --from=pkg-local / ${OUT_DIR}
 COPY --link --from=pkg-source / ${OUT_DIR}
-RUN <<eot
-#!/usr/bin/env sh
-set -euxo pipefail
-for kptfile in $(find "${OUT_DIR}" -type f -name Kptfile); do
-  sed -i.bak \
-    -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' \
-    "${kptfile}"
-done
-eot
 RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
-RUN <<eot
-#!/usr/bin/env sh
-set -euxo pipefail
-for kptfile in $(find "${OUT_DIR}" -type f -name Kptfile); do
-  backup_file="${kptfile}.bak"
-  rm "${kptfile}"
-  mv "${backup_file}" "${kptfile}"
-done
-eot
 
 FROM scratch as pkg
 ARG OUT_DIR
