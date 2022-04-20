@@ -414,6 +414,7 @@ group "examples" {
   targets = [
     "examples-cluster-api-v1alpha3-management-docker",
     "examples-cluster-api-v1alpha3-management-sidero",
+    "examples-cluster-api-v1alpha3-workload-sidero",
   ]
 }
 
@@ -441,4 +442,12 @@ target "examples-cluster-api-v1alpha3-management-sidero" {
     example-source = "./examples/cluster-api-v1alpha3-management-sidero"
   }
   output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-sidero"]
+}
+
+target "examples-cluster-api-v1alpha3-workload-sidero" {
+  inherits = ["_examples"]
+  contexts = {
+    example-source = "./examples/cluster-api-v1alpha3-workload-sidero"
+  }
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-workload-sidero"]
 }
