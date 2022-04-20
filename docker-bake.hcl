@@ -5,6 +5,7 @@ variable "CLUSTER_API_DIR" {default = "${ROOT_DIR}/cluster-api"}
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
 variable "CERT_MANAGER_VERSION" {default = "v1.1.1"}
 variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
+variable "KUBECTL_VERSION" {default = "1.23.5"}
 variable "CAPI_V1ALPHA3_CORE_VERSION" {default = "v0.3.25"}
 variable "CAPI_V1ALPHA4_CORE_VERSION" {default = "v0.4.7"}
 variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.1.2"}
@@ -17,6 +18,7 @@ variable "CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.3.3"}
 
 variable "KPT_IMAGE" {default = "docker-image://ghcr.io/bzub/images/kpt:${KPT_VERSION}"}
 variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CLUSTERCTL_VERSION}"}
+variable "KUBECTL_IMAGE" {default = "docker-image://docker.io/bitnami/kubectl:${KUBECTL_VERSION}"}
 variable "KPT_FN_SEARCH_REPLACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/search-replace@sha256:c8da9c025eea6bef4426c1eb1c12158da7bd795f8912fc83a170d490b3240a8b"}
 variable "KPT_FN_SET_ANNOTATIONS_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-annotations@sha256:6285fca0192e26c0ae090f26103a3661282260c69c80a794fbf6481082101ea6"}
 variable "KPT_FN_SET_NAMESPACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/set-namespace:v0.3.3"}
@@ -41,6 +43,7 @@ target "_common" {
   contexts = {
     kpt = KPT_IMAGE
     clusterctl = CLUSTERCTL_IMAGE
+    kubectl = KUBECTL_IMAGE
     kpt-fn-search-replace = KPT_FN_SEARCH_REPLACE_IMAGE
     kpt-fn-set-annotations = KPT_FN_SET_ANNOTATIONS_IMAGE
     kpt-fn-set-namespace = KPT_FN_SET_NAMESPACE_IMAGE
