@@ -3,5 +3,6 @@ kind: Kptfile
 metadata:
   name: cert-manager
 pipeline:
+  mutators: []
   validators:
     - image: gcr.io/kpt-fn/gatekeeper:unstable
