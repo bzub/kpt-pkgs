@@ -52,7 +52,8 @@ This blueprint:
 - Defines separate `Environment`s and `ServerClass`es that are dedicated to the control-plane and worker deployments of this cluster.
 
 Use cases may include:
-- Predictable server allocation -- specific servers dedicated to specific clusters and roles.
+- Predictable server allocation and configuration
+  - Specific configuration/servers dedicated to specific clusters and roles.
 
 ### Getting Packages [`dedicated-environments-and-serverclasses`]
 
@@ -77,4 +78,70 @@ kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/machinedeployment@$
 kpt fn render "${blueprint_dir}"
 ```
 
+### Suffix Control-Plane And Workload Resource Names
+
+We need to give control-plane and worker resources unique names to avoid naming conflicts.
+We can do this with the `ensure-name-substring` config function.
+
+<!-- @addRoleSuffixes @test -->
+```sh
+for deployment in control-plane workers; do
+  patch="$(cat <<EOF
+  - op: add
+    path: /pipeline/mutators/0
+    value:
+      name: ensure-name-prefix
+      image: gcr.io/kpt-fn/ensure-name-substring:v0.2.0
+      configMap:
+        append: "-${deployment}"
+EOF
+  )"
+
+  kptfile="${blueprint_dir}/${deployment}/Kptfile"
+  if ! grep -qE '^  mutators:'; then
+    echo "  mutators: []" >> "${kptfile}"
+  fi
+  new_kptfile_yaml="$(kubectl patch --local --type=json -o yaml --patch="${patch}" -f "${kptfile}")"
+  echo "${new_kptfile_yaml}" > "${kptfile}"
+done
+
+kpt fn render "${blueprint_dir}"
+```
+
 At this point the package is ready to be deployed with default settings via `kpt live` commands.
+
+## Customizations
+
+The blueprint package(s) above may need further customizations to fit your needs.
+Here we will cover some of those situations.
+
+### Prefix Cluster Resource Names [`dedicated-environments-and-serverclasses`]
+
+One way to give a cluster a unique name is to give the resources associated with it a unique name prefix.
+We can do this with the `ensure-name-substring` config function.
+
+<!-- @prefixClusterResourceNames @test -->
+```sh
+for blueprint_dir in $(find "${example_dir}" -type d -maxdepth 1 -mindepth 1); do
+  blueprint_name="$(basename "${blueprint_dir}")"
+  patch="$(cat <<EOF
+  - op: add
+    path: /pipeline/mutators/0
+    value:
+      name: ensure-name-prefix
+      image: gcr.io/kpt-fn/ensure-name-substring:v0.2.0
+      configMap:
+        prepend: "${blueprint_name}-"
+EOF
+  )"
+
+  kptfile="${blueprint_dir}/Kptfile"
+  if ! grep -qE '^  mutators:'; then
+    echo "  mutators: []" >> "${kptfile}"
+  fi
+  new_kptfile_yaml="$(kubectl patch --local --type=json -o yaml --patch="${patch}" -f "${kptfile}")"
+  echo "${new_kptfile_yaml}" > "${kptfile}"
+done
+
+kpt fn render "${blueprint_dir}"
+```
