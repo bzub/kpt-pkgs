@@ -1,12 +1,12 @@
 apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
-  name: talosconfigtemplate
+  name: workers
 upstream:
   type: git
   git:
     repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/v1alpha3/cluster/sidero/talosconfigtemplate
+    directory: /cluster-api/v1alpha3/cluster/sidero/cluster/infrastructure/workers
     ref: main
   updateStrategy: resource-merge
 pipeline:

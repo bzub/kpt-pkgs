@@ -1,7 +1,7 @@
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: MetalCluster
 metadata:
-  name: metalcluster
+  name: cluster-name
 spec:
   controlPlaneEndpoint:
     host: 127.0.0.1

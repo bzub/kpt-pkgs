@@ -171,9 +171,16 @@ COPY --link --from=kpt-fn-sink-build ${OUT_DIR} /
 
 FROM tools as pkg-sink-source-sidero-cluster-build
 ARG OUT_DIR
+ARG INFRASTRUCTURE_DIR="${OUT_DIR}/infrastructure"
+ARG WORKERS_DIR="${INFRASTRUCTURE_DIR}/workers"
+ARG CONTROL_PLANE_DIR="${INFRASTRUCTURE_DIR}/control-plane"
 ARG CONTROLPLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
 COPY --link --from=kpt-fn-sink /cluster_clustername.yaml ${OUT_DIR}/cluster.yaml
 COPY --link --from=kpt-fn-sink /metalcluster_clustername.yaml ${OUT_DIR}/metalcluster.yaml
+COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${INFRASTRUCTURE_DIR}/metalmachinetemplate.yaml
+COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${CONTROL_PLANE_DIR}/taloscontrolplane.yaml
+COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${WORKERS_DIR}/machinedeployment.yaml
+COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${WORKERS_DIR}/talosconfigtemplate.yaml
 COPY --link <<eot ${CONTROLPLANE_ENDPOINT_FN_CONFIG}
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
@@ -192,37 +199,12 @@ replacements:
           create: true
 eot
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROLPLANE_ENDPOINT_FN_CONFIG}"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-file-path=cluster.yaml" "by-path=metadata.name" "put-value=cluster"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-file-path=metalcluster.yaml" "by-path=metadata.name" "put-value=metalcluster"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-file-path=cluster.yaml" "by-path=spec.controlPlaneRef.name" "put-value=taloscontrolplane"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-file-path=cluster.yaml" "by-path=spec.infrastructureRef.name" "put-value=metalcluster"
+RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=cluster-name"
+RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-file-path=infrastructure/metalmachinetemplate.yaml" "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
 
 FROM scratch as pkg-sink-source-sidero-cluster
 ARG OUT_DIR
 COPY --link --from=pkg-sink-source-sidero-cluster-build ${OUT_DIR} /
-
-FROM tools as pkg-sink-source-sidero-machinedeployment-build
-ARG OUT_DIR
-COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${OUT_DIR}/machinedeployment.yaml
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=machinedeployment"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.bootstrap.configRef.name" "put-value=talosconfigtemplate"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.infrastructureRef.name" "put-value=metalmachinetemplate"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=spec.clusterName" "put-value=cluster"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.clusterName" "put-value=cluster"
-
-FROM scratch as pkg-sink-source-sidero-machinedeployment
-ARG OUT_DIR
-COPY --link --from=pkg-sink-source-sidero-machinedeployment-build ${OUT_DIR} /
-
-FROM tools as pkg-sink-source-sidero-metalmachinetemplate-build
-ARG OUT_DIR
-COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${OUT_DIR}/metalmachinetemplate.yaml
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=metalmachinetemplate"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
-
-FROM scratch as pkg-sink-source-sidero-metalmachinetemplate
-ARG OUT_DIR
-COPY --link --from=pkg-sink-source-sidero-metalmachinetemplate-build ${OUT_DIR} /
 
 FROM scratch as pkg-sink-source-sidero-serverclass
 COPY --link <<eot /serverclass.yaml
@@ -231,25 +213,6 @@ kind: ServerClass
 metadata:
   name: serverclass
 eot
-
-FROM tools as pkg-sink-source-sidero-talosconfigtemplate-build
-ARG OUT_DIR
-COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${OUT_DIR}/talosconfigtemplate.yaml
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=talosconfigtemplate"
-
-FROM scratch as pkg-sink-source-sidero-talosconfigtemplate
-ARG OUT_DIR
-COPY --link --from=pkg-sink-source-sidero-talosconfigtemplate-build ${OUT_DIR} /
-
-FROM tools as pkg-sink-source-sidero-taloscontrolplane-build
-ARG OUT_DIR
-COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${OUT_DIR}/taloscontrolplane.yaml
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=taloscontrolplane"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=spec.infrastructureTemplate.name" "put-value=metalmachinetemplate"
-
-FROM scratch as pkg-sink-source-sidero-taloscontrolplane
-ARG OUT_DIR
-COPY --link --from=pkg-sink-source-sidero-taloscontrolplane-build ${OUT_DIR} /
 
 FROM scratch as pkg-sink-source-sidero-environment
 COPY --link <<eot /environment.yaml
@@ -325,7 +288,21 @@ COPY --link --from=example-source / "${EXAMPLE_SOURCE_DIR}"
 RUN <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
+git -C "${GIT_REPO_DIR}" checkout "${GIT_REF}" -- .
+for kptfile in $(/usr/bin/find "${GIT_REPO_DIR}" -type f -name Kptfile); do
+  sed -i "s|repo: https://github.com/bzub/kpt-pkgs|repo: ${GIT_REPO}|" "${kptfile}"
+  sed -i "s|ref: main|ref: ${GIT_REF}|" "${kptfile}"
+done
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+git -C "${GIT_REPO_DIR}" commit -a -m "modified kptfile upstreams"
+git -C "${GIT_REPO_DIR}" tag "${GIT_REF}" -f
+eot
+RUN <<eot
+#!/usr/bin/env sh
+set -euxo pipefail
 sed -i 's/kpt fn render/kpt fn render --allow-exec/g' "${EXAMPLE_SOURCE_DIR}/README.md"
+sed -i 's|--image="gcr.io/kpt-fn/\(.*\):unstable"|--exec=kpt-fn-\1|g' "${EXAMPLE_SOURCE_DIR}/README.md"
 mdrip "${EXAMPLE_SOURCE_DIR}" > /example.sh
 chmod +x /example.sh
 bash -c /example.sh

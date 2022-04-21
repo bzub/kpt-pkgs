@@ -1,14 +1,16 @@
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
 metadata:
-  name: set-talosconfigtemplate-from-name
+  name: set-taloscontrolplane-from-name
   annotations:
     config.kubernetes.io/local-config: "true"
 replacements:
   - source:
-      kind: TalosConfigTemplate
+      kind: TalosControlPlane
     targets:
       - select:
-          kind: MachineDeployment
+          kind: Cluster
         fieldPaths:
-          - spec.template.spec.bootstrap.configRef.name
+          - spec.controlPlaneRef.name
+        options:
+          create: true

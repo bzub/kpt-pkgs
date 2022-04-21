@@ -1,7 +1,7 @@
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: Cluster
 metadata:
-  name: cluster
+  name: cluster-name
 spec:
   clusterNetwork:
     pods:
@@ -13,11 +13,11 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
     kind: TalosControlPlane
-    name: taloscontrolplane
+    name: cluster-name
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
     kind: MetalCluster
-    name: metalcluster
+    name: cluster-name
   controlPlaneEndpoint:
     host: 127.0.0.1
     port: 6443
