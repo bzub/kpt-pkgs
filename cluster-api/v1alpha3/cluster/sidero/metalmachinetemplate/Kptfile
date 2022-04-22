@@ -2,6 +2,15 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: metalmachinetemplate
+  annotations:
+    config.kubernetes.io/local-config: "true"
+upstream:
+  type: git
+  git:
+    repo: https://github.com/bzub/kpt-pkgs
+    directory: /cluster-api/v1alpha3/cluster/sidero/metalmachinetemplate
+    ref: main
+  updateStrategy: resource-merge
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/apply-replacements:unstable

@@ -2,7 +2,21 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: environment
+upstream:
+  type: git
+  git:
+    repo: https://github.com/bzub/kpt-pkgs
+    directory: /cluster-api/v1alpha3/cluster/sidero/environment
+    ref: main
+  updateStrategy: resource-merge
 pipeline:
-  mutators: []
+  mutators:
+    - name: set-environment-from-name
+      image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: ".fn-configs/set-environment-from-name.yaml"
+      selectors:
+        - kind: Environment
+        - kind: Server
+        - kind: ServerClass
   validators:
     - image: gcr.io/kpt-fn/gatekeeper:unstable
