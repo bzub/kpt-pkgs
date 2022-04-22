@@ -2,10 +2,22 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: serverclass
+  annotations:
+    config.kubernetes.io/local-config: "true"
+upstream:
+  type: git
+  git:
+    repo: https://github.com/bzub/kpt-pkgs
+    directory: /cluster-api/v1alpha3/cluster/sidero/serverclass
+    ref: main
+  updateStrategy: resource-merge
 pipeline:
   mutators:
-    - name: set-serverclass-label-from-name
+    - name: set-serverclass-from-name
       image: gcr.io/kpt-fn/apply-replacements:unstable
-      configPath: ".fn-configs/set-serverclass-label-from-name.yaml"
+      configPath: ".fn-configs/set-serverclass-from-name.yaml"
+      selectors:
+        - kind: ServerClass
+        - kind: MetalMachineTemplate
   validators:
     - image: gcr.io/kpt-fn/gatekeeper:unstable

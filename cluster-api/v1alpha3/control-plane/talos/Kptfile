@@ -2,6 +2,13 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: cluster-api-control-plane-talos
+upstream:
+  type: git
+  git:
+    repo: https://github.com/bzub/kpt-pkgs
+    directory: /cluster-api/v1alpha3/control-plane/talos
+    ref: main
+  updateStrategy: resource-merge
 pipeline:
   mutators:
     - name: set-labels-for-clusterctl
