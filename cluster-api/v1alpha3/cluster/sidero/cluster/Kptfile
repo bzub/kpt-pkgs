@@ -14,8 +14,26 @@ pipeline:
     - name: set-cluster-from-name
       image: gcr.io/kpt-fn/apply-replacements:unstable
       configPath: ".fn-configs/set-cluster-from-name.yaml"
+      selectors:
+        - kind: Cluster
+        - kind: MachineDeployment
     - name: set-controlPlaneEndpoint-from-cluster
       image: gcr.io/kpt-fn/apply-replacements:unstable
       configPath: ".fn-configs/set-controlPlaneEndpoint-from-cluster.yaml"
+      selectors:
+        - kind: Cluster
+        - kind: MetalCluster
+    - name: set-metalcluster-from-name
+      image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: ".fn-configs/set-metalcluster-from-name.yaml"
+      selectors:
+        - kind: MetalCluster
+        - kind: Cluster
+    - name: set-taloscontrolplane-from-name
+      image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: ".fn-configs/set-taloscontrolplane-from-name.yaml"
+      selectors:
+        - kind: TalosControlPlane
+        - kind: Cluster
   validators:
     - image: gcr.io/kpt-fn/gatekeeper:unstable

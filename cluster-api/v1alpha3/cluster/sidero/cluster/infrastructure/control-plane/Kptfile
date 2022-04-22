@@ -1,12 +1,12 @@
 apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
-  name: taloscontrolplane
+  name: control-plane
 upstream:
   type: git
   git:
     repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/v1alpha3/cluster/sidero/taloscontrolplane
+    directory: /cluster-api/v1alpha3/cluster/sidero/cluster/infrastructure/control-plane
     ref: main
   updateStrategy: resource-merge
 pipeline:

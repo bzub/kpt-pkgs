@@ -12,7 +12,11 @@ replacements:
           kind: TalosControlPlane
         fieldPaths:
           - spec.infrastructureTemplate.name
+        options:
+          create: true
       - select:
           kind: MachineDeployment
         fieldPaths:
           - spec.template.spec.infrastructureRef.name
+        options:
+          create: true
