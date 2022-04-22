@@ -20,3 +20,6 @@ spec:
         kind: MetalMachineTemplate
         name: cluster-name
       version: v1.20.15
+    metadata:
+      labels:
+        cluster: cluster-name
