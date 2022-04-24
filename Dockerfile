@@ -180,7 +180,7 @@ ARG CONTROL_PLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-
 COPY --link --from=kpt-fn-sink /cluster_clustername.yaml ${OUT_DIR}/cluster.yaml
 COPY --link --from=kpt-fn-sink /metalcluster_clustername.yaml ${OUT_DIR}/metalcluster.yaml
 COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${WORKERS_DIR}/metalmachinetemplate.yaml
-COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-cp.yaml suder{CONTROL_PLANE_DIR}/metalmachinetemplate.yaml
+COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-cp.yaml ${CONTROL_PLANE_DIR}/metalmachinetemplate.yaml
 COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${CONTROL_PLANE_DIR}/taloscontrolplane.yaml
 COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${WORKERS_DIR}/machinedeployment.yaml
 COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${WORKERS_DIR}/talosconfigtemplate.yaml
@@ -322,7 +322,7 @@ FROM tools as kpt-fn-render
 ARG OUT_DIR
 COPY --link --from=pkg-local / ${OUT_DIR}
 COPY --link --from=pkg-source / ${OUT_DIR}
-RUN find "${OUT_DIR}"; kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
+RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 
 FROM scratch as pkg
 ARG OUT_DIR
