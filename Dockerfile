@@ -38,7 +38,7 @@ run_kpt() {
 }
 run_kpt_render() {
   pkg="${@: -1}"
-  if [ "${pkg}" = "render" ]; then
+  if [ "${pkg}" = "render" ] || [ "${pkg}" = "--allow-exec" ]; then
     pkg="${PWD}"
   fi
   for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
