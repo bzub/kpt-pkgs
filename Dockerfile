@@ -322,7 +322,7 @@ FROM tools as kpt-fn-render
 ARG OUT_DIR
 COPY --link --from=pkg-local / ${OUT_DIR}
 COPY --link --from=pkg-source / ${OUT_DIR}
-RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
+RUN find "${OUT_DIR}"; kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 
 FROM scratch as pkg
 ARG OUT_DIR
