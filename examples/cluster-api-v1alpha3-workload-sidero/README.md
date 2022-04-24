@@ -15,7 +15,8 @@ git_ref="${GIT_REF:-main}"
 
 mkdir -p "${example_dir}"
 kpt pkg init "${example_dir}"
-git -C "${example_dir}" init && git -C "${example_dir}" add . && git -C "${example_dir}" commit -m "feat: initial commit"
+cd "${example_dir}"
+git init && git add . && git commit -m "feat: initial commit"
 ```
 
 ## Environment [`lab`]
@@ -25,12 +26,12 @@ Define an `environment` resource that will configure the kernel image/parameters
 <!-- @createEnvironment @test -->
 ```sh
 environment_name="lab"
-environment_dir="${example_dir}/${environment_name}"
+environment_dir="${environment_name}"
 
 kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/environment@${git_ref}" "${environment_dir}"
 
-git -C "${example_dir}" add .
-git -C "${example_dir}" commit -m "feat: add lab environment"
+git add .
+git commit -m "feat: add lab environment"
 ```
 
 ### Cluster [`cluster0-lab`]
@@ -113,9 +114,9 @@ For example, here this will ensure references to the cluster resources we rename
 
 <!-- @renderAndCommit @test -->
 ```sh
-kpt fn render "${example_dir}"
-git -C "${example_dir}" add .
-git -C "${example_dir}" commit -m "feat: add cluster0-lab cluster"
+kpt fn render
+git add .
+git commit -m "feat: add cluster0-lab cluster"
 ```
 
 #### Add `ServerClass` [`cluster0-lab`]
@@ -143,9 +144,9 @@ Finalize and commit the changes.
 
 <!-- @renderAndCommit @test -->
 ```sh
-kpt fn render "${example_dir}"
-git -C "${example_dir}" add .
-git -C "${example_dir}" commit -m "feat: add cluster0-lab serverclass"
+kpt fn render
+git add .
+git commit -m "feat: add cluster0-lab serverclass"
 ```
 
 ## Customizations
