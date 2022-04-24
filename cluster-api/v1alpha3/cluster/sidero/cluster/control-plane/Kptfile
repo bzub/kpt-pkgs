@@ -14,7 +14,7 @@ upstream:
 pipeline:
   mutators:
     - name: ensure-name-suffix
-      image: gcr.io/kpt-fn/ensure-name-substring
+      image: gcr.io/kpt-fn/ensure-name-substring:unstable
       configMap:
         append: -control-plane
     - name: set-metalmachinetemplate-from-name
