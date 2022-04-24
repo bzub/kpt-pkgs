@@ -38,6 +38,9 @@ run_kpt() {
 }
 run_kpt_render() {
   pkg="${@: -1}"
+  if [ "${pkg}" = "render" ]; then
+    pkg="${PWD}"
+  fi
   for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
     sed -i.bak -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' "${kptfile}"
   done
