@@ -6,11 +6,18 @@ upstream:
   type: git
   git:
     repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/v1alpha3/cluster/sidero/cluster/infrastructure/workers
+    directory: /cluster-api/v1alpha3/cluster/sidero/cluster/workers
     ref: main
   updateStrategy: resource-merge
 pipeline:
   mutators:
+    - name: ensure-name-suffix
+      image: gcr.io/kpt-fn/ensure-name-substring
+      configMap:
+        append: -workers
+    - name: set-metalmachinetemplate-from-name
+      image: gcr.io/kpt-fn/apply-replacements:unstable
+      configPath: .fn-configs/set-metalmachinetemplate-from-name.yaml
     - name: set-talosconfigtemplate-from-name
       image: gcr.io/kpt-fn/apply-replacements:unstable
       configPath: ".fn-configs/set-talosconfigtemplate-from-name.yaml"
