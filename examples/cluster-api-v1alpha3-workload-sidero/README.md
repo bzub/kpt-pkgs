@@ -124,12 +124,13 @@ git commit -m "feat: add cluster0-lab cluster"
 Now lets say we have a need for another cluster in our `lab` environment.
 We no longer want to use `serverclass` `any`, and we instead want to dedicate specific servers to specific clusters.
 To do this we create a `serverclass` which will select servers by label.
-Then we will place the cluster's infrastructure under the new `serverclass` package directory.
+Then we will place the cluster's `control-plane` and `workers` packages under the new `serverclass` package directory.
 
 <!-- @addServerClass @test -->
 ```sh
 kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/serverclass@${git_ref}" "${cluster_dir}"
-git mv "${cluster_dir}/infrastructure" "${cluster_dir}/serverclass"
+git mv "${cluster_dir}/control-plane" "${cluster_dir}/serverclass"
+git mv "${cluster_dir}/workers" "${cluster_dir}/serverclass"
 ```
 
 Let's give our new `serverclass` a unique name.
