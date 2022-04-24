@@ -38,6 +38,9 @@ run_kpt() {
 }
 run_kpt_render() {
   pkg="${@: -1}"
+  if [ "${pkg}" = "render" ] || [ "${pkg}" = "--allow-exec" ]; then
+    pkg="${PWD}"
+  fi
   for kptfile in $(/usr/bin/find "${pkg}" -type f -name Kptfile); do
     sed -i.bak -e 's|image: gcr.io/kpt-fn/\(.*\):.*|exec: /usr/local/bin/kpt-fn-\1|' "${kptfile}"
   done
@@ -171,17 +174,17 @@ COPY --link --from=kpt-fn-sink-build ${OUT_DIR} /
 
 FROM tools as pkg-sink-source-sidero-cluster-build
 ARG OUT_DIR
-ARG INFRASTRUCTURE_DIR="${OUT_DIR}/infrastructure"
-ARG WORKERS_DIR="${INFRASTRUCTURE_DIR}/workers"
-ARG CONTROL_PLANE_DIR="${INFRASTRUCTURE_DIR}/control-plane"
-ARG CONTROLPLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
+ARG WORKERS_DIR="${OUT_DIR}/workers"
+ARG CONTROL_PLANE_DIR="${OUT_DIR}/control-plane"
+ARG CONTROL_PLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
 COPY --link --from=kpt-fn-sink /cluster_clustername.yaml ${OUT_DIR}/cluster.yaml
 COPY --link --from=kpt-fn-sink /metalcluster_clustername.yaml ${OUT_DIR}/metalcluster.yaml
-COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${INFRASTRUCTURE_DIR}/metalmachinetemplate.yaml
+COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${WORKERS_DIR}/metalmachinetemplate.yaml
+COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-cp.yaml ${CONTROL_PLANE_DIR}/metalmachinetemplate.yaml
 COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${CONTROL_PLANE_DIR}/taloscontrolplane.yaml
 COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${WORKERS_DIR}/machinedeployment.yaml
 COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${WORKERS_DIR}/talosconfigtemplate.yaml
-COPY --link <<eot ${CONTROLPLANE_ENDPOINT_FN_CONFIG}
+COPY --link <<eot ${CONTROL_PLANE_ENDPOINT_FN_CONFIG}
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
 metadata:
@@ -198,9 +201,9 @@ replacements:
         options:
           create: true
 eot
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROLPLANE_ENDPOINT_FN_CONFIG}"
+RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROL_PLANE_ENDPOINT_FN_CONFIG}"
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=cluster-name"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-file-path=infrastructure/metalmachinetemplate.yaml" "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
+RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" --match-kind="MetalMachineTemplate" -- "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
 
 FROM scratch as pkg-sink-source-sidero-cluster
 ARG OUT_DIR
