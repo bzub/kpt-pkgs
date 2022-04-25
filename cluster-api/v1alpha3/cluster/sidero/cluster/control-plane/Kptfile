@@ -4,13 +4,6 @@ metadata:
   name: control-plane
   annotations:
     config.kubernetes.io/local-config: "true"
-upstream:
-  type: git
-  git:
-    repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/v1alpha3/cluster/sidero/cluster/control-plane
-    ref: main
-  updateStrategy: resource-merge
 pipeline:
   mutators:
     - name: ensure-name-suffix

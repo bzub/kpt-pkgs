@@ -2,13 +2,6 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: cluster-api-core
-upstream:
-  type: git
-  git:
-    repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/v1alpha3/core/cluster-api
-    ref: main
-  updateStrategy: resource-merge
 pipeline:
   mutators:
     - name: set-labels-for-clusterctl

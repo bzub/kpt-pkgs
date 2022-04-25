@@ -291,13 +291,8 @@ RUN <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
 git -C "${GIT_REPO_DIR}" checkout "${GIT_REF}" -- .
-for kptfile in $(/usr/bin/find "${GIT_REPO_DIR}" -type f -name Kptfile); do
-  sed -i "s|repo: https://github.com/bzub/kpt-pkgs|repo: ${GIT_REPO}|" "${kptfile}"
-  sed -i "s|ref: main|ref: ${GIT_REF}|" "${kptfile}"
-done
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
-git -C "${GIT_REPO_DIR}" commit -a -m "modified kptfile upstreams"
 git -C "${GIT_REPO_DIR}" tag "${GIT_REF}" -f
 eot
 RUN <<eot
