@@ -2,6 +2,8 @@ apiVersion: metal.sidero.dev/v1alpha1
 kind: Environment
 metadata:
   name: environment
+  labels:
+    environment: environment
 spec:
   initrd:
     url: https://github.com/talos-systems/talos/releases/download/v0.10.3/initramfs-amd64.xz

@@ -9,14 +9,62 @@ replacements:
       kind: Environment
     targets:
       - select:
+          kind: ServerClass
+        fieldPaths:
+          - spec.environmentRef.name
+        options:
+          create: true
+
+      - select:
           kind: Server
         fieldPaths:
           - spec.environmentRef.name
         options:
           create: true
+
       - select:
           kind: ServerClass
         fieldPaths:
-          - spec.environmentRef.name
+          - spec.selector.matchLabels.environment
+        options:
+          create: true
+
+      - select:
+          group: bootstrap.cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.labels.environment
+        options:
+          create: true
+
+      - select:
+          group: cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.labels.environment
+        options:
+          create: true
+
+      - select:
+          group: controlplane.cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.labels.environment
+        options:
+          create: true
+
+      - select:
+          group: infrastructure.cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.labels.environment
+        options:
+          create: true
+
+      - select:
+          group: metal.sidero.dev
+          version: v1alpha1
+        fieldPaths:
+          - metadata.labels.environment
         options:
           create: true

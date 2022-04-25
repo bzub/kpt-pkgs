@@ -29,9 +29,40 @@ environment_name="lab"
 environment_dir="${environment_name}"
 
 kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/environment@${git_ref}" "${environment_dir}"
+```
+
+Let's give our new environment a unique name and commit the changes.
+
+<!-- @renameEnvironment @test -->
+```sh
+kpt fn eval "${environment_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" -- "by-path=metadata.name" "put-value=${environment_name}"
 
 git add .
 git commit -m "feat: add lab environment"
+```
+
+### Add Servers [`cluster0-lab`]
+
+Let's add some `Server` resources.
+
+<!-- @addServers @test -->
+```sh
+mkdir "${environment_dir}/servers"
+
+for server_idx in $(seq 0 3); do
+  server_name="server${server_idx}"
+  cat <<EOF > "${environment_dir}/servers/server_${server_name}.yaml"
+apiVersion: metal.sidero.dev/v1alpha1
+kind: Server
+metadata:
+  name: ${server_name}
+spec:
+  accepted: true
+EOF
+done
+
+git add "${environment_dir}/servers"
+git commit -m "feat: add servers to lab environment"
 ```
 
 ### Cluster [`cluster0-lab`]
@@ -141,6 +172,17 @@ Since this `serverclass` represents all servers in the cluster, we will give it 
 kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" -- "by-path=metadata.name" "put-value=${cluster_name}"
 ```
 
+#### Move Servers Into The New `ServerClass`
+
+By adding a `ServerClass`, the deployments in our cluster will no longer use the default `any` `ServerClass`.
+This means the `Server` resources we created earlier will no longer be selected for use by the cluster.
+We can alleviate this by moving `Server` resources under the new `ServerClass` package directory.
+
+<!-- @moveServersIntoServerClass @test -->
+```sh
+git mv "${environment_dir}/servers" "${cluster_dir}/serverclass"
+```
+
 Finalize and commit the changes.
 
 <!-- @renderAndCommit @test -->
@@ -149,10 +191,3 @@ kpt fn render
 git add .
 git commit -m "feat: add cluster0-lab serverclass"
 ```
-
-## Customizations
-
-The blueprint package(s) above may need further customizations to fit your needs.
-Here we will cover some of those situations.
-
-***TODO***
