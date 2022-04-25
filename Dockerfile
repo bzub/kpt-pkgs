@@ -1,8 +1,6 @@
 # syntax = docker.io/docker/dockerfile-upstream:1.4.0
 
-ARG FETCH_RESOURCES_IMAGE
-ARG PKG_SOURCE
-ARG PKG_LOCAL=scratch
+ARG FETCH_RESOURCES_IMAGE=scratch
 ARG PKG_SINK_SOURCE
 ARG OUT_DIR=/_out
 ARG IN_DIR=/_in
@@ -315,13 +313,10 @@ FROM scratch as example-artifacts
 ARG OUT_DIR
 COPY --link --from=example-artifacts-build ${OUT_DIR} /
 
-FROM ${PKG_SOURCE} as pkg-source
-FROM ${PKG_LOCAL} as pkg-local
-
 FROM tools as kpt-fn-render
 ARG OUT_DIR
 COPY --link --from=pkg-local / ${OUT_DIR}
-COPY --link --from=pkg-source / ${OUT_DIR}
+COPY --link --from=pkg-rename-files / ${OUT_DIR}
 RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 
 FROM scratch as pkg
