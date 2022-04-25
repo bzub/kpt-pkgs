@@ -202,6 +202,7 @@ eot
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROL_PLANE_ENDPOINT_FN_CONFIG}"
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=cluster-name"
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" --match-kind="MetalMachineTemplate" -- "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
+RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" --match-kind="Cluster" -- "by-path=metadata.namespace" "put-value=default"
 
 FROM scratch as pkg-sink-source-sidero-cluster
 ARG OUT_DIR

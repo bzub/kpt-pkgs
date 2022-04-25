@@ -6,6 +6,7 @@ metadata:
     role: control-plane
     metalmachinetemplate: cluster-name-control-plane
     cluster: cluster-name
+  namespace: default
 spec:
   controlPlaneConfig:
     controlplane:

@@ -7,6 +7,44 @@ metadata:
 replacements:
   - source:
       kind: Cluster
+      fieldPath: metadata.namespace
+    targets:
+      - select:
+          group: bootstrap.cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.namespace
+        options:
+          create: true
+
+      - select:
+          group: cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.namespace
+        options:
+          create: true
+
+      - select:
+          group: controlplane.cluster.x-k8s.io
+          version: v1alpha3
+        fieldPaths:
+          - metadata.namespace
+        options:
+          create: true
+
+      - select:
+          group: infrastructure.cluster.x-k8s.io
+          version: v1alpha3
+        reject:
+          - kind: ServerBinding
+        fieldPaths:
+          - metadata.namespace
+        options:
+          create: true
+
+  - source:
+      kind: Cluster
     targets:
       - select:
           kind: MachineDeployment
