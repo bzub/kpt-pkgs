@@ -63,7 +63,6 @@ target "_common" {
   }
   args = {
     FETCH_RESOURCES_IMAGE = "github-release-file"
-    PKG_SOURCE = "pkg-rename-files"
     PKG_SINK_SOURCE = "kpt-fn-sink"
   }
 }
@@ -381,11 +380,9 @@ group "examples" {
 
 target "_examples" {
   inherits = ["_common"]
+  target = "example-artifacts"
   contexts = {
     repo-source = ".git"
-  }
-  args = {
-    PKG_SOURCE = "example-artifacts"
   }
 }
 
