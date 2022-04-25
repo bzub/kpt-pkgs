@@ -4,13 +4,6 @@ metadata:
   name: environment
   annotations:
     config.kubernetes.io/local-config: "true"
-upstream:
-  type: git
-  git:
-    repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/v1alpha3/cluster/sidero/environment
-    ref: main
-  updateStrategy: resource-merge
 pipeline:
   mutators:
     - name: set-environment-from-name

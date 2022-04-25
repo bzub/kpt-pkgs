@@ -2,13 +2,6 @@ apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
   name: clusterctl-crds
-upstream:
-  type: git
-  git:
-    repo: https://github.com/bzub/kpt-pkgs
-    directory: /cluster-api/clusterctl-crds
-    ref: main
-  updateStrategy: resource-merge
 pipeline:
   mutators:
     - name: set-labels-for-clusterctl
