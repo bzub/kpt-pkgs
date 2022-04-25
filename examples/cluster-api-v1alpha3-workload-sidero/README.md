@@ -93,6 +93,22 @@ Let's make the cluster name unique.
 kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" -- "by-path=metadata.name" "put-value=${cluster_name}"
 ```
 
+#### Change The Namespace [`cluster0-lab`]
+
+Let's create a namespace for the cluster resources.
+
+<!-- @changeNamespace @test -->
+```sh
+cat <<EOF > "${cluster_dir}/namespace_${cluster_name}.yaml"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${cluster_name}
+EOF
+
+kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" --match-kind="Cluster" -- "by-path=metadata.namespace" "put-value=${cluster_name}"
+```
+
 #### Scale The Cluster [`cluster0-lab`]
 
 Our lab cluster will have three control-plane nodes and one worker node.

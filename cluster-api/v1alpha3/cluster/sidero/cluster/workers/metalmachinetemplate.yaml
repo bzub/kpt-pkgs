@@ -6,6 +6,7 @@ metadata:
     role: workers
     metalmachinetemplate: cluster-name-workers
     cluster: cluster-name
+  namespace: default
 spec:
   template:
     spec:
