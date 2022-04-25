@@ -2,3 +2,9 @@ apiVersion: metal.sidero.dev/v1alpha1
 kind: ServerClass
 metadata:
   name: serverclass
+  labels:
+    serverclass: serverclass
+spec:
+  selector:
+    matchLabels:
+      serverclass: serverclass
