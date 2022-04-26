@@ -10,8 +10,6 @@ metadata:
 spec:
   clusterName: cluster-name
   replicas: 0
-  selector:
-    matchLabels: null
   template:
     spec:
       bootstrap:
@@ -25,6 +23,3 @@ spec:
         kind: MetalMachineTemplate
         name: cluster-name-workers
       version: v1.20.15
-    metadata:
-      labels:
-        cluster: cluster-name

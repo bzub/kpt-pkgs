@@ -178,7 +178,8 @@ COPY --link --from=kpt-fn-sink /metalcluster_clustername.yaml ${OUT_DIR}/metalcl
 COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-cp.yaml ${OUT_DIR}/control-plane/metalmachinetemplate.yaml
 COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${OUT_DIR}/control-plane/taloscontrolplane.yaml
 COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${OUT_DIR}/workers/metalmachinetemplate.yaml
-COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${OUT_DIR}/workers/machinedeployment.yaml
+COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml /tmp/machinedeployment.yaml
+RUN kubectl patch -f /tmp/machinedeployment.yaml --local -o yaml --type=json -p '[{"op":"remove","path":"/spec/selector"}]' > "${OUT_DIR}/workers/machinedeployment.yaml"
 COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${OUT_DIR}/workers/talosconfigtemplate.yaml
 COPY --link <<eot ${CONTROL_PLANE_ENDPOINT_FN_CONFIG}
 apiVersion: fn.kpt.dev/v1alpha1

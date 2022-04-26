@@ -51,8 +51,6 @@ replacements:
         fieldPaths:
           - spec.clusterName
           - spec.template.spec.clusterName
-          - spec.selector.matchLabels.cluster
-          - spec.template.metadata.labels.cluster
         options:
           create: true
 
