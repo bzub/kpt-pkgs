@@ -172,16 +172,14 @@ COPY --link --from=kpt-fn-sink-build ${OUT_DIR} /
 
 FROM tools as pkg-sink-source-sidero-cluster-build
 ARG OUT_DIR
-ARG WORKERS_DIR="${OUT_DIR}/workers"
-ARG CONTROL_PLANE_DIR="${OUT_DIR}/control-plane"
 ARG CONTROL_PLANE_ENDPOINT_FN_CONFIG="/fn-configs/set-controlPlaneEndpoint-from-metalcluster.yaml"
 COPY --link --from=kpt-fn-sink /cluster_clustername.yaml ${OUT_DIR}/cluster.yaml
 COPY --link --from=kpt-fn-sink /metalcluster_clustername.yaml ${OUT_DIR}/metalcluster.yaml
-COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${WORKERS_DIR}/metalmachinetemplate.yaml
-COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-cp.yaml ${CONTROL_PLANE_DIR}/metalmachinetemplate.yaml
-COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${CONTROL_PLANE_DIR}/taloscontrolplane.yaml
-COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${WORKERS_DIR}/machinedeployment.yaml
-COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${WORKERS_DIR}/talosconfigtemplate.yaml
+COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-cp.yaml ${OUT_DIR}/control-plane/metalmachinetemplate.yaml
+COPY --link --from=kpt-fn-sink /taloscontrolplane_clustername-cp.yaml ${OUT_DIR}/control-plane/taloscontrolplane.yaml
+COPY --link --from=kpt-fn-sink /metalmachinetemplate_clustername-workers.yaml ${OUT_DIR}/workers/metalmachinetemplate.yaml
+COPY --link --from=kpt-fn-sink /machinedeployment_clustername-workers.yaml ${OUT_DIR}/workers/machinedeployment.yaml
+COPY --link --from=kpt-fn-sink /talosconfigtemplate_clustername-workers.yaml ${OUT_DIR}/workers/talosconfigtemplate.yaml
 COPY --link <<eot ${CONTROL_PLANE_ENDPOINT_FN_CONFIG}
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
@@ -201,8 +199,8 @@ replacements:
 eot
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-apply-replacements" --fn-config="${CONTROL_PLANE_ENDPOINT_FN_CONFIG}"
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" -- "by-path=metadata.name" "put-value=cluster-name"
-RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" --match-kind="MetalMachineTemplate" -- "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
 RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" --match-kind="Cluster" -- "by-path=metadata.namespace" "put-value=default"
+RUN kpt fn eval "${OUT_DIR}" --exec="kpt-fn-search-replace" --match-kind="MetalMachineTemplate" -- "by-path=spec.template.spec.serverClassRef.name" "put-value=any"
 
 FROM scratch as pkg-sink-source-sidero-cluster
 ARG OUT_DIR
@@ -318,6 +316,32 @@ RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 FROM scratch as pkg
 ARG OUT_DIR
 COPY --link --from=kpt-fn-render "${OUT_DIR}" /
+
+FROM tools as cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render
+ARG OUT_DIR
+COPY --link --from=pkg-local / ${OUT_DIR}
+COPY --link --from=control-plane-pkg-local / ${OUT_DIR}/control-plane
+COPY --link --from=workers-pkg-local / ${OUT_DIR}/workers
+COPY --link --from=pkg-rename-files / ${OUT_DIR}
+RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
+
+FROM tools as cluster-api-v1alpha3-workload-sidero-cluster-pkg-build
+ARG OUT_DIR
+COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}" "${OUT_DIR}"
+RUN find "${OUT_DIR}" -delete -mindepth 2 -not -path "${OUT_DIR}/.fn-configs*"
+RUN find "${OUT_DIR}" -delete -mindepth 1 -type d -not -path "${OUT_DIR}/.fn-configs"
+
+FROM scratch as cluster-api-v1alpha3-workload-sidero-cluster-pkg
+ARG OUT_DIR
+COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-pkg-build "${OUT_DIR}" /
+
+FROM scratch as cluster-api-v1alpha3-workload-sidero-control-plane-pkg
+ARG OUT_DIR
+COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/control-plane" /
+
+FROM scratch as cluster-api-v1alpha3-workload-sidero-workers-pkg
+ARG OUT_DIR
+COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/workers" /
 
 FROM tools as git-tag-packages-build
 ARG GIT_TAGS

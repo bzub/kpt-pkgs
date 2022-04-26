@@ -2,11 +2,8 @@ variable "OUTPUT_DIR" {default = "."}
 variable "ARTIFACTS_DIR" {default = "${OUTPUT_DIR}/_out"}
 variable "CAPI_DIR" {default = "cluster-api"}
 variable "CAPI_V1ALPHA3_DIR" {default = "${CAPI_DIR}/v1alpha3"}
-variable "CAPI_V1ALPHA3_WORKLOAD_DIR" {default = "${CAPI_V1ALPHA3_DIR}/cluster"}
+variable "CAPI_V1ALPHA3_WORKLOAD_DIR" {default = "${CAPI_V1ALPHA3_DIR}/workload"}
 variable "CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR" {default = "${CAPI_V1ALPHA3_WORKLOAD_DIR}/sidero"}
-variable "CAPI_V1ALPHA3_WORKLOAD_SIDERO_CLUSTER_DIR" {default = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/cluster"}
-variable "CAPI_V1ALPHA3_WORKLOAD_SIDERO_SERVERCLASS_DIR" {default = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/serverclass"}
-variable "CAPI_V1ALPHA3_WORKLOAD_SIDERO_ENVIRONMENT_DIR" {default = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/environment"}
 
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
 variable "CERT_MANAGER_VERSION" {default = "v1.1.1"}
@@ -80,7 +77,7 @@ target "git-tag-packages" {
       "cluster-api/v1alpha3/control-plane/kubeadm/${CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION}",
       "cluster-api/v1alpha3/infrastructure/docker/${CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION}",
       "cluster-api/v1alpha3/infrastructure/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/cluster/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/v1alpha3/workload/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
     ])
   }
   output = ["${OUTPUT_DIR}/.git"]
@@ -104,7 +101,7 @@ target "cert-manager" {
 group "cluster-api" {
   targets = [
     "cluster-api-providers",
-    "cluster-api-clusters",
+    "cluster-api-workloads",
   ]
 }
 
@@ -117,13 +114,12 @@ group "cluster-api-providers" {
     "cluster-api-v1alpha3-control-plane-talos",
     "cluster-api-v1alpha3-infrastructure-docker",
     "cluster-api-v1alpha3-infrastructure-sidero",
-    "cluster-api-v1alpha3-cluster-sidero",
   ]
 }
 
-group "cluster-api-clusters" {
+group "cluster-api-workloads" {
   targets = [
-    "cluster-api-v1alpha3-cluster-sidero",
+    "cluster-api-v1alpha3-workload-sidero",
   ]
 }
 
@@ -137,7 +133,7 @@ target "_cluster-api-provider" {
   }
 }
 
-target "_cluster-api-cluster" {
+target "_cluster-api-workload" {
   args = {
     FETCH_RESOURCES_IMAGE = "clusterctl-generate-yaml"
   }
@@ -192,8 +188,8 @@ target "_cluster-api-v1alpha3-infrastructure" {
   }
 }
 
-target "_cluster-api-v1alpha3-cluster" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-cluster"]
+target "_cluster-api-v1alpha3-workload" {
+  inherits = ["_cluster-api-v1alpha3", "_cluster-api-workload"]
 }
 
 target "cluster-api-v1alpha3-bootstrap-kubeadm" {
@@ -292,20 +288,20 @@ target "cluster-api-v1alpha3-infrastructure-sidero" {
   output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/infrastructure/sidero"]
 }
 
-group "cluster-api-v1alpha3-cluster-sidero" {
+group "cluster-api-v1alpha3-workload-sidero" {
   targets = [
-    "cluster-api-v1alpha3-cluster-sidero-cluster",
-    "cluster-api-v1alpha3-cluster-sidero-serverclass",
-    "cluster-api-v1alpha3-cluster-sidero-environment",
+    "cluster-api-v1alpha3-workload-sidero-cluster",
+    "cluster-api-v1alpha3-workload-sidero-control-plane",
+    "cluster-api-v1alpha3-workload-sidero-workers",
+    "cluster-api-v1alpha3-workload-sidero-serverclass",
+    "cluster-api-v1alpha3-workload-sidero-environment",
   ]
 }
 
-target "_cluster-api-v1alpha3-cluster-sidero" {
-  inherits = ["_cluster-api-v1alpha3-cluster"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/cluster/sidero"
-  }
+target "_cluster-api-v1alpha3-workload-sidero" {
+  inherits = ["_cluster-api-v1alpha3-workload"]
   args = {
+    PKG_SINK_SOURCE = "pkg-sink-source-sidero-cluster"
     PROVIDER_NAME = "sidero"
     NAMESPACE = "sidero-system"
     VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
@@ -326,37 +322,53 @@ target "_cluster-api-v1alpha3-cluster-sidero" {
   }
 }
 
-target "cluster-api-v1alpha3-cluster-sidero-cluster" {
-  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+target "_cluster-api-v1alpha3-workload-sidero-cluster" {
+  inherits = ["_cluster-api-v1alpha3-workload-sidero"]
   contexts = {
-    pkg-local = CAPI_V1ALPHA3_WORKLOAD_SIDERO_CLUSTER_DIR
+    pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/cluster"
+    control-plane-pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/control-plane"
+    workers-pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/workers"
   }
-  args = {
-    PKG_SINK_SOURCE = "pkg-sink-source-sidero-cluster"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_CLUSTER_DIR}"]
 }
 
-target "cluster-api-v1alpha3-cluster-sidero-serverclass" {
-  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+target "cluster-api-v1alpha3-workload-sidero-cluster" {
+  inherits = ["_cluster-api-v1alpha3-workload-sidero-cluster"]
+  target = "cluster-api-v1alpha3-workload-sidero-cluster-pkg"
+  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/cluster"]
+}
+
+target "cluster-api-v1alpha3-workload-sidero-control-plane" {
+  inherits = ["_cluster-api-v1alpha3-workload-sidero-cluster"]
+  target = "cluster-api-v1alpha3-workload-sidero-control-plane-pkg"
+  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/control-plane"]
+}
+
+target "cluster-api-v1alpha3-workload-sidero-workers" {
+  inherits = ["_cluster-api-v1alpha3-workload-sidero-cluster"]
+  target = "cluster-api-v1alpha3-workload-sidero-workers-pkg"
+  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/workers"]
+}
+
+target "cluster-api-v1alpha3-workload-sidero-serverclass" {
+  inherits = ["_cluster-api-v1alpha3-workload-sidero"]
   contexts = {
-    pkg-local = CAPI_V1ALPHA3_WORKLOAD_SIDERO_SERVERCLASS_DIR
+    pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/serverclass"
   }
   args = {
     PKG_SINK_SOURCE = "pkg-sink-source-sidero-serverclass"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_SERVERCLASS_DIR}"]
+  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/serverclass"]
 }
 
-target "cluster-api-v1alpha3-cluster-sidero-environment" {
-  inherits = ["_cluster-api-v1alpha3-cluster-sidero"]
+target "cluster-api-v1alpha3-workload-sidero-environment" {
+  inherits = ["_cluster-api-v1alpha3-workload-sidero"]
   contexts = {
-    pkg-local = CAPI_V1ALPHA3_WORKLOAD_SIDERO_ENVIRONMENT_DIR
+    pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/environment"
   }
   args = {
     PKG_SINK_SOURCE = "pkg-sink-source-sidero-environment"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_ENVIRONMENT_DIR}"]
+  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/environment"]
 }
 
 target "cluster-api-clusterctl-crds" {
