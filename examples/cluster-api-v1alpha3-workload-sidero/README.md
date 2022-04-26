@@ -28,7 +28,7 @@ Define an `environment` resource that will configure the kernel image/parameters
 environment_name="lab"
 environment_dir="${environment_name}"
 
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/environment@${git_ref}" "${environment_dir}"
+kpt pkg get "${git_repo}/cluster-api/v1alpha3/workload/sidero/environment@${git_ref}" "${environment_dir}"
 ```
 
 Let's give our new environment a unique name and commit the changes.
@@ -81,7 +81,9 @@ Populate a new cluster package.
 cluster_name="cluster0-${environment_name}"
 cluster_dir="${environment_dir}/${cluster_name}"
 
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/cluster@${git_ref}" "${cluster_dir}"
+kpt pkg get "${git_repo}/cluster-api/v1alpha3/workload/sidero/cluster@${git_ref}" "${cluster_dir}"
+kpt pkg get "${git_repo}/cluster-api/v1alpha3/workload/sidero/control-plane@${git_ref}" "${cluster_dir}"
+kpt pkg get "${git_repo}/cluster-api/v1alpha3/workload/sidero/workers@${git_ref}" "${cluster_dir}"
 ```
 
 #### Rename The Cluster And Resources [`cluster0-lab`]
@@ -175,7 +177,7 @@ Then we will place the cluster's `control-plane` and `workers` packages under th
 
 <!-- @addServerClass @test -->
 ```sh
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/cluster/sidero/serverclass@${git_ref}" "${cluster_dir}"
+kpt pkg get "${git_repo}/cluster-api/v1alpha3/workload/sidero/serverclass@${git_ref}" "${cluster_dir}"
 git mv "${cluster_dir}/control-plane" "${cluster_dir}/serverclass"
 git mv "${cluster_dir}/workers" "${cluster_dir}/serverclass"
 ```
