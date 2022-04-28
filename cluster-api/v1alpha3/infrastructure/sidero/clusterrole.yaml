@@ -6,6 +6,72 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
+  name: sidero-system-sidero-environment-editor-role
+rules:
+- apiGroups:
+  - metal.sidero.dev
+  resources:
+  - environments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metal.sidero.dev
+  resources:
+  - environments/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
+  name: sidero-system-sidero-serverclass-editor-role
+rules:
+- apiGroups:
+  - metal.sidero.dev
+  resources:
+  - serverclasses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metal.sidero.dev
+  resources:
+  - serverclasses/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-caps-manager-role
 rules:
 - apiGroups:
@@ -150,6 +216,29 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
+  name: sidero-system-sidero-proxy-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-sidero-server-editor-role
 rules:
 - apiGroups:
@@ -172,92 +261,3 @@ rules:
   - get
   - patch
   - update
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: sidero
-    cluster.x-k8s.io/provider: infrastructure-sidero
-    cluster.x-k8s.io/v1alpha3: v1alpha3
-    clusterctl.cluster.x-k8s.io: ""
-  name: sidero-system-sidero-serverclass-editor-role
-rules:
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - serverclasses
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - serverclasses/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: sidero
-    cluster.x-k8s.io/provider: infrastructure-sidero
-    cluster.x-k8s.io/v1alpha3: v1alpha3
-    clusterctl.cluster.x-k8s.io: ""
-  name: sidero-system-sidero-environment-editor-role
-rules:
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - environments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - environments/status
-  verbs:
-  - get
-  - patch
-  - update
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: sidero
-    cluster.x-k8s.io/provider: infrastructure-sidero
-    cluster.x-k8s.io/v1alpha3: v1alpha3
-    clusterctl.cluster.x-k8s.io: ""
-  name: sidero-system-sidero-proxy-role
-rules:
-- apiGroups:
-  - authentication.k8s.io
-  resources:
-  - tokenreviews
-  verbs:
-  - create
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - subjectaccessreviews
-  verbs:
-  - create

@@ -4,40 +4,6 @@ metadata:
   labels:
     cluster.x-k8s.io/provider: control-plane-talos
     clusterctl.cluster.x-k8s.io: ""
-  name: cacppt-system-cacppt-proxy-role
-rules:
-- apiGroups:
-  - authentication.k8s.io
-  resources:
-  - tokenreviews
-  verbs:
-  - create
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - subjectaccessreviews
-  verbs:
-  - create
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  labels:
-    cluster.x-k8s.io/provider: control-plane-talos
-    clusterctl.cluster.x-k8s.io: ""
-  name: cacppt-system-cacppt-metrics-reader
-rules:
-- nonResourceURLs:
-  - /metrics
-  verbs:
-  - get
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    cluster.x-k8s.io/provider: control-plane-talos
-    clusterctl.cluster.x-k8s.io: ""
   name: cacppt-system-cacppt-manager-role
 rules:
 - apiGroups:
@@ -96,3 +62,37 @@ rules:
   - list
   - patch
   - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: control-plane-talos
+    clusterctl.cluster.x-k8s.io: ""
+  name: cacppt-system-cacppt-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: control-plane-talos
+    clusterctl.cluster.x-k8s.io: ""
+  name: cacppt-system-cacppt-proxy-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
