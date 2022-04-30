@@ -1,0 +1,12 @@
+apiVersion: clusterctl.cluster.x-k8s.io/v1alpha3
+kind: Provider
+metadata:
+  name: infrastructure-sidero
+  namespace: sidero-system
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    clusterctl.cluster.x-k8s.io: ""
+    clusterctl.cluster.x-k8s.io/core: inventory
+providerName: sidero
+type: InfrastructureProvider
+version: v0.4.1
