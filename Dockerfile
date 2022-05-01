@@ -284,6 +284,8 @@ ARG GIT_REF="test_e2e"
 ENV GIT_REF=${GIT_REF}
 ENV EXAMPLE_DIR="${OUT_DIR}"
 ARG EXAMPLE_SOURCE_DIR="${IN_DIR}/example"
+ARG CAPI_API_GROUP
+ENV CAPI_API="${CAPI_API_GROUP}"
 COPY --link --from=repo-source / "${GIT_REPO_DIR}/.git"
 COPY --link --from=example-source / "${EXAMPLE_SOURCE_DIR}"
 RUN <<eot

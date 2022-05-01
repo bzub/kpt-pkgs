@@ -539,7 +539,9 @@ target "cluster-api-clusterctl-crds" {
 group "examples" {
   targets = [
     "examples-cluster-api-v1alpha3-management-docker",
+    "examples-cluster-api-v1alpha4-management-docker",
     "examples-cluster-api-v1alpha3-management-sidero",
+    "examples-cluster-api-v1alpha4-management-sidero",
     "examples-cluster-api-v1alpha3-workload-sidero",
   ]
 }
@@ -553,19 +555,35 @@ target "_examples" {
 }
 
 target "examples-cluster-api-v1alpha3-management-docker" {
-  inherits = ["_examples"]
+  inherits = ["_cluster-api-v1alpha3", "_examples"]
   contexts = {
-    example-source = "./examples/cluster-api-v1alpha3-management-docker"
+    example-source = "./examples/cluster-api-management-docker"
   }
   output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-docker"]
 }
 
-target "examples-cluster-api-v1alpha3-management-sidero" {
-  inherits = ["_examples"]
+target "examples-cluster-api-v1alpha4-management-docker" {
+  inherits = ["_cluster-api-v1alpha4", "_examples"]
   contexts = {
-    example-source = "./examples/cluster-api-v1alpha3-management-sidero"
+    example-source = "./examples/cluster-api-management-docker"
+  }
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha4-management-docker"]
+}
+
+target "examples-cluster-api-v1alpha3-management-sidero" {
+  inherits = ["_cluster-api-v1alpha3", "_examples"]
+  contexts = {
+    example-source = "./examples/cluster-api-management-sidero"
   }
   output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-sidero"]
+}
+
+target "examples-cluster-api-v1alpha4-management-sidero" {
+  inherits = ["_cluster-api-v1alpha4", "_examples"]
+  contexts = {
+    example-source = "./examples/cluster-api-management-sidero"
+  }
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha4-management-sidero"]
 }
 
 target "examples-cluster-api-v1alpha3-workload-sidero" {
