@@ -1,0 +1,12 @@
+apiVersion: clusterctl.cluster.x-k8s.io/v1alpha3
+kind: Provider
+metadata:
+  name: bootstrap-talos
+  namespace: cabpt-system
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-talos
+    clusterctl.cluster.x-k8s.io: ""
+    clusterctl.cluster.x-k8s.io/core: inventory
+providerName: talos
+type: BootstrapProvider
+version: v0.4.3

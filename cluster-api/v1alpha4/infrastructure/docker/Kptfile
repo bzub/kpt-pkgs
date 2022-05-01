@@ -1,0 +1,43 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: cluster-api-infrastructure-docker
+pipeline:
+  mutators:
+    - name: set-labels-for-clusterctl
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        cluster.x-k8s.io/provider: infrastructure-docker
+        clusterctl.cluster.x-k8s.io: ""
+    - name: set-labels-for-clusterctl-shared-lifecycle
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io/lifecycle: shared
+      selectors:
+        - namespace: capi-webhook-system
+        - kind: CustomResourceDefinition
+        - kind: ValidatingWebhookConfiguration
+        - kind: MutatingWebhookConfiguration
+    - name: set-labels-for-clusterctl-core-inventory
+      image: gcr.io/kpt-fn/set-labels:unstable
+      configMap:
+        clusterctl.cluster.x-k8s.io/core: inventory
+      selectors:
+        - kind: Provider
+    - name: ensure-cluster-rbac-name-prefixes
+      image: gcr.io/kpt-fn/ensure-name-substring:unstable
+      configMap:
+        prepend: capd-system-
+      selectors:
+        - kind: ClusterRole
+        - kind: ClusterRoleBinding
+    - name: set-cert-manager-dependencies
+      image: gcr.io/kpt-fn/set-annotations:unstable
+      configMap:
+        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
+      selectors:
+        - kind: Certificate
+        - kind: Issuer
+        - kind: Deployment
+  validators:
+    - image: gcr.io/kpt-fn/gatekeeper:unstable
