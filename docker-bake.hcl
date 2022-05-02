@@ -6,7 +6,7 @@ variable "CAPI_V1ALPHA3_WORKLOAD_DIR" {default = "${CAPI_V1ALPHA3_DIR}/workload"
 variable "CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR" {default = "${CAPI_V1ALPHA3_WORKLOAD_DIR}/sidero"}
 
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
-variable "CERT_MANAGER_VERSION" {default = "v1.1.1"}
+variable "CERT_MANAGER_VERSION" {default = "v1.5.5"}
 variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 variable "KUBECTL_VERSION" {default = "1.23.5"}
 variable "CAPI_V1ALPHA3_CORE_VERSION" {default = "v0.3.25"}
