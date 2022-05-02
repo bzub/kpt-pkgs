@@ -80,6 +80,7 @@ target "git-tag-packages" {
   args = {
     GIT_TAGS = join(" ", [
       "cert-manager/${CERT_MANAGER_VERSION}",
+      # CAPI v1alpha3
       "cluster-api/v1alpha3/core/cluster-api/${CAPI_V1ALPHA3_CORE_VERSION}",
       "cluster-api/v1alpha3/bootstrap/talos/${CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION}",
       "cluster-api/v1alpha3/bootstrap/kubeadm/${CAPI_V1ALPHA3_BOOTSTRAP_KUBEADM_VERSION}",
@@ -87,7 +88,19 @@ target "git-tag-packages" {
       "cluster-api/v1alpha3/control-plane/kubeadm/${CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION}",
       "cluster-api/v1alpha3/infrastructure/docker/${CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION}",
       "cluster-api/v1alpha3/infrastructure/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/workload/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/v1alpha3/workload/sidero/cluster${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/v1alpha3/workload/sidero/control-plane${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/v1alpha3/workload/sidero/environment${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/v1alpha3/workload/sidero/serverclass${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/v1alpha3/workload/sidero/workers${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
+      # CAPI v1alpha4
+      "cluster-api/v1alpha4/core/cluster-api/${CAPI_V1ALPHA4_CORE_VERSION}",
+      "cluster-api/v1alpha4/bootstrap/talos/${CAPI_V1ALPHA4_BOOTSTRAP_TALOS_VERSION}",
+      "cluster-api/v1alpha4/bootstrap/kubeadm/${CAPI_V1ALPHA4_BOOTSTRAP_KUBEADM_VERSION}",
+      "cluster-api/v1alpha4/control-plane/talos/${CAPI_V1ALPHA4_CONTROLPLANE_TALOS_VERSION}",
+      "cluster-api/v1alpha4/control-plane/kubeadm/${CAPI_V1ALPHA4_CONTROLPLANE_KUBEADM_VERSION}",
+      "cluster-api/v1alpha4/infrastructure/docker/${CAPI_V1ALPHA4_INFRASTRUCTURE_DOCKER_VERSION}",
+      "cluster-api/v1alpha4/infrastructure/sidero/${CAPI_V1ALPHA4_INFRASTRUCTURE_SIDERO_VERSION}",
     ])
   }
   output = ["${OUTPUT_DIR}/.git"]
