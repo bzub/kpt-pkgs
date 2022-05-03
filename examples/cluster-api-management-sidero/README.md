@@ -11,7 +11,6 @@ Set default variables and create a workspace for the blueprint packages in this 
 example_dir="${EXAMPLE_DIR:-$(mktemp -d)}"
 git_repo="${GIT_REPO:-https://github.com/bzub/kpt-pkgs/.git}"
 git_ref="${GIT_REF:-main}"
-capi_api_group="${CAPI_API_GROUP:-v1alpha4}"
 
 mkdir -p "${example_dir}"
 kpt pkg init "${example_dir}"
@@ -33,11 +32,11 @@ mkdir "${blueprint_dir}"
 kpt pkg init "${blueprint_dir}"
 
 kpt pkg get "${git_repo}/cert-manager@${git_ref}" "${blueprint_dir}/cert-manager"
-kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/core/cluster-api@${git_ref}" "${blueprint_dir}/cluster-api-core"
+kpt pkg get "${git_repo}/cluster-api/core/cluster-api@${git_ref}" "${blueprint_dir}/cluster-api-core"
 kpt pkg get "${git_repo}/cluster-api/clusterctl-crds@${git_ref}" "${blueprint_dir}/clusterctl-crds"
-kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/bootstrap/talos@${git_ref}" "${blueprint_dir}/bootstrap-talos"
-kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/control-plane/talos@${git_ref}" "${blueprint_dir}/control-plane-talos"
-kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/infrastructure/sidero@${git_ref}" "${blueprint_dir}/infrastructure-sidero"
+kpt pkg get "${git_repo}/cluster-api/bootstrap/talos@${git_ref}" "${blueprint_dir}/bootstrap-talos"
+kpt pkg get "${git_repo}/cluster-api/control-plane/talos@${git_ref}" "${blueprint_dir}/control-plane-talos"
+kpt pkg get "${git_repo}/cluster-api/infrastructure/sidero@${git_ref}" "${blueprint_dir}/infrastructure-sidero"
 ```
 
 At this point the package is ready to be deployed with default settings via `kpt live` commands.
