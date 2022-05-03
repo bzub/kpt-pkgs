@@ -320,6 +320,27 @@ FROM scratch as pkg
 ARG OUT_DIR
 COPY --link --from=kpt-fn-render "${OUT_DIR}" /
 
+# This is a workaround for issues with missing permissions.
+# TODO: create an issue in https://github.com/siderolabs/cluster-api-bootstrap-provider-talos
+FROM tools as cluster-api-bootstrap-talos-pkg-build
+ARG OUT_DIR
+COPY --link --from=kpt-fn-render "${OUT_DIR}" "${OUT_DIR}"
+COPY --link <<eot /tmp/patch_clusterrole.yaml
+- apiGroups:
+  - cluster.x-k8s.io
+  resources:
+  - machinepools
+  - machinepools/status
+  verbs:
+  - get
+  - list
+  - watch
+eot
+RUN cat /tmp/patch_clusterrole.yaml >> "${OUT_DIR}/clusterrole.yaml"
+FROM scratch as cluster-api-bootstrap-talos-pkg
+ARG OUT_DIR
+COPY --link --from=cluster-api-bootstrap-talos-pkg-build "${OUT_DIR}" /
+
 FROM tools as cluster-api-workload-sidero-cluster-kpt-fn-render
 ARG OUT_DIR
 COPY --link --from=pkg-local / ${OUT_DIR}
