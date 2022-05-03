@@ -1,4 +1,4 @@
-# cluster-api-v1alpha3-management-docker
+# cluster-api-management-docker
 
 How to install cluster-api providers for kubeadm and docker.
 
@@ -11,6 +11,7 @@ Set default variables and create a workspace for the blueprint packages in this 
 example_dir="${EXAMPLE_DIR:-$(mktemp -d)}"
 git_repo="${GIT_REPO:-https://github.com/bzub/kpt-pkgs/.git}"
 git_ref="${GIT_REF:-main}"
+capi_api_group="${CAPI_API_GROUP:-v1alpha4}"
 
 mkdir -p "${example_dir}"
 kpt pkg init "${example_dir}"
@@ -32,11 +33,11 @@ mkdir "${blueprint_dir}"
 kpt pkg init "${blueprint_dir}"
 
 kpt pkg get "${git_repo}/cert-manager@${git_ref}" "${blueprint_dir}/cert-manager"
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/core/cluster-api@${git_ref}" "${blueprint_dir}/cluster-api-core"
+kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/core/cluster-api@${git_ref}" "${blueprint_dir}/cluster-api-core"
 kpt pkg get "${git_repo}/cluster-api/clusterctl-crds@${git_ref}" "${blueprint_dir}/clusterctl-crds"
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/bootstrap/kubeadm@${git_ref}" "${blueprint_dir}/bootstrap-kubeadm"
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/control-plane/kubeadm@${git_ref}" "${blueprint_dir}/control-plane-kubeadm"
-kpt pkg get "${git_repo}/cluster-api/v1alpha3/infrastructure/docker@${git_ref}" "${blueprint_dir}/infrastructure-docker"
+kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/bootstrap/kubeadm@${git_ref}" "${blueprint_dir}/bootstrap-kubeadm"
+kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/control-plane/kubeadm@${git_ref}" "${blueprint_dir}/control-plane-kubeadm"
+kpt pkg get "${git_repo}/cluster-api/${capi_api_group}/infrastructure/docker@${git_ref}" "${blueprint_dir}/infrastructure-docker"
 ```
 
 At this point the package is ready to be deployed with default settings via `kpt live` commands.
