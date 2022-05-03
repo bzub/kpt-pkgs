@@ -1,0 +1,25 @@
+apiVersion: cluster.x-k8s.io/v1alpha4
+kind: MachineDeployment
+metadata:
+  name: cluster-name-workers
+  labels:
+    role: workers
+    metalmachinetemplate: cluster-name-workers
+    cluster: cluster-name
+  namespace: default
+spec:
+  clusterName: cluster-name
+  replicas: 0
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+          kind: TalosConfigTemplate
+          name: cluster-name-workers
+      clusterName: cluster-name
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: MetalMachineTemplate
+        name: cluster-name-workers
+      version: v1.20.15

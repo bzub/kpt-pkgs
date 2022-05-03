@@ -1,9 +1,8 @@
 variable "OUTPUT_DIR" {default = "."}
 variable "ARTIFACTS_DIR" {default = "${OUTPUT_DIR}/_out"}
 variable "CAPI_DIR" {default = "cluster-api"}
-variable "CAPI_V1ALPHA3_DIR" {default = "${CAPI_DIR}/v1alpha3"}
-variable "CAPI_V1ALPHA3_WORKLOAD_DIR" {default = "${CAPI_V1ALPHA3_DIR}/workload"}
-variable "CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR" {default = "${CAPI_V1ALPHA3_WORKLOAD_DIR}/sidero"}
+variable "CAPI_WORKLOAD_DIR" {default = "${CAPI_DIR}/workload"}
+variable "CAPI_WORKLOAD_SIDERO_DIR" {default = "${CAPI_WORKLOAD_DIR}/sidero"}
 
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
 variable "CERT_MANAGER_VERSION" {default = "v1.5.5"}
@@ -12,22 +11,15 @@ variable "KUBECTL_VERSION" {default = "1.23.5"}
 variable "CAPI_V1ALPHA3_CORE_VERSION" {default = "v0.3.25"}
 variable "CAPI_V1ALPHA4_CORE_VERSION" {default = "v0.4.7"}
 variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.1.2"}
+variable "CAPI_CORE_VERSION" {default = CAPI_V1ALPHA4_CORE_VERSION}
 
-# cluster-api v1alpha3
-variable "CAPI_V1ALPHA3_BOOTSTRAP_KUBEADM_VERSION" {default = "${CAPI_V1ALPHA3_CORE_VERSION}"}
-variable "CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION" {default = "v0.3.2"}
-variable "CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION" {default = "${CAPI_V1ALPHA3_CORE_VERSION}"}
-variable "CAPI_V1ALPHA3_CONTROLPLANE_TALOS_VERSION" {default = "v0.2.0"}
-variable "CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_V1ALPHA3_CORE_VERSION}"}
-variable "CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.3.3"}
-
-# cluster-api v1alpha4
-variable "CAPI_V1ALPHA4_BOOTSTRAP_KUBEADM_VERSION" {default = "${CAPI_V1ALPHA4_CORE_VERSION}"}
-variable "CAPI_V1ALPHA4_BOOTSTRAP_TALOS_VERSION" {default = "v0.4.3"}
-variable "CAPI_V1ALPHA4_CONTROLPLANE_KUBEADM_VERSION" {default = "${CAPI_V1ALPHA4_CORE_VERSION}"}
-variable "CAPI_V1ALPHA4_CONTROLPLANE_TALOS_VERSION" {default = "v0.3.1"}
-variable "CAPI_V1ALPHA4_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_V1ALPHA4_CORE_VERSION}"}
-variable "CAPI_V1ALPHA4_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.4.1"}
+# cluster-api
+variable "CAPI_BOOTSTRAP_KUBEADM_VERSION" {default = "${CAPI_CORE_VERSION}"}
+variable "CAPI_BOOTSTRAP_TALOS_VERSION" {default = "v0.4.3"}
+variable "CAPI_CONTROLPLANE_KUBEADM_VERSION" {default = "${CAPI_CORE_VERSION}"}
+variable "CAPI_CONTROLPLANE_TALOS_VERSION" {default = "v0.3.1"}
+variable "CAPI_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_CORE_VERSION}"}
+variable "CAPI_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.4.1"}
 
 variable "KPT_IMAGE" {default = "docker-image://ghcr.io/bzub/images/kpt:${KPT_VERSION}"}
 variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CLUSTERCTL_VERSION}"}
@@ -80,27 +72,19 @@ target "git-tag-packages" {
   args = {
     GIT_TAGS = join(" ", [
       "cert-manager/${CERT_MANAGER_VERSION}",
-      # CAPI v1alpha3
-      "cluster-api/v1alpha3/core/cluster-api/${CAPI_V1ALPHA3_CORE_VERSION}",
-      "cluster-api/v1alpha3/bootstrap/talos/${CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION}",
-      "cluster-api/v1alpha3/bootstrap/kubeadm/${CAPI_V1ALPHA3_BOOTSTRAP_KUBEADM_VERSION}",
-      "cluster-api/v1alpha3/control-plane/talos/${CAPI_V1ALPHA3_CONTROLPLANE_TALOS_VERSION}",
-      "cluster-api/v1alpha3/control-plane/kubeadm/${CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION}",
-      "cluster-api/v1alpha3/infrastructure/docker/${CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION}",
-      "cluster-api/v1alpha3/infrastructure/sidero/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/workload/sidero/cluster/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/workload/sidero/control-plane/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/workload/sidero/environment/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/workload/sidero/serverclass/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/v1alpha3/workload/sidero/workers/${CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION}",
-      # CAPI v1alpha4
-      "cluster-api/v1alpha4/core/cluster-api/${CAPI_V1ALPHA4_CORE_VERSION}",
-      "cluster-api/v1alpha4/bootstrap/talos/${CAPI_V1ALPHA4_BOOTSTRAP_TALOS_VERSION}",
-      "cluster-api/v1alpha4/bootstrap/kubeadm/${CAPI_V1ALPHA4_BOOTSTRAP_KUBEADM_VERSION}",
-      "cluster-api/v1alpha4/control-plane/talos/${CAPI_V1ALPHA4_CONTROLPLANE_TALOS_VERSION}",
-      "cluster-api/v1alpha4/control-plane/kubeadm/${CAPI_V1ALPHA4_CONTROLPLANE_KUBEADM_VERSION}",
-      "cluster-api/v1alpha4/infrastructure/docker/${CAPI_V1ALPHA4_INFRASTRUCTURE_DOCKER_VERSION}",
-      "cluster-api/v1alpha4/infrastructure/sidero/${CAPI_V1ALPHA4_INFRASTRUCTURE_SIDERO_VERSION}",
+      # cluster-api
+      "cluster-api/core/cluster-api/${CAPI_CORE_VERSION}",
+      "cluster-api/bootstrap/talos/${CAPI_BOOTSTRAP_TALOS_VERSION}",
+      "cluster-api/bootstrap/kubeadm/${CAPI_BOOTSTRAP_KUBEADM_VERSION}",
+      "cluster-api/control-plane/talos/${CAPI_CONTROLPLANE_TALOS_VERSION}",
+      "cluster-api/control-plane/kubeadm/${CAPI_CONTROLPLANE_KUBEADM_VERSION}",
+      "cluster-api/infrastructure/docker/${CAPI_INFRASTRUCTURE_DOCKER_VERSION}",
+      "cluster-api/infrastructure/sidero/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/workload/sidero/cluster/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/workload/sidero/control-plane/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/workload/sidero/environment/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/workload/sidero/serverclass/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/workload/sidero/workers/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
     ])
   }
   output = ["${OUTPUT_DIR}/.git"]
@@ -130,43 +114,20 @@ group "cluster-api" {
 
 group "cluster-api-providers" {
   targets = [
-    "cluster-api-providers-v1alpha3",
-    "cluster-api-providers-v1alpha4"
-  ]
-}
-
-group "cluster-api-providers-v1alpha3" {
-  targets = [
-    "cluster-api-v1alpha3-core",
-    "cluster-api-v1alpha3-bootstrap-kubeadm",
-    "cluster-api-v1alpha3-bootstrap-talos",
-    "cluster-api-v1alpha3-control-plane-kubeadm",
-    "cluster-api-v1alpha3-control-plane-talos",
-    "cluster-api-v1alpha3-infrastructure-docker",
-    "cluster-api-v1alpha3-infrastructure-sidero",
-  ]
-}
-
-group "cluster-api-providers-v1alpha4" {
-  targets = [
-    "cluster-api-v1alpha4-core",
-    "cluster-api-v1alpha4-bootstrap-kubeadm",
-    "cluster-api-v1alpha4-bootstrap-talos",
-    "cluster-api-v1alpha4-control-plane-kubeadm",
-    "cluster-api-v1alpha4-control-plane-talos",
-    "cluster-api-v1alpha4-infrastructure-docker",
-    "cluster-api-v1alpha4-infrastructure-sidero",
+    "cluster-api-core",
+    "cluster-api-bootstrap-kubeadm",
+    "cluster-api-bootstrap-talos",
+    "cluster-api-control-plane-kubeadm",
+    "cluster-api-control-plane-talos",
+    "cluster-api-infrastructure-docker",
+    "cluster-api-infrastructure-sidero",
   ]
 }
 
 group "cluster-api-workloads" {
   targets = [
-    "cluster-api-v1alpha3-workload-sidero",
+    "cluster-api-workload-sidero",
   ]
-}
-
-target "_cluster-api" {
-  inherits = ["_common"]
 }
 
 target "_cluster-api-provider" {
@@ -178,20 +139,6 @@ target "_cluster-api-provider" {
 target "_cluster-api-workload" {
   args = {
     FETCH_RESOURCES_IMAGE = "clusterctl-generate-yaml"
-  }
-}
-
-target "_cluster-api-v1alpha3" {
-  inherits = ["_cluster-api"]
-  args = {
-    CAPI_API_GROUP = "v1alpha3"
-  }
-}
-
-target "_cluster-api-v1alpha4" {
-  inherits = ["_cluster-api"]
-  args = {
-    CAPI_API_GROUP = "v1alpha4"
   }
 }
 
@@ -207,26 +154,15 @@ target "_cluster-api-core" {
   }
 }
 
-target "cluster-api-v1alpha3-core" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-core"]
+target "cluster-api-core" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-core"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/core/cluster-api"
+    pkg-local = "${CAPI_DIR}/core/cluster-api"
   }
   args = {
-    VERSION = CAPI_V1ALPHA3_CORE_VERSION
+    VERSION = CAPI_CORE_VERSION
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/core/cluster-api"]
-}
-
-target "cluster-api-v1alpha4-core" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-core"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/core/cluster-api"
-  }
-  args = {
-    VERSION = CAPI_V1ALPHA4_CORE_VERSION
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/core/cluster-api"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/core/cluster-api"]
 }
 
 target "_cluster-api-bootstrap" {
@@ -250,215 +186,119 @@ target "_cluster-api-infrastructure" {
   }
 }
 
-target "cluster-api-v1alpha3-bootstrap-kubeadm" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-bootstrap"]
+target "cluster-api-bootstrap-kubeadm" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-bootstrap"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/bootstrap/kubeadm"
+    pkg-local = "${CAPI_DIR}/bootstrap/kubeadm"
   }
   args = {
     PROVIDER_NAME = "kubeadm"
     NAMESPACE = "capi-kubeadm-bootstrap-system"
-    VERSION = CAPI_V1ALPHA3_BOOTSTRAP_KUBEADM_VERSION
+    VERSION = CAPI_BOOTSTRAP_KUBEADM_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
     FILENAME = "bootstrap-components.yaml"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/bootstrap/kubeadm"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/bootstrap/kubeadm"]
 }
 
-target "cluster-api-v1alpha4-bootstrap-kubeadm" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-bootstrap"]
+target "cluster-api-bootstrap-talos" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-bootstrap"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/bootstrap/kubeadm"
-  }
-  args = {
-    PROVIDER_NAME = "kubeadm"
-    NAMESPACE = "capi-kubeadm-bootstrap-system"
-    VERSION = CAPI_V1ALPHA4_BOOTSTRAP_KUBEADM_VERSION
-    GITHUB_ORG = "kubernetes-sigs"
-    GITHUB_REPO = "cluster-api"
-    FILENAME = "bootstrap-components.yaml"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/bootstrap/kubeadm"]
-}
-
-target "cluster-api-v1alpha3-bootstrap-talos" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-bootstrap"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/bootstrap/talos"
+    pkg-local = "${CAPI_DIR}/bootstrap/talos"
   }
   args = {
     PROVIDER_NAME = "talos"
     NAMESPACE = "cabpt-system"
-    VERSION = CAPI_V1ALPHA3_BOOTSTRAP_TALOS_VERSION
+    VERSION = CAPI_BOOTSTRAP_TALOS_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "cluster-api-bootstrap-provider-talos"
     FILENAME = "bootstrap-components.yaml"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/bootstrap/talos"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/bootstrap/talos"]
 }
 
-target "cluster-api-v1alpha4-bootstrap-talos" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-bootstrap"]
+target "cluster-api-control-plane-kubeadm" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-control-plane"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/bootstrap/talos"
-  }
-  args = {
-    PROVIDER_NAME = "talos"
-    NAMESPACE = "cabpt-system"
-    VERSION = CAPI_V1ALPHA4_BOOTSTRAP_TALOS_VERSION
-    GITHUB_ORG = "siderolabs"
-    GITHUB_REPO = "cluster-api-bootstrap-provider-talos"
-    FILENAME = "bootstrap-components.yaml"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/bootstrap/talos"]
-}
-
-target "cluster-api-v1alpha3-control-plane-kubeadm" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-control-plane"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/control-plane/kubeadm"
+    pkg-local = "${CAPI_DIR}/control-plane/kubeadm"
   }
   args = {
     PROVIDER_NAME = "kubeadm"
     NAMESPACE = "capi-kubeadm-control-plane-system"
-    VERSION = CAPI_V1ALPHA3_CONTROLPLANE_KUBEADM_VERSION
+    VERSION = CAPI_CONTROLPLANE_KUBEADM_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
     FILENAME = "control-plane-components.yaml"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/control-plane/kubeadm"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/control-plane/kubeadm"]
 }
 
-target "cluster-api-v1alpha4-control-plane-kubeadm" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-control-plane"]
+target "cluster-api-control-plane-talos" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-control-plane"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/control-plane/kubeadm"
-  }
-  args = {
-    PROVIDER_NAME = "kubeadm"
-    NAMESPACE = "capi-kubeadm-control-plane-system"
-    VERSION = CAPI_V1ALPHA4_CONTROLPLANE_KUBEADM_VERSION
-    GITHUB_ORG = "kubernetes-sigs"
-    GITHUB_REPO = "cluster-api"
-    FILENAME = "control-plane-components.yaml"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/control-plane/kubeadm"]
-}
-
-target "cluster-api-v1alpha3-control-plane-talos" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-control-plane"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/control-plane/talos"
+    pkg-local = "${CAPI_DIR}/control-plane/talos"
   }
   args = {
     PROVIDER_NAME = "talos"
     NAMESPACE = "cacppt-system"
-    VERSION = CAPI_V1ALPHA3_CONTROLPLANE_TALOS_VERSION
+    VERSION = CAPI_CONTROLPLANE_TALOS_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "cluster-api-control-plane-provider-talos"
     FILENAME = "control-plane-components.yaml"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/control-plane/talos"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/control-plane/talos"]
 }
 
-target "cluster-api-v1alpha4-control-plane-talos" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-control-plane"]
+target "cluster-api-infrastructure-docker" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-infrastructure"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/control-plane/talos"
-  }
-  args = {
-    PROVIDER_NAME = "talos"
-    NAMESPACE = "cacppt-system"
-    VERSION = CAPI_V1ALPHA4_CONTROLPLANE_TALOS_VERSION
-    GITHUB_ORG = "siderolabs"
-    GITHUB_REPO = "cluster-api-control-plane-provider-talos"
-    FILENAME = "control-plane-components.yaml"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/control-plane/talos"]
-}
-
-target "cluster-api-v1alpha3-infrastructure-docker" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-infrastructure"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/infrastructure/docker"
+    pkg-local = "${CAPI_DIR}/infrastructure/docker"
   }
   args = {
     PROVIDER_NAME = "docker"
     NAMESPACE = "capd-system"
-    VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_DOCKER_VERSION
+    VERSION = CAPI_INFRASTRUCTURE_DOCKER_VERSION
     GITHUB_ORG = "kubernetes-sigs"
     GITHUB_REPO = "cluster-api"
     FILENAME = "infrastructure-components-development.yaml"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/infrastructure/docker"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/infrastructure/docker"]
 }
 
-target "cluster-api-v1alpha4-infrastructure-docker" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-infrastructure"]
+target "cluster-api-infrastructure-sidero" {
+  inherits = ["_common", "_cluster-api-provider", "_cluster-api-infrastructure"]
   contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/infrastructure/docker"
-  }
-  args = {
-    PROVIDER_NAME = "docker"
-    NAMESPACE = "capd-system"
-    VERSION = CAPI_V1ALPHA4_INFRASTRUCTURE_DOCKER_VERSION
-    GITHUB_ORG = "kubernetes-sigs"
-    GITHUB_REPO = "cluster-api"
-    FILENAME = "infrastructure-components-development.yaml"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/infrastructure/docker"]
-}
-
-target "cluster-api-v1alpha3-infrastructure-sidero" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-provider", "_cluster-api-infrastructure"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha3/infrastructure/sidero"
+    pkg-local = "${CAPI_DIR}/infrastructure/sidero"
   }
   args = {
     PROVIDER_NAME = "sidero"
     NAMESPACE = "sidero-system"
-    VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
+    VERSION = CAPI_INFRASTRUCTURE_SIDERO_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "sidero"
     FILENAME = "infrastructure-components.yaml"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha3/infrastructure/sidero"]
+  output = ["${OUTPUT_DIR}/${CAPI_DIR}/infrastructure/sidero"]
 }
 
-target "cluster-api-v1alpha4-infrastructure-sidero" {
-  inherits = ["_cluster-api-v1alpha4", "_cluster-api-provider", "_cluster-api-infrastructure"]
-  contexts = {
-    pkg-local = "${CAPI_DIR}/v1alpha4/infrastructure/sidero"
-  }
-  args = {
-    PROVIDER_NAME = "sidero"
-    NAMESPACE = "sidero-system"
-    VERSION = CAPI_V1ALPHA4_INFRASTRUCTURE_SIDERO_VERSION
-    GITHUB_ORG = "siderolabs"
-    GITHUB_REPO = "sidero"
-    FILENAME = "infrastructure-components.yaml"
-  }
-  output = ["${OUTPUT_DIR}/${CAPI_DIR}/v1alpha4/infrastructure/sidero"]
-}
-
-group "cluster-api-v1alpha3-workload-sidero" {
+group "cluster-api-workload-sidero" {
   targets = [
-    "cluster-api-v1alpha3-workload-sidero-cluster",
-    "cluster-api-v1alpha3-workload-sidero-control-plane",
-    "cluster-api-v1alpha3-workload-sidero-workers",
-    "cluster-api-v1alpha3-workload-sidero-serverclass",
-    "cluster-api-v1alpha3-workload-sidero-environment",
+    "cluster-api-workload-sidero-cluster",
+    "cluster-api-workload-sidero-control-plane",
+    "cluster-api-workload-sidero-workers",
+    "cluster-api-workload-sidero-serverclass",
+    "cluster-api-workload-sidero-environment",
   ]
 }
 
-target "_cluster-api-v1alpha3-workload-sidero" {
-  inherits = ["_cluster-api-v1alpha3", "_cluster-api-workload"]
+target "_cluster-api-workload-sidero" {
+  inherits = ["_common", "_cluster-api-workload"]
   args = {
     PKG_SINK_SOURCE = "pkg-sink-source-sidero-cluster"
     PROVIDER_NAME = "sidero"
     NAMESPACE = "sidero-system"
-    VERSION = CAPI_V1ALPHA3_INFRASTRUCTURE_SIDERO_VERSION
+    VERSION = CAPI_INFRASTRUCTURE_SIDERO_VERSION
     GITHUB_ORG = "siderolabs"
     GITHUB_REPO = "sidero"
     FILENAME = "cluster-template.yaml"
@@ -476,61 +316,62 @@ target "_cluster-api-v1alpha3-workload-sidero" {
   }
 }
 
-target "_cluster-api-v1alpha3-workload-sidero-cluster" {
-  inherits = ["_cluster-api-v1alpha3-workload-sidero"]
+target "_cluster-api-workload-sidero-cluster" {
+  inherits = ["_cluster-api-workload-sidero"]
   contexts = {
-    pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/cluster"
-    control-plane-pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/control-plane"
-    workers-pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/workers"
+    pkg-local = "${CAPI_WORKLOAD_SIDERO_DIR}/cluster"
+    control-plane-pkg-local = "${CAPI_WORKLOAD_SIDERO_DIR}/control-plane"
+    workers-pkg-local = "${CAPI_WORKLOAD_SIDERO_DIR}/workers"
   }
 }
 
-target "cluster-api-v1alpha3-workload-sidero-cluster" {
-  inherits = ["_cluster-api-v1alpha3-workload-sidero-cluster"]
-  target = "cluster-api-v1alpha3-workload-sidero-cluster-pkg"
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/cluster"]
+target "cluster-api-workload-sidero-cluster" {
+  inherits = ["_cluster-api-workload-sidero-cluster"]
+  target = "cluster-api-workload-sidero-cluster-pkg"
+  output = ["${OUTPUT_DIR}/${CAPI_WORKLOAD_SIDERO_DIR}/cluster"]
 }
 
-target "cluster-api-v1alpha3-workload-sidero-control-plane" {
-  inherits = ["_cluster-api-v1alpha3-workload-sidero-cluster"]
-  target = "cluster-api-v1alpha3-workload-sidero-control-plane-pkg"
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/control-plane"]
+target "cluster-api-workload-sidero-control-plane" {
+  inherits = ["_cluster-api-workload-sidero-cluster"]
+  target = "cluster-api-workload-sidero-control-plane-pkg"
+  output = ["${OUTPUT_DIR}/${CAPI_WORKLOAD_SIDERO_DIR}/control-plane"]
 }
 
-target "cluster-api-v1alpha3-workload-sidero-workers" {
-  inherits = ["_cluster-api-v1alpha3-workload-sidero-cluster"]
-  target = "cluster-api-v1alpha3-workload-sidero-workers-pkg"
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/workers"]
+target "cluster-api-workload-sidero-workers" {
+  inherits = ["_cluster-api-workload-sidero-cluster"]
+  target = "cluster-api-workload-sidero-workers-pkg"
+  output = ["${OUTPUT_DIR}/${CAPI_WORKLOAD_SIDERO_DIR}/workers"]
 }
 
-target "cluster-api-v1alpha3-workload-sidero-serverclass" {
-  inherits = ["_cluster-api-v1alpha3-workload-sidero"]
+target "cluster-api-workload-sidero-serverclass" {
+  inherits = ["_cluster-api-workload-sidero"]
   contexts = {
-    pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/serverclass"
+    pkg-local = "${CAPI_WORKLOAD_SIDERO_DIR}/serverclass"
   }
   args = {
     PKG_SINK_SOURCE = "pkg-sink-source-sidero-serverclass"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/serverclass"]
+  output = ["${OUTPUT_DIR}/${CAPI_WORKLOAD_SIDERO_DIR}/serverclass"]
 }
 
-target "cluster-api-v1alpha3-workload-sidero-environment" {
-  inherits = ["_cluster-api-v1alpha3-workload-sidero"]
+target "cluster-api-workload-sidero-environment" {
+  inherits = ["_cluster-api-workload-sidero"]
   contexts = {
-    pkg-local = "${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/environment"
+    pkg-local = "${CAPI_WORKLOAD_SIDERO_DIR}/environment"
   }
   args = {
     PKG_SINK_SOURCE = "pkg-sink-source-sidero-environment"
   }
-  output = ["${OUTPUT_DIR}/${CAPI_V1ALPHA3_WORKLOAD_SIDERO_DIR}/environment"]
+  output = ["${OUTPUT_DIR}/${CAPI_WORKLOAD_SIDERO_DIR}/environment"]
 }
 
 target "cluster-api-clusterctl-crds" {
-  inherits = ["_cluster-api"]
+  inherits = ["_common"]
   contexts = {
     pkg-local = "${CAPI_DIR}/clusterctl-crds"
   }
   args = {
+    FILENAME = "fetch-github-release-file"
     URL = "https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/${CLUSTERCTL_VERSION}/cmd/clusterctl/config/manifest/clusterctl-api.yaml"
   }
   output = ["${OUTPUT_DIR}/${CAPI_DIR}/clusterctl-crds"]
@@ -538,11 +379,9 @@ target "cluster-api-clusterctl-crds" {
 
 group "examples" {
   targets = [
-    "examples-cluster-api-v1alpha3-management-docker",
-    "examples-cluster-api-v1alpha4-management-docker",
-    "examples-cluster-api-v1alpha3-management-sidero",
-    "examples-cluster-api-v1alpha4-management-sidero",
-    "examples-cluster-api-v1alpha3-workload-sidero",
+    "examples-cluster-api-management-docker",
+    "examples-cluster-api-management-sidero",
+    "examples-cluster-api-workload-sidero",
   ]
 }
 
@@ -554,42 +393,26 @@ target "_examples" {
   }
 }
 
-target "examples-cluster-api-v1alpha3-management-docker" {
-  inherits = ["_cluster-api-v1alpha3", "_examples"]
+target "examples-cluster-api-management-docker" {
+  inherits = ["_common", "_examples"]
   contexts = {
     example-source = "./examples/cluster-api-management-docker"
   }
-  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-docker"]
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-management-docker"]
 }
 
-target "examples-cluster-api-v1alpha4-management-docker" {
-  inherits = ["_cluster-api-v1alpha4", "_examples"]
-  contexts = {
-    example-source = "./examples/cluster-api-management-docker"
-  }
-  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha4-management-docker"]
-}
-
-target "examples-cluster-api-v1alpha3-management-sidero" {
-  inherits = ["_cluster-api-v1alpha3", "_examples"]
+target "examples-cluster-api-management-sidero" {
+  inherits = ["_common", "_examples"]
   contexts = {
     example-source = "./examples/cluster-api-management-sidero"
   }
-  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-management-sidero"]
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-management-sidero"]
 }
 
-target "examples-cluster-api-v1alpha4-management-sidero" {
-  inherits = ["_cluster-api-v1alpha4", "_examples"]
-  contexts = {
-    example-source = "./examples/cluster-api-management-sidero"
-  }
-  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha4-management-sidero"]
-}
-
-target "examples-cluster-api-v1alpha3-workload-sidero" {
+target "examples-cluster-api-workload-sidero" {
   inherits = ["_examples"]
   contexts = {
-    example-source = "./examples/cluster-api-v1alpha3-workload-sidero"
+    example-source = "./examples/cluster-api-workload-sidero"
   }
-  output = ["${ARTIFACTS_DIR}/examples/cluster-api-v1alpha3-workload-sidero"]
+  output = ["${ARTIFACTS_DIR}/examples/cluster-api-workload-sidero"]
 }

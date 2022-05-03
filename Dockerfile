@@ -320,7 +320,7 @@ FROM scratch as pkg
 ARG OUT_DIR
 COPY --link --from=kpt-fn-render "${OUT_DIR}" /
 
-FROM tools as cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render
+FROM tools as cluster-api-workload-sidero-cluster-kpt-fn-render
 ARG OUT_DIR
 COPY --link --from=pkg-local / ${OUT_DIR}
 COPY --link --from=control-plane-pkg-local / ${OUT_DIR}/control-plane
@@ -328,23 +328,23 @@ COPY --link --from=workers-pkg-local / ${OUT_DIR}/workers
 COPY --link --from=pkg-rename-files / ${OUT_DIR}
 RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 
-FROM tools as cluster-api-v1alpha3-workload-sidero-cluster-pkg-build
+FROM tools as cluster-api-workload-sidero-cluster-pkg-build
 ARG OUT_DIR
-COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}" "${OUT_DIR}"
-RUN find "${OUT_DIR}" -delete -mindepth 2 -not -path "${OUT_DIR}/.fn-configs*"
-RUN find "${OUT_DIR}" -delete -mindepth 1 -type d -not -path "${OUT_DIR}/.fn-configs"
+COPY --link --from=cluster-api-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}" "${OUT_DIR}"
+RUN find "${OUT_DIR}" -mindepth 2 -not -path "${OUT_DIR}/.fn-configs*" -delete 
+RUN find "${OUT_DIR}" -mindepth 1 -type d -not -path "${OUT_DIR}/.fn-configs" -delete 
 
-FROM scratch as cluster-api-v1alpha3-workload-sidero-cluster-pkg
+FROM scratch as cluster-api-workload-sidero-cluster-pkg
 ARG OUT_DIR
-COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-pkg-build "${OUT_DIR}" /
+COPY --link --from=cluster-api-workload-sidero-cluster-pkg-build "${OUT_DIR}" /
 
-FROM scratch as cluster-api-v1alpha3-workload-sidero-control-plane-pkg
+FROM scratch as cluster-api-workload-sidero-control-plane-pkg
 ARG OUT_DIR
-COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/control-plane" /
+COPY --link --from=cluster-api-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/control-plane" /
 
-FROM scratch as cluster-api-v1alpha3-workload-sidero-workers-pkg
+FROM scratch as cluster-api-workload-sidero-workers-pkg
 ARG OUT_DIR
-COPY --link --from=cluster-api-v1alpha3-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/workers" /
+COPY --link --from=cluster-api-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/workers" /
 
 FROM tools as git-tag-packages-build
 ARG GIT_TAGS

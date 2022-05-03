@@ -4,6 +4,8 @@ metadata:
   name: ensureportprotocolsareset
   annotations:
     config.kubernetes.io/local-config: "true"
+  labels:
+    clusterctl.cluster.x-k8s.io: ""
 spec:
   crd:
     spec:
@@ -37,8 +39,12 @@ metadata:
   name: ensureportprotocolsareset
   annotations:
     config.kubernetes.io/local-config: "true"
+  labels:
+    clusterctl.cluster.x-k8s.io: ""
 spec:
   match:
     kinds:
-      - apiGroups: [""]
-        kinds: ["Service"]
+      - apiGroups:
+          - ""
+        kinds:
+          - Service
