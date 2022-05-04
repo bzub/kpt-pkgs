@@ -71,20 +71,20 @@ target "git-tag-packages" {
   target = "git-tag-packages"
   args = {
     GIT_TAGS = join(" ", [
-      "cert-manager/${CERT_MANAGER_VERSION}",
+      "cert-manager/${CERT_MANAGER_VERSION}-pkg.00",
       # cluster-api
-      "cluster-api/core/cluster-api/${CAPI_CORE_VERSION}",
-      "cluster-api/bootstrap/talos/${CAPI_BOOTSTRAP_TALOS_VERSION}",
-      "cluster-api/bootstrap/kubeadm/${CAPI_BOOTSTRAP_KUBEADM_VERSION}",
-      "cluster-api/control-plane/talos/${CAPI_CONTROLPLANE_TALOS_VERSION}",
-      "cluster-api/control-plane/kubeadm/${CAPI_CONTROLPLANE_KUBEADM_VERSION}",
-      "cluster-api/infrastructure/docker/${CAPI_INFRASTRUCTURE_DOCKER_VERSION}",
-      "cluster-api/infrastructure/sidero/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/workload/sidero/cluster/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/workload/sidero/control-plane/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/workload/sidero/environment/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/workload/sidero/serverclass/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
-      "cluster-api/workload/sidero/workers/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}",
+      "cluster-api/core/cluster-api/${CAPI_CORE_VERSION}-pkg.00",
+      "cluster-api/bootstrap/talos/${CAPI_BOOTSTRAP_TALOS_VERSION}-pkg.00",
+      "cluster-api/bootstrap/kubeadm/${CAPI_BOOTSTRAP_KUBEADM_VERSION}-pkg.00",
+      "cluster-api/control-plane/talos/${CAPI_CONTROLPLANE_TALOS_VERSION}-pkg.00",
+      "cluster-api/control-plane/kubeadm/${CAPI_CONTROLPLANE_KUBEADM_VERSION}-pkg.00",
+      "cluster-api/infrastructure/docker/${CAPI_INFRASTRUCTURE_DOCKER_VERSION}-pkg.00",
+      "cluster-api/infrastructure/sidero/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}-pkg.00",
+      "cluster-api/workload/sidero/cluster/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}-pkg.00",
+      "cluster-api/workload/sidero/control-plane/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}-pkg.00",
+      "cluster-api/workload/sidero/environment/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}-pkg.00",
+      "cluster-api/workload/sidero/serverclass/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}-pkg.00",
+      "cluster-api/workload/sidero/workers/${CAPI_INFRASTRUCTURE_SIDERO_VERSION}-pkg.00",
     ])
   }
   output = ["${OUTPUT_DIR}/.git"]
