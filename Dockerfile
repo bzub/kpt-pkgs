@@ -376,7 +376,7 @@ RUN <<EOT
 #!/usr/bin/env sh
 set -euxo pipefail
 for tag in $(echo "${GIT_TAGS}"); do
-  git tag --force "${tag}"
+  git tag "${tag}"
 done
 EOT
 
