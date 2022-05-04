@@ -216,10 +216,6 @@ target "cluster-api-bootstrap-talos" {
     FILENAME = "bootstrap-components.yaml"
   }
   output = ["${OUTPUT_DIR}/${CAPI_DIR}/bootstrap/talos"]
-
-  # This is a workaround for issues with missing permissions.
-  # TODO: create an issue in https://github.com/siderolabs/cluster-api-bootstrap-provider-talos
-  target = "cluster-api-bootstrap-talos-pkg"
 }
 
 target "cluster-api-control-plane-kubeadm" {
