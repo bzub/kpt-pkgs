@@ -9,4 +9,4 @@ metadata:
     clusterctl.cluster.x-k8s.io/core: inventory
 providerName: kubeadm
 type: BootstrapProvider
-version: v0.4.7
+version: v1.1.3

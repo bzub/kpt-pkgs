@@ -16,3 +16,6 @@ spec:
     kind: Issuer
     name: capi-selfsigned-issuer
   secretName: capi-webhook-service-cert
+  subject:
+    organizations:
+    - k8s-sig-cluster-lifecycle

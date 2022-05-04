@@ -16,3 +16,6 @@ spec:
     kind: Issuer
     name: capd-selfsigned-issuer
   secretName: capd-webhook-service-cert
+  subject:
+    organizations:
+    - k8s-sig-cluster-lifecycle

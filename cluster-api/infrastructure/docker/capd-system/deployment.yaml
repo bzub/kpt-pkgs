@@ -30,7 +30,7 @@ spec:
         - --leader-elect
         - --metrics-bind-addr=localhost:8080
         - --feature-gates=MachinePool=false,ClusterTopology=false
-        image: gcr.io/k8s-staging-cluster-api/capd-manager:v0.4.7
+        image: gcr.io/k8s-staging-cluster-api/capd-manager:v1.1.3
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -61,6 +61,8 @@ spec:
       tolerations:
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
       volumes:
       - name: cert
         secret:

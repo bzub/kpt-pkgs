@@ -155,6 +155,8 @@ addportprotocol(ctx.resource_list["items"])
 eot
 COPY --link --from=fetch-resources-image / ${IN_DIR}
 RUN mkdir -p "$(dirname "${OUT_PKG}")"
+# The use of kpt-fn-search-replace is a workaround so we can use cert-manager v1.7.X with sidero.
+# TODO: Create an issue with https://github.com/siderolabs/sidero
 RUN <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
@@ -163,6 +165,8 @@ cat $(find "${IN_DIR}" -type f -maxdepth 1) \
 | sed '/^ *caBundle: Cg==$/d' \
 | sed '/^  creationTimestamp: null$/d' \
 | kpt fn eval - --exec="kpt-fn-starlark" --match-kind="Service" -- "source=$(cat ${ENSURE_PORT_PROTOCOL_STARLARK})" \
+| kpt fn eval - --exec="kpt-fn-search-replace" --match-kind="Certificate" -- "by-path=apiVersion" "by-value=cert-manager.io/v1alpha2" "put-value=cert-manager.io/v1" \
+| kpt fn eval - --exec="kpt-fn-search-replace" --match-kind="Issuer" -- "by-path=apiVersion" "by-value=cert-manager.io/v1alpha2" "put-value=cert-manager.io/v1" \
 | kpt fn sink "${OUT_DIR}"
 eot
 
@@ -352,8 +356,8 @@ RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 FROM tools as cluster-api-workload-sidero-cluster-pkg-build
 ARG OUT_DIR
 COPY --link --from=cluster-api-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}" "${OUT_DIR}"
-RUN find "${OUT_DIR}" -mindepth 2 -not -path "${OUT_DIR}/.fn-configs*" -delete 
-RUN find "${OUT_DIR}" -mindepth 1 -type d -not -path "${OUT_DIR}/.fn-configs" -delete 
+RUN find "${OUT_DIR}" -mindepth 2 -not -path "${OUT_DIR}/.fn-configs*" -delete
+RUN find "${OUT_DIR}" -mindepth 1 -type d -not -path "${OUT_DIR}/.fn-configs" -delete
 
 FROM scratch as cluster-api-workload-sidero-cluster-pkg
 ARG OUT_DIR

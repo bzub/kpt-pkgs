@@ -5,21 +5,21 @@ variable "CAPI_WORKLOAD_DIR" {default = "${CAPI_DIR}/workload"}
 variable "CAPI_WORKLOAD_SIDERO_DIR" {default = "${CAPI_WORKLOAD_DIR}/sidero"}
 
 variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
-variable "CERT_MANAGER_VERSION" {default = "v1.5.5"}
+variable "CERT_MANAGER_VERSION" {default = "v1.7.2"}
 variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 variable "KUBECTL_VERSION" {default = "1.23.5"}
 variable "CAPI_V1ALPHA3_CORE_VERSION" {default = "v0.3.25"}
 variable "CAPI_V1ALPHA4_CORE_VERSION" {default = "v0.4.7"}
-variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.1.2"}
-variable "CAPI_CORE_VERSION" {default = CAPI_V1ALPHA4_CORE_VERSION}
+variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.1.3"}
+variable "CAPI_CORE_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 
 # cluster-api
 variable "CAPI_BOOTSTRAP_KUBEADM_VERSION" {default = "${CAPI_CORE_VERSION}"}
-variable "CAPI_BOOTSTRAP_TALOS_VERSION" {default = "v0.4.3"}
+variable "CAPI_BOOTSTRAP_TALOS_VERSION" {default = "v0.5.3"}
 variable "CAPI_CONTROLPLANE_KUBEADM_VERSION" {default = "${CAPI_CORE_VERSION}"}
-variable "CAPI_CONTROLPLANE_TALOS_VERSION" {default = "v0.3.1"}
+variable "CAPI_CONTROLPLANE_TALOS_VERSION" {default = "v0.4.6"}
 variable "CAPI_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_CORE_VERSION}"}
-variable "CAPI_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.4.1"}
+variable "CAPI_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.5.0"}
 
 variable "KPT_IMAGE" {default = "docker-image://ghcr.io/bzub/images/kpt:${KPT_VERSION}"}
 variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CLUSTERCTL_VERSION}"}
@@ -216,7 +216,7 @@ target "cluster-api-bootstrap-talos" {
     FILENAME = "bootstrap-components.yaml"
   }
   output = ["${OUTPUT_DIR}/${CAPI_DIR}/bootstrap/talos"]
-  
+
   # This is a workaround for issues with missing permissions.
   # TODO: create an issue in https://github.com/siderolabs/cluster-api-bootstrap-provider-talos
   target = "cluster-api-bootstrap-talos-pkg"

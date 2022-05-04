@@ -6,6 +6,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: caps-webhook-service
   namespace: sidero-system
@@ -19,6 +20,7 @@ spec:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     control-plane: caps-controller-manager
     clusterctl.cluster.x-k8s.io: ""
 ---
@@ -30,6 +32,33 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
+    clusterctl.cluster.x-k8s.io: ""
+  name: sidero-siderolink
+  namespace: sidero-system
+spec:
+  ports:
+  - port: 51821
+    protocol: UDP
+    targetPort: siderolink
+  selector:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
+    control-plane: sidero-controller-manager
+    clusterctl.cluster.x-k8s.io: ""
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sidero
+    cluster.x-k8s.io/provider: infrastructure-sidero
+    cluster.x-k8s.io/v1alpha3: v1alpha3
+    cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     control-plane: caps-controller-manager
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-controller-manager-metrics-service
@@ -45,6 +74,7 @@ spec:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     control-plane: caps-controller-manager
     clusterctl.cluster.x-k8s.io: ""
 ---
@@ -56,6 +86,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-tftp
   namespace: sidero-system
@@ -69,6 +100,7 @@ spec:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     control-plane: sidero-controller-manager
     clusterctl.cluster.x-k8s.io: ""
 ---
@@ -80,6 +112,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-http
   namespace: sidero-system
@@ -93,5 +126,6 @@ spec:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     control-plane: sidero-controller-manager
     clusterctl.cluster.x-k8s.io: ""

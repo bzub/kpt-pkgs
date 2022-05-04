@@ -32,13 +32,24 @@ spec:
         - --feature-gates=MachinePool=false
         command:
         - /manager
-        image: ghcr.io/talos-systems/cluster-api-talos-controller:v0.4.3
+        image: ghcr.io/siderolabs/cluster-api-talos-controller:v0.5.3
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: healthz
         name: manager
         ports:
         - containerPort: 9443
           name: webhook-server
           protocol: TCP
+        - containerPort: 9440
+          name: healthz
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: healthz
         resources:
           limits:
             cpu: 500m

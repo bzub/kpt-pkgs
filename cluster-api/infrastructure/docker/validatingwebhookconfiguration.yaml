@@ -16,7 +16,7 @@ webhooks:
     service:
       name: capd-webhook-service
       namespace: capd-system
-      path: /validate-infrastructure-cluster-x-k8s-io-v1alpha4-dockercluster
+      path: /validate-infrastructure-cluster-x-k8s-io-v1beta1-dockercluster
   failurePolicy: Fail
   matchPolicy: Equivalent
   name: validation.dockercluster.infrastructure.cluster.x-k8s.io
@@ -24,7 +24,7 @@ webhooks:
   - apiGroups:
     - infrastructure.cluster.x-k8s.io
     apiVersions:
-    - v1alpha4
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
@@ -38,7 +38,7 @@ webhooks:
     service:
       name: capd-webhook-service
       namespace: capd-system
-      path: /validate-infrastructure-cluster-x-k8s-io-v1alpha4-dockerclustertemplate
+      path: /validate-infrastructure-cluster-x-k8s-io-v1beta1-dockerclustertemplate
   failurePolicy: Fail
   matchPolicy: Equivalent
   name: validation.dockerclustertemplate.infrastructure.cluster.x-k8s.io
@@ -46,7 +46,7 @@ webhooks:
   - apiGroups:
     - infrastructure.cluster.x-k8s.io
     apiVersions:
-    - v1alpha4
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
@@ -60,7 +60,7 @@ webhooks:
     service:
       name: capd-webhook-service
       namespace: capd-system
-      path: /validate-infrastructure-cluster-x-k8s-io-v1alpha4-dockermachinetemplate
+      path: /validate-infrastructure-cluster-x-k8s-io-v1beta1-dockermachinetemplate
   failurePolicy: Fail
   matchPolicy: Equivalent
   name: validation.dockermachinetemplate.infrastructure.cluster.x-k8s.io
@@ -68,7 +68,7 @@ webhooks:
   - apiGroups:
     - infrastructure.cluster.x-k8s.io
     apiVersions:
-    - v1alpha4
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
