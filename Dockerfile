@@ -255,10 +255,25 @@ RUN mkdir -p "${OUT_DIR}"
 RUN <<eot
 #!/usr/bin/env sh
 set -euxo pipefail
-for filepath in $(find "${IN_DIR}" -type f -iname '*.yaml'); do
+for filepath in $(find "${IN_DIR}" -type f -iname '*.yaml' | sort); do
   kind="$(echo "${filepath}" | sed 's|\(.*/\)\(\w*\)_.*.yaml|\2|')"
   if [ "${kind}" = "customresourcedefinition" ] || [ -z "${kind}" ]; then
     continue
+  fi
+  # This is a workaround for issues with missing permissions.
+  # TODO: create an issue in https://github.com/siderolabs/cluster-api-bootstrap-provider-talos
+  if [ "$(basename "${filepath}")" == "clusterrole_cabpt-manager-role.yaml" ]; then
+    cat <<'EOF' >> "${filepath}"
+- apiGroups:
+  - cluster.x-k8s.io
+  resources:
+  - machinepools
+  - machinepools/status
+  verbs:
+  - get
+  - list
+  - watch
+EOF
   fi
   dir="$(dirname "${filepath}")"
   outfile="${dir}/${kind}.yaml"
@@ -319,27 +334,6 @@ RUN kpt fn render --allow-exec --truncate-output=false "${OUT_DIR}"
 FROM scratch as pkg
 ARG OUT_DIR
 COPY --link --from=kpt-fn-render "${OUT_DIR}" /
-
-# This is a workaround for issues with missing permissions.
-# TODO: create an issue in https://github.com/siderolabs/cluster-api-bootstrap-provider-talos
-FROM tools as cluster-api-bootstrap-talos-pkg-build
-ARG OUT_DIR
-COPY --link --from=kpt-fn-render "${OUT_DIR}" "${OUT_DIR}"
-COPY --link <<eot /tmp/patch_clusterrole.yaml
-- apiGroups:
-  - cluster.x-k8s.io
-  resources:
-  - machinepools
-  - machinepools/status
-  verbs:
-  - get
-  - list
-  - watch
-eot
-RUN cat /tmp/patch_clusterrole.yaml >> "${OUT_DIR}/clusterrole.yaml"
-FROM scratch as cluster-api-bootstrap-talos-pkg
-ARG OUT_DIR
-COPY --link --from=cluster-api-bootstrap-talos-pkg-build "${OUT_DIR}" /
 
 FROM tools as cluster-api-workload-sidero-cluster-kpt-fn-render
 ARG OUT_DIR

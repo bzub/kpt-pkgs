@@ -7,7 +7,7 @@ metadata:
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: sidero-leader-election-role
+  name: caps-leader-election-role
   namespace: sidero-system
 rules:
 - apiGroups:
@@ -58,7 +58,7 @@ metadata:
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
-  name: caps-leader-election-role
+  name: sidero-leader-election-role
   namespace: sidero-system
 rules:
 - apiGroups:
