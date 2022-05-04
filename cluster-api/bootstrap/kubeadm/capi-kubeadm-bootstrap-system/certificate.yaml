@@ -16,3 +16,6 @@ spec:
     kind: Issuer
     name: capi-kubeadm-bootstrap-selfsigned-issuer
   secretName: capi-kubeadm-bootstrap-webhook-service-cert
+  subject:
+    organizations:
+    - k8s-sig-cluster-lifecycle

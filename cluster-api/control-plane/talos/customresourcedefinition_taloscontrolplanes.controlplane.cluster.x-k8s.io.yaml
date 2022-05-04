@@ -3,11 +3,12 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: cacppt-system/cacppt-serving-cert
-    controller-gen.kubebuilder.io/version: v0.5.0
+    controller-gen.kubebuilder.io/version: v0.8.0
   labels:
     cluster.x-k8s.io/provider: control-plane-talos
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
     clusterctl.cluster.x-k8s.io/lifecycle: shared
   name: taloscontrolplanes.controlplane.cluster.x-k8s.io
@@ -96,13 +97,20 @@ spec:
                         type: string
                       generateType:
                         type: string
+                      hostname:
+                        description: Set hostname in the machine configuration to some value.
+                        properties:
+                          source:
+                            description: "Source of the hostname. \n Allowed values: \"MachineName\" (use linked Machine's Name)."
+                            type: string
+                        type: object
                       talosVersion:
                         type: string
                     required:
                     - generateType
                     type: object
                   init:
-                    description: TalosConfigSpec defines the desired state of TalosConfig
+                    description: 'Deprecated: starting from cacppt v0.4.0 provider doesn''t use init configs.'
                     properties:
                       configPatches:
                         items:
@@ -122,6 +130,13 @@ spec:
                         type: string
                       generateType:
                         type: string
+                      hostname:
+                        description: Set hostname in the machine configuration to some value.
+                        properties:
+                          source:
+                            description: "Source of the hostname. \n Allowed values: \"MachineName\" (use linked Machine's Name)."
+                            type: string
+                        type: object
                       talosVersion:
                         type: string
                     required:
@@ -129,7 +144,6 @@ spec:
                     type: object
                 required:
                 - controlplane
-                - init
                 type: object
               infrastructureTemplate:
                 description: InfrastructureTemplate is a required reference to a custom resource offered by an infrastructure provider.
@@ -160,6 +174,27 @@ spec:
                 description: Number of desired machines. Defaults to 1. When stacked etcd is used only odd numbers are permitted, as per [etcd best practice](https://etcd.io/docs/v3.3.12/faq/#why-an-odd-number-of-cluster-members). This is a pointer to distinguish between explicit zero and not specified.
                 format: int32
                 type: integer
+              rolloutStrategy:
+                default:
+                  rollingUpdate:
+                    maxSurge: 1
+                  type: RollingUpdate
+                description: The RolloutStrategy to use to replace control plane machines with new ones.
+                properties:
+                  rollingUpdate:
+                    description: Rolling update config params. Present only if RolloutStrategyType = RollingUpdate.
+                    properties:
+                      maxSurge:
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        description: 'The maximum number of control planes that can be scheduled above or under the desired number of control planes. Value can be an absolute number 1 or 0. Defaults to 1. Example: when this is set to 1, the control plane can be scaled up immediately when the rolling update starts.'
+                        x-kubernetes-int-or-string: true
+                    type: object
+                  type:
+                    description: Type of rollout. Currently the only supported strategy is "RollingUpdate". Default is RollingUpdate.
+                    type: string
+                type: object
               version:
                 description: Version defines the desired Kubernetes version.
                 minLength: 2
@@ -173,6 +208,9 @@ spec:
           status:
             description: TalosControlPlaneStatus defines the observed state of TalosControlPlane
             properties:
+              bootstrapped:
+                description: Bootstrapped denotes whether any nodes received bootstrap request which is required to start etcd and Kubernetes components in Talos.
+                type: boolean
               conditions:
                 description: Conditions defines current service state of the KubeadmControlPlane.
                 items:
@@ -198,6 +236,7 @@ spec:
                       description: Type of condition in CamelCase or in foo.example.com/CamelCase. Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be useful (see .node.status.conditions), the ability to deconflict is important.
                       type: string
                   required:
+                  - lastTransitionTime
                   - status
                   - type
                   type: object

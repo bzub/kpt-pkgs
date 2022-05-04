@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: cert-manager
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/component: "controller"
-    app.kubernetes.io/version: "v1.5.5"
+    app.kubernetes.io/version: "v1.7.2"
 rules:
   # Used for leader election by the controller
   # See also: https://github.com/kubernetes-sigs/controller-runtime/pull/1144#discussion_r480173688
@@ -40,7 +40,7 @@ metadata:
     app.kubernetes.io/name: cainjector
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/component: "cainjector"
-    app.kubernetes.io/version: "v1.5.5"
+    app.kubernetes.io/version: "v1.7.2"
 rules:
   # Used for leader election by the controller
   # cert-manager-cainjector-leader-election is used by the CertificateBased injector controller

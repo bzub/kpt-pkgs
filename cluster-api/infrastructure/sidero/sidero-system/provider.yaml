@@ -9,4 +9,4 @@ metadata:
     clusterctl.cluster.x-k8s.io/core: inventory
 providerName: sidero
 type: InfrastructureProvider
-version: v0.4.1
+version: v0.5.0

@@ -6,6 +6,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-caps-metalcluster-editor-role-rolebinding
 roleRef:
@@ -25,6 +26,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-caps-metalmachine-editor-rolebinding
 roleRef:
@@ -44,6 +46,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-sidero-manager-serverclass-editor-rolebinding
 roleRef:
@@ -63,6 +66,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-sidero-manager-environment-editor-rolebinding
 roleRef:
@@ -82,6 +86,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-sidero-manager-server-editor-rolebinding
 roleRef:
@@ -101,6 +106,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-caps-manager-rolebinding
 roleRef:
@@ -120,6 +126,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-system-sidero-proxy-rolebinding
 roleRef:

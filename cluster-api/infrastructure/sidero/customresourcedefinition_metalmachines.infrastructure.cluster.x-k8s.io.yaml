@@ -9,6 +9,7 @@ metadata:
     cluster.x-k8s.io/provider: infrastructure-sidero
     cluster.x-k8s.io/v1alpha3: v1alpha3
     cluster.x-k8s.io/v1alpha4: v1alpha3
+    cluster.x-k8s.io/v1beta1: v1alpha3
     clusterctl.cluster.x-k8s.io: ""
     clusterctl.cluster.x-k8s.io/lifecycle: shared
   name: metalmachines.infrastructure.cluster.x-k8s.io
@@ -195,6 +196,52 @@ spec:
           status:
             description: MetalMachineStatus defines the observed state of MetalMachine.
             properties:
+              addresses:
+                description: Addresses contains the Metal machine associated addresses.
+                items:
+                  description: MachineAddress contains information for the node's address.
+                  properties:
+                    address:
+                      description: The machine address.
+                      type: string
+                    type:
+                      description: Machine address type, one of Hostname, ExternalIP or InternalIP.
+                      type: string
+                  required:
+                  - address
+                  - type
+                  type: object
+                type: array
+              conditions:
+                description: Conditions defines current state of the MetalMachine.
+                items:
+                  description: Condition defines an observation of a Cluster API resource operational state.
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status to another. This should be when the underlying condition changed. If that is not known, then using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about the transition. This field may be empty.
+                      type: string
+                    reason:
+                      description: The reason for the condition's last transition in CamelCase. The specific API may choose whether or not this field is considered a guaranteed API. This field may not be empty.
+                      type: string
+                    severity:
+                      description: Severity provides an explicit classification of Reason code, so the users or machines can immediately understand the current situation and act accordingly. The Severity field MUST be set only when Status=False.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase. Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - status
+                  - type
+                  type: object
+                type: array
               failureMessage:
                 description: "FailureMessage will be set in the event that there is a terminal problem reconciling the Machine and will contain a more verbose string suitable for logging and human consumption. \n This field should not be set for transitive errors that a controller faces that are expected to be fixed automatically over time (like service outages), but instead indicate that something is fundamentally wrong with the Machine's spec or the configuration of the controller, and that manual intervention is required. Examples of terminal errors would be invalid combinations of settings in the spec, values that are unsupported by the controller, or the responsible controller itself being critically misconfigured. \n Any transient errors that occur during the reconciliation of Machines can be added as events to the Machine object and/or logged in the controller's output."
                 type: string
@@ -203,8 +250,6 @@ spec:
                 type: string
               ready:
                 type: boolean
-            required:
-            - ready
             type: object
         type: object
     served: true
