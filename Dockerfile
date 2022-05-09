@@ -1,4 +1,4 @@
-# syntax = docker.io/docker/dockerfile-upstream:1.4.0
+# syntax = docker.io/docker/dockerfile-upstream:1.4.2
 
 ARG FETCH_RESOURCES_IMAGE=scratch
 ARG PKG_SINK_SOURCE
