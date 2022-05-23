@@ -1,9 +1,11 @@
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
 metadata:
-  name: set-metalmachinetemplate-from-name
+  name: set-metalmachinetemplate-from-name-control-plane
   annotations:
     config.kubernetes.io/local-config: "true"
+  labels:
+    role: control-plane
 replacements:
   - source:
       kind: MetalMachineTemplate
@@ -14,14 +16,12 @@ replacements:
           - spec.infrastructureTemplate.name
         options:
           create: true
-
       - select:
           kind: MachineDeployment
         fieldPaths:
           - spec.template.spec.infrastructureRef.name
         options:
           create: true
-
       - select:
           group: bootstrap.cluster.x-k8s.io
           version: v1alpha3
@@ -29,14 +29,12 @@ replacements:
           - metadata.labels.metalmachinetemplate
         options:
           create: true
-
       - select:
           group: cluster.x-k8s.io
         fieldPaths:
           - metadata.labels.metalmachinetemplate
         options:
           create: true
-
       - select:
           group: controlplane.cluster.x-k8s.io
           version: v1alpha3
@@ -44,7 +42,6 @@ replacements:
           - metadata.labels.metalmachinetemplate
         options:
           create: true
-
       - select:
           group: infrastructure.cluster.x-k8s.io
           version: v1alpha3
@@ -52,7 +49,6 @@ replacements:
           - metadata.labels.metalmachinetemplate
         options:
           create: true
-
       - select:
           group: metal.sidero.dev
           version: v1alpha1

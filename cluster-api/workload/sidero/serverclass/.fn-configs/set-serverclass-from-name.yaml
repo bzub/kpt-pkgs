@@ -14,14 +14,12 @@ replacements:
           - spec.template.spec.serverClassRef.name
         options:
           create: true
-
       - select:
           kind: ServerClass
         fieldPaths:
           - spec.selector.matchLabels.serverclass
         options:
           create: true
-
       - select:
           group: bootstrap.cluster.x-k8s.io
           version: v1alpha3
@@ -29,14 +27,12 @@ replacements:
           - metadata.labels.serverclass
         options:
           create: true
-
       - select:
           group: cluster.x-k8s.io
         fieldPaths:
           - metadata.labels.serverclass
         options:
           create: true
-
       - select:
           group: controlplane.cluster.x-k8s.io
           version: v1alpha3
@@ -44,7 +40,6 @@ replacements:
           - metadata.labels.serverclass
         options:
           create: true
-
       - select:
           group: infrastructure.cluster.x-k8s.io
           version: v1alpha3
@@ -52,7 +47,6 @@ replacements:
           - metadata.labels.serverclass
         options:
           create: true
-
       - select:
           group: metal.sidero.dev
           version: v1alpha1

@@ -35,7 +35,8 @@ Let's give our new environment a unique name and commit the changes.
 
 <!-- @renameEnvironment @test -->
 ```sh
-kpt fn eval "${environment_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" -- "by-path=metadata.name" "put-value=${environment_name}"
+kpt fn eval "${environment_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" --exclude-annotations='config.kubernetes.io/local-config=true' \
+-- "by-path=metadata.name" "put-value=${environment_name}"
 
 git add .
 git commit -m "feat: add lab environment"
@@ -92,7 +93,8 @@ Let's make the cluster name unique.
 
 <!-- @setClusterResourceNames @test -->
 ```sh
-kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" -- "by-path=metadata.name" "put-value=${cluster_name}"
+kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" --exclude-annotations='config.kubernetes.io/local-config=true' \
+-- "by-path=metadata.name" "put-value=${cluster_name}"
 ```
 
 #### Change The Namespace [`cluster0-lab`]
@@ -187,7 +189,8 @@ Since this `serverclass` represents all servers in the cluster, we will give it 
 
 <!-- @setClusterResourceNames @test -->
 ```sh
-kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" -- "by-path=metadata.name" "put-value=${cluster_name}"
+kpt fn eval "${cluster_dir}" --image="gcr.io/kpt-fn/search-replace:unstable" --exclude-annotations='config.kubernetes.io/local-config=true' \
+-- "by-path=metadata.name" "put-value=${cluster_name}"
 ```
 
 #### Move Servers Into The New `ServerClass`
