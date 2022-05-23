@@ -14,7 +14,7 @@ RUN go install "github.com/monopole/mdrip@${MDRIP_GIT_REF}"
 
 FROM alpine as tools
 RUN apk add -U git curl bash jq
-COPY --link --from=kpt /kpt /usr/local/bin/kpt-bin
+COPY --link --from=kpt /usr/local/bin/kpt /usr/local/bin/kpt-bin
 COPY --link --from=clusterctl /clusterctl /usr/local/bin/clusterctl
 COPY --link --from=kubectl /opt/bitnami/kubectl/bin/kubectl /usr/local/bin/kubectl
 COPY --link --from=kpt-fn-search-replace /usr/local/bin/function /usr/local/bin/kpt-fn-search-replace
