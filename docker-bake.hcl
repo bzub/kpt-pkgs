@@ -4,7 +4,7 @@ variable "CAPI_DIR" {default = "cluster-api"}
 variable "CAPI_WORKLOAD_DIR" {default = "${CAPI_DIR}/workload"}
 variable "CAPI_WORKLOAD_SIDERO_DIR" {default = "${CAPI_WORKLOAD_DIR}/sidero"}
 
-variable "KPT_VERSION" {default = "v1.0.0-beta.13"}
+variable "KPT_VERSION" {default = "v1.0.0-beta.15"}
 variable "CERT_MANAGER_VERSION" {default = "v1.7.2"}
 variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 variable "KUBECTL_VERSION" {default = "1.23.5"}
@@ -21,7 +21,7 @@ variable "CAPI_CONTROLPLANE_TALOS_VERSION" {default = "v0.4.6"}
 variable "CAPI_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_CORE_VERSION}"}
 variable "CAPI_INFRASTRUCTURE_SIDERO_VERSION" {default = "v0.5.0"}
 
-variable "KPT_IMAGE" {default = "docker-image://ghcr.io/bzub/images/kpt:${KPT_VERSION}"}
+variable "KPT_IMAGE" {default = "docker-image://gcr.io/kpt-dev/kpt:${KPT_VERSION}"}
 variable "CLUSTERCTL_IMAGE" {default = "docker-image://ghcr.io/bzub/images/clusterctl:${CLUSTERCTL_VERSION}"}
 variable "KUBECTL_IMAGE" {default = "docker-image://docker.io/bitnami/kubectl:${KUBECTL_VERSION}"}
 variable "KPT_FN_SEARCH_REPLACE_IMAGE" {default = "docker-image://gcr.io/kpt-fn/search-replace@sha256:c8da9c025eea6bef4426c1eb1c12158da7bd795f8912fc83a170d490b3240a8b"}
