@@ -16,14 +16,12 @@ replacements:
           - metadata.namespace
         options:
           create: true
-
       - select:
           group: cluster.x-k8s.io
         fieldPaths:
           - metadata.namespace
         options:
           create: true
-
       - select:
           group: controlplane.cluster.x-k8s.io
           version: v1alpha3
@@ -31,7 +29,6 @@ replacements:
           - metadata.namespace
         options:
           create: true
-
       - select:
           group: infrastructure.cluster.x-k8s.io
           version: v1alpha3
@@ -41,7 +38,6 @@ replacements:
           - metadata.namespace
         options:
           create: true
-
   - source:
       kind: Cluster
     targets:
@@ -52,14 +48,12 @@ replacements:
           - spec.template.spec.clusterName
         options:
           create: true
-
       - select:
           kind: ServerClass
         fieldPaths:
           - spec.selector.matchLabels.cluster
         options:
           create: true
-
       - select:
           group: bootstrap.cluster.x-k8s.io
           version: v1alpha3
@@ -67,14 +61,12 @@ replacements:
           - metadata.labels.cluster
         options:
           create: true
-
       - select:
           group: cluster.x-k8s.io
         fieldPaths:
           - metadata.labels.cluster
         options:
           create: true
-
       - select:
           group: controlplane.cluster.x-k8s.io
           version: v1alpha3
@@ -82,7 +74,6 @@ replacements:
           - metadata.labels.cluster
         options:
           create: true
-
       - select:
           group: infrastructure.cluster.x-k8s.io
           version: v1alpha3
@@ -90,7 +81,6 @@ replacements:
           - metadata.labels.cluster
         options:
           create: true
-
       - select:
           group: metal.sidero.dev
           version: v1alpha1
