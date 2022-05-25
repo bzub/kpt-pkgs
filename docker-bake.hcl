@@ -4,7 +4,7 @@ variable "CAPI_DIR" {default = "cluster-api"}
 variable "CAPI_WORKLOAD_DIR" {default = "${CAPI_DIR}/workload"}
 variable "CAPI_WORKLOAD_SIDERO_DIR" {default = "${CAPI_WORKLOAD_DIR}/sidero"}
 
-variable "KPT_VERSION" {default = "v1.0.0-beta.15"}
+variable "KPT_VERSION" {default = "v1.0.0-beta.16"}
 variable "CERT_MANAGER_VERSION" {default = "v1.5.5"}
 variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 variable "KUBECTL_VERSION" {default = "1.23.5"}
