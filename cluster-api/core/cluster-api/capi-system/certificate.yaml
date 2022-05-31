@@ -6,8 +6,6 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
   name: capi-serving-cert
   namespace: capi-system
-  annotations:
-    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
   dnsNames:
   - capi-webhook-service.capi-system.svc

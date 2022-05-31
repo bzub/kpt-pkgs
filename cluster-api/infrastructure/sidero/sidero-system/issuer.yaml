@@ -9,7 +9,5 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
   name: caps-selfsigned-issuer
   namespace: sidero-system
-  annotations:
-    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
   selfSigned: {}
