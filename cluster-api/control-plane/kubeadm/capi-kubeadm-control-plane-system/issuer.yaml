@@ -6,7 +6,5 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
   name: capi-kubeadm-control-plane-selfsigned-issuer
   namespace: capi-kubeadm-control-plane-system
-  annotations:
-    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
   selfSigned: {}

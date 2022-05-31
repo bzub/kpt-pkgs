@@ -11,8 +11,6 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
   name: caps-controller-manager
   namespace: sidero-system
-  annotations:
-    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
   replicas: 1
   selector:
@@ -34,8 +32,6 @@ spec:
         cluster.x-k8s.io/v1beta1: v1alpha3
         control-plane: caps-controller-manager
         clusterctl.cluster.x-k8s.io: ""
-      annotations:
-        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
     spec:
       containers:
       - args:
@@ -91,8 +87,6 @@ metadata:
     clusterctl.cluster.x-k8s.io: ""
   name: sidero-controller-manager
   namespace: sidero-system
-  annotations:
-    config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
 spec:
   replicas: 1
   selector:
@@ -114,8 +108,6 @@ spec:
         cluster.x-k8s.io/v1beta1: v1alpha3
         control-plane: sidero-controller-manager
         clusterctl.cluster.x-k8s.io: ""
-      annotations:
-        config.kubernetes.io/depends-on: apps/namespaces/cert-manager/Deployment/cert-manager-webhook
     spec:
       containers:
       - args:
