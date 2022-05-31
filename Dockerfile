@@ -366,17 +366,12 @@ ARG OUT_DIR
 COPY --link --from=cluster-api-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/workers" /
 
 FROM tools as git-tag-packages-build
-ARG GIT_TAGS
-ENV GIT_TAGS=${GIT_TAGS}
-COPY --link .git /repo/.git
+ARG PKG_VERSIONS
+ENV PKG_VERSIONS=${PKG_VERSIONS}
+COPY --link /.git /repo/.git
+COPY --link /hack/git_tag_packages.sh /git_tag_packages.sh
 WORKDIR /repo
-RUN <<EOT
-#!/usr/bin/env sh
-set -euxo pipefail
-for tag in $(echo "${GIT_TAGS}"); do
-  git tag "${tag}"
-done
-EOT
+RUN /git_tag_packages.sh
 
 FROM scratch as git-tag-packages
 COPY --link --from=git-tag-packages-build /repo/.git /
