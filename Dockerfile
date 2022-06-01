@@ -365,13 +365,13 @@ FROM scratch as cluster-api-workload-sidero-workers-pkg
 ARG OUT_DIR
 COPY --link --from=cluster-api-workload-sidero-cluster-kpt-fn-render "${OUT_DIR}/workers" /
 
-FROM tools as git-tag-packages-build
+FROM tools as git-tag-packages
 ARG PKG_VERSIONS
 ENV PKG_VERSIONS=${PKG_VERSIONS}
-COPY --link /.git /repo/.git
+COPY --link --from=git-repo /.git /repo/.git
 COPY --link /hack/git_tag_packages.sh /git_tag_packages.sh
 WORKDIR /repo
-RUN /git_tag_packages.sh
+RUN --mount="type=secret,required=true,target=/root/secrets/.git-credentials" /git_tag_packages.sh
 
-FROM scratch as git-tag-packages
-COPY --link --from=git-tag-packages-build /repo/.git /
+# FROM scratch as git-tag-packages
+# COPY --link --from=git-tag-packages-build /repo/.git /
