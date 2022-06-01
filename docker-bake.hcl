@@ -1,3 +1,4 @@
+variable "GIT_CREDENTIALS_PATH" {default = ""}
 variable "OUTPUT_DIR" {default = "."}
 variable "ARTIFACTS_DIR" {default = "${OUTPUT_DIR}/_out"}
 variable "CAPI_DIR" {default = "cluster-api"}
@@ -75,7 +76,14 @@ target "_common" {
 target "git-tag-packages" {
   inherits = ["_common"]
   target = "git-tag-packages"
+  secret = [
+    "id=.git-credentials,src=${GIT_CREDENTIALS_PATH}"
+  ]
+  contexts = {
+    git-repo = "https://github.com/bzub/kpt-pkgs.git#main"
+  }
   args = {
+    BUILDKIT_CONTEXT_KEEP_GIT_DIR = "true"
     PKG_VERSIONS = jsonencode({
       "cert-manager" = CERT_MANAGER_VERSION,
       # cluster-api
@@ -94,7 +102,6 @@ target "git-tag-packages" {
       "cluster-api/workload/sidero/workers" = CAPI_INFRASTRUCTURE_SIDERO_VERSION,
     })
   }
-  output = ["${OUTPUT_DIR}/.git"]
 }
 
 target "cert-manager" {
