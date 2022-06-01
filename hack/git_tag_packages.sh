@@ -9,7 +9,6 @@ git checkout "${branch}"
 git fetch --tags
 git branch "--set-upstream-to=origin/${branch}" "${branch}"
 git pull --unshallow
-git show-ref --tags -d > /tmp/tags.before
 
 run_git_tag() {
   tag="${1}"
@@ -43,9 +42,6 @@ for pkg in ${packages}; do
   echo "[INFO] Incrementing package revision: \"${next_revision}\""
   run_git_tag "${new_tag}" "${latest_commit}"
 done
-
-git show-ref --tags -d > /tmp/tags.after
-diff /tmp/tags.before /tmp/tags.after
 
 git config credential.helper store
 git push --tags
