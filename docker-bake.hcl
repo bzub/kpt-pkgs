@@ -80,7 +80,7 @@ target "git-tag-packages" {
     "id=.git-credentials,src=${GIT_CREDENTIALS_PATH}"
   ]
   contexts = {
-    git-repo = "https://github.com/bzub/kpt-pkgs.git#main"
+    git-repo = "https://github.com/bzub/kpt-pkgs.git#cluster-api-v1alpha4"
   }
   args = {
     BUILDKIT_CONTEXT_KEEP_GIT_DIR = "true"
