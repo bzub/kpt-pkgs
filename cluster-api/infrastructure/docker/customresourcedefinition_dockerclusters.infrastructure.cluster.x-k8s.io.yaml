@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: capd-system/capd-serving-cert
-    controller-gen.kubebuilder.io/version: v0.8.0
+    controller-gen.kubebuilder.io/version: v0.9.1
   labels:
     cluster.x-k8s.io/provider: infrastructure-docker
     cluster.x-k8s.io/v1alpha3: v1alpha3
@@ -306,7 +306,7 @@ spec:
                       description: ControlPlane determines if this failure domain is suitable for use by control plane machines.
                       type: boolean
                   type: object
-                description: FailureDomains are not usulaly defined on the spec. The docker provider is special since failure domains don't mean anything in a local docker environment. Instead, the docker cluster controller will simply copy these into the Status and allow the Cluster API controllers to do what they will with the defined failure domains.
+                description: FailureDomains are usually not defined in the spec. The docker provider is special since failure domains don't mean anything in a local docker environment. Instead, the docker cluster controller will simply copy these into the Status and allow the Cluster API controllers to do what they will with the defined failure domains.
                 type: object
               loadBalancer:
                 description: LoadBalancer allows defining configurations for the cluster load balancer.
@@ -376,9 +376,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
