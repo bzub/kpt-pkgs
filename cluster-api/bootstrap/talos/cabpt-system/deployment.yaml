@@ -28,7 +28,7 @@ spec:
         - --feature-gates=MachinePool=false
         command:
         - /manager
-        image: ghcr.io/siderolabs/cluster-api-talos-controller:v0.5.3
+        image: ghcr.io/siderolabs/cluster-api-talos-controller:v0.5.5
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
