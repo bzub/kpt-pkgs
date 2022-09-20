@@ -25,10 +25,23 @@ spec:
       - args:
         - --leader-elect
         - --metrics-bind-addr=localhost:8080
-        - --feature-gates=MachinePool=false,ClusterResourceSet=false,ClusterTopology=false
+        - --feature-gates=MachinePool=false,ClusterResourceSet=false,ClusterTopology=false,RuntimeSDK=false
         command:
         - /manager
-        image: k8s.gcr.io/cluster-api/cluster-api-controller:v1.1.3
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_UID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.uid
+        image: k8s.gcr.io/cluster-api/cluster-api-controller:v1.2.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

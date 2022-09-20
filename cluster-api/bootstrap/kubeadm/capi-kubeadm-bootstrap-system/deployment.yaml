@@ -26,9 +26,10 @@ spec:
         - --leader-elect
         - --metrics-bind-addr=localhost:8080
         - --feature-gates=MachinePool=false,KubeadmBootstrapFormatIgnition=false
+        - --bootstrap-token-ttl=15m
         command:
         - /manager
-        image: k8s.gcr.io/cluster-api/kubeadm-bootstrap-controller:v1.1.3
+        image: k8s.gcr.io/cluster-api/kubeadm-bootstrap-controller:v1.2.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

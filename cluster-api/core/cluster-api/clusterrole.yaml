@@ -20,6 +20,14 @@ metadata:
   name: capi-system-capi-manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - addons.cluster.x-k8s.io
   resources:
   - '*'
@@ -295,4 +303,23 @@ rules:
   - get
   - list
   - patch
+  - watch
+- apiGroups:
+  - ipam.cluster.x-k8s.io
+  resources:
+  - ipaddressclaims
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - runtime.cluster.x-k8s.io
+  resources:
+  - extensionconfigs
+  - extensionconfigs/status
+  verbs:
+  - get
+  - list
+  - patch
+  - update
   - watch

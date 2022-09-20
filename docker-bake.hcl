@@ -11,7 +11,7 @@ variable "CLUSTERCTL_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 variable "KUBECTL_VERSION" {default = "1.23.5"}
 variable "CAPI_V1ALPHA3_CORE_VERSION" {default = "v0.3.25"}
 variable "CAPI_V1ALPHA4_CORE_VERSION" {default = "v0.4.7"}
-variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.1.3"}
+variable "CAPI_V1BETA1_CORE_VERSION" {default = "v1.2.2"}
 variable "CAPI_CORE_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 
 # cluster-api
