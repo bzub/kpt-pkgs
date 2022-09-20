@@ -27,7 +27,7 @@ spec:
         - --enable-leader-election
         command:
         - /manager
-        image: ghcr.io/siderolabs/cluster-api-control-plane-talos-controller:v0.4.6
+        image: ghcr.io/siderolabs/cluster-api-control-plane-talos-controller:v0.4.9
         imagePullPolicy: Always
         name: manager
         ports:
