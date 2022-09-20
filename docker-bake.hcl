@@ -16,7 +16,7 @@ variable "CAPI_CORE_VERSION" {default = CAPI_V1BETA1_CORE_VERSION}
 
 # cluster-api
 variable "CAPI_BOOTSTRAP_KUBEADM_VERSION" {default = "${CAPI_CORE_VERSION}"}
-variable "CAPI_BOOTSTRAP_TALOS_VERSION" {default = "v0.5.3"}
+variable "CAPI_BOOTSTRAP_TALOS_VERSION" {default = "v0.5.5"}
 variable "CAPI_CONTROLPLANE_KUBEADM_VERSION" {default = "${CAPI_CORE_VERSION}"}
 variable "CAPI_CONTROLPLANE_TALOS_VERSION" {default = "v0.4.6"}
 variable "CAPI_INFRASTRUCTURE_DOCKER_VERSION" {default = "${CAPI_CORE_VERSION}"}
