@@ -9,4 +9,4 @@ metadata:
     clusterctl.cluster.x-k8s.io/core: inventory
 providerName: talos
 type: ControlPlaneProvider
-version: v0.4.6
+version: v0.4.9

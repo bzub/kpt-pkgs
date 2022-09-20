@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: cacppt-system/cacppt-serving-cert
-    controller-gen.kubebuilder.io/version: v0.8.0
+    controller-gen.kubebuilder.io/version: v0.9.1
   labels:
     cluster.x-k8s.io/provider: control-plane-talos
     cluster.x-k8s.io/v1alpha3: v1alpha3
@@ -170,6 +170,7 @@ spec:
                     description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                     type: string
                 type: object
+                x-kubernetes-map-type: atomic
               replicas:
                 description: Number of desired machines. Defaults to 1. When stacked etcd is used only odd numbers are permitted, as per [etcd best practice](https://etcd.io/docs/v3.3.12/faq/#why-an-odd-number-of-cluster-members). This is a pointer to distinguish between explicit zero and not specified.
                 format: int32
@@ -192,7 +193,7 @@ spec:
                         x-kubernetes-int-or-string: true
                     type: object
                   type:
-                    description: Type of rollout. Currently the only supported strategy is "RollingUpdate". Default is RollingUpdate.
+                    description: "Change rollout strategy. \n Supported strategies: * \"RollingUpdate\". * \"OnDelete\" \n Default is RollingUpdate."
                     type: string
                 type: object
               version:
@@ -282,9 +283,3 @@ spec:
         specReplicasPath: .spec.replicas
         statusReplicasPath: .status.replicas
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
